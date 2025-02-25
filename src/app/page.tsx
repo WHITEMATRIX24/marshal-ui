@@ -6,23 +6,23 @@ export default function Login() {
   const checkvalue = "";
 
   return (
-    <div className="grid grid-cols-5 h-dvh">
+    <div className="grid md:grid-cols-5 h-dvh justify-center">
       <div className="col-span-3"></div>
-      <div className="col-span-2 flex flex-col justify-center items-center gap-10 px-5 md:px-20 ">
+      <div className="col-span-2 flex flex-col justify-center items-center gap-10 px-5 lg:px-16">
         <div>image</div>
-        <div className="flex flex-col gap-5">
+        <div className="flex flex-col gap-5 w-full 2xl:w-2/3">
           <div className="flex flex-col gap-2">
             <p className="m-0 w-fit">Login</p>
             <input
               type="text"
-              className="w-96 outline-none border border-gray-300 bg-greycomponentbg px-3 py-2 rounded-md"
+              className="w-full outline-none border border-gray-300 bg-greycomponentbg px-3 py-2 rounded-md"
             />
           </div>
           <div className="relative flex flex-col gap-2">
             <p className="m-0 w-fit">password</p>
             <input
               type="password"
-              className="w-96 outline-none border border-gray-300 bg-greycomponentbg ps-3 pe-16 py-2 rounded-md"
+              className="w-full outline-none border border-gray-300 bg-greycomponentbg ps-3 pe-16 py-2 rounded-md"
             />
             <p className="ms-auto text-textcolorblue">Link Button Label</p>
             <span className="absolute right-5 top-10">icon</span>
