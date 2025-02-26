@@ -1,7 +1,8 @@
 "use client"
 import * as React from "react"
-import { Pencil, Trash } from "lucide-react"
-
+import { Pencil, Trash, ChevronDown, ChevronUp } from "lucide-react"
+import { saveAs } from "file-saver"
+import Papa from "papaparse"
 import {
     ColumnDef,
     flexRender,
@@ -27,34 +28,54 @@ interface DataTableProps<TData, TValue> {
     data: TData[]
 }
 
-export function DataTable<TData, TValue>({
+export function DataTable<TData extends { id: string; subRows?: TData[] }, TValue>({
     columns,
     data,
 }: DataTableProps<TData, TValue>) {
     const [pageSize, setPageSize] = React.useState(10)
     const [pageIndex, setPageIndex] = React.useState(0)
     const [isDropdownOpen, setIsDropdownOpen] = React.useState(false)
+    const [expandedRows, setExpandedRows] = React.useState<Record<string, boolean>>({})
+    const [searchQuery, setSearchQuery] = React.useState("")
+    const [filteredData, setFilteredData] = React.useState(data)
+
+    React.useEffect(() => {
+        setFilteredData(
+            data.filter((row) =>
+                Object.values(row).some((value) =>
+                    String(value).toLowerCase().includes(searchQuery.toLowerCase())
+                )
+            )
+        )
+    }, [searchQuery, data])
+
+    const handleExportCSV = () => {
+        const csv = Papa.unparse(filteredData)
+        const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" })
+        saveAs(blob, "exported_data.csv")
+    }
+
+    const toggleRow = (rowId: string) => {
+        setExpandedRows((prev) => ({
+            ...prev,
+            [rowId]: !prev[rowId],
+        }))
+    }
 
     const table = useReactTable({
         data,
         columns: [
-            ...columns, {
+            ...columns,
+            {
                 id: "actions",
                 header: "Actions",
                 cell: ({ row }) => (
                     <div className="flex space-x-2">
-                        <Pencil
-                            className="h-4 w-4 text-black cursor-pointer"
-
-                        />
-                        <Trash
-                            className="h-4 w-4 text-black cursor-pointer"
-
-                        />
+                        <Pencil className="h-4 w-4 text-black cursor-pointer" />
+                        <Trash className="h-4 w-4 text-black cursor-pointer" />
                     </div>
                 ),
             },
-
         ],
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
@@ -81,17 +102,58 @@ export function DataTable<TData, TValue>({
     const startItem = pageIndex * pageSize + 1
     const endItem = Math.min(startItem + pageSize - 1, totalItems)
 
+    // Recursive function to render rows with indentation
+    const renderRows = (rows: TData[], level: number = 0) => {
+        return rows.map((row) => (
+            <React.Fragment key={row.id}>
+                <TableRow className={`transition-colors ${expandedRows[row.id] ? "bg-gray-100" : ""}`}>
+                    {columns.map((column, colIndex) => (
+                        <TableCell key={column.id}>
+                            {colIndex === 0 ? (
+                                <div className="flex items-center space-x-2" style={{ paddingLeft: `${level * 20}px` }}>
+                                    {row.subRows && row.subRows.length > 0 && (
+                                        <button onClick={() => toggleRow(row.id)} className="flex items-center">
+                                            {expandedRows[row.id] ? (
+                                                <ChevronUp className="h-4 w-4" />
+                                            ) : (
+                                                <ChevronDown className="h-4 w-4" />
+                                            )}
+                                        </button>
+                                    )}
+                                    <span>{row[column.accessorKey as keyof TData]}</span>
+                                </div>
+                            ) : (
+                                row[column.accessorKey as keyof TData]
+                            )}
+                        </TableCell>
+                    ))}
+                    <TableCell>
+                        <div className="flex space-x-2">
+                            <Pencil className="h-4 w-4 text-black cursor-pointer" />
+                            <Trash className="h-4 w-4 text-black cursor-pointer" />
+                        </div>
+                    </TableCell>
+                </TableRow>
+
+                {/* Render nested subrows if expanded */}
+                {expandedRows[row.id] && row.subRows && row.subRows.length > 0 && renderRows(row.subRows, level + 1)}
+            </React.Fragment>
+        ))
+    }
+
     return (
         <div className="w-full">
-            <div className="flex items-center py-4">
+            <div className="flex items-center justify-end py-4 space-x-5">
                 <Input
-                    placeholder="Filter lines..."
-                    value={(table.getColumn("appRevAreaName")?.getFilterValue() as string) ?? ""}
-                    onChange={(event) =>
-                        table.getColumn("appRevAreaName")?.setFilterValue(event.target.value)
-                    }
+                    placeholder="Search..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
                     className="max-w-sm"
                 />
+
+                <Button variant="outline">Customize Columns</Button>
+                <Button onClick={handleExportCSV}>Export</Button>
+
             </div>
 
             <Table className="w-full">
@@ -109,32 +171,10 @@ export function DataTable<TData, TValue>({
                     ))}
                 </TableHeader>
 
-                <TableBody>
-                    {table.getRowModel().rows.length ? (
-                        table.getRowModel().rows.map((row) => (
-                            <TableRow
-                                key={row.id}
-                                data-state={row.getIsSelected() && "selected"}
-                            >
-                                {row.getVisibleCells().map((cell) => (
-                                    <TableCell key={cell.id}>
-                                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                    </TableCell>
-                                ))}
-                            </TableRow>
-                        ))
-                    ) : (
-                        <TableRow>
-                            <TableCell colSpan={columns.length} className="h-24 text-center">
-                                No results.
-                            </TableCell>
-                        </TableRow>
-                    )}
-                </TableBody>
+                <TableBody>{renderRows(data)}</TableBody>
             </Table>
 
             <div className="flex items-center justify-between py-4">
-                {/* Items Per Page Dropdown */}
                 <div className="flex items-center space-x-2 relative">
                     <span className="text-sm">Items per page</span>
                     <button
@@ -158,7 +198,6 @@ export function DataTable<TData, TValue>({
                     )}
                 </div>
 
-                {/* Page Summary and Controls */}
                 <div className="flex items-center space-x-4 text-sm">
                     <span>
                         {startItem} - {endItem} of {totalItems}

@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import Link from "next/link"
 import {
   AudioWaveform,
   BookOpen,
@@ -12,6 +13,13 @@ import {
   PieChart,
   Settings2,
   SquareTerminal,
+  LayoutDashboard,
+  BriefcaseBusiness,
+  UserCog,
+  FileCheck2,
+  Cog,
+  FileChartColumn,
+  BookMarked,
 } from "lucide-react"
 
 import { NavMain } from "@/components/nav-main"
@@ -29,8 +37,8 @@ import {
 // This is sample data.
 const data = {
   user: {
-    name: "shadcn",
-    email: "m@example.com",
+    name: "username",
+    role: "rolename",
     avatar: "/avatars/shadcn.jpg",
   },
   teams: [
@@ -52,108 +60,76 @@ const data = {
   ],
   navMain: [
     {
-      title: "Playground",
+      title: "Dashboard",
       url: "#",
-      icon: SquareTerminal,
+      icon: LayoutDashboard,
       isActive: true,
+
+    },
+    {
+      title: "Portfolio",
+      url: "/home/portfolio",
+      icon: BriefcaseBusiness,
       items: [
         {
-          title: "History",
-          url: "#",
+          title: "Iso 24",
+          url: "/home/portfolio",
         },
         {
-          title: "Starred",
-          url: "#",
-        },
-        {
-          title: "Settings",
+          title: "Iso z 67",
           url: "#",
         },
       ],
     },
     {
-      title: "Models",
+      title: "Role/ User Management",
       url: "#",
-      icon: Bot,
-      items: [
-        {
-          title: "Genesis",
-          url: "#",
-        },
-        {
-          title: "Explorer",
-          url: "#",
-        },
-        {
-          title: "Quantum",
-          url: "#",
-        },
-      ],
+      icon: UserCog,
+
+    },
+    {
+      title: "My Activities",
+      url: "#",
+      icon: FileCheck2,
+
+    },
+
+    {
+      title: "Configuration",
+      url: "#",
+      icon: Cog,
+
+    },
+    {
+      title: "Reports",
+      url: "#",
+      icon: FileChartColumn,
+
     },
     {
       title: "Documentation",
       url: "#",
-      icon: BookOpen,
-      items: [
-        {
-          title: "Introduction",
-          url: "#",
-        },
-        {
-          title: "Get Started",
-          url: "#",
-        },
-        {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Settings",
-      url: "#",
-      icon: Settings2,
-      items: [
-        {
-          title: "General",
-          url: "#",
-        },
-        {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
-          url: "#",
-        },
-      ],
+      icon: BookMarked,
+
     },
   ],
-  projects: [
-    {
-      name: "Design Engineering",
-      url: "#",
-      icon: Frame,
-    },
-    {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: PieChart,
-    },
-    {
-      name: "Travel",
-      url: "#",
-      icon: Map,
-    },
-  ],
+  // projects: [
+  //   {
+  //     name: "Design Engineering",
+  //     url: "#",
+  //     icon: Frame,
+  //   },
+  //   {
+  //     name: "Sales & Marketing",
+  //     url: "#",
+  //     icon: PieChart,
+  //   },
+  //   {
+  //     name: "Travel",
+  //     url: "#",
+  //     icon: Map,
+  //   },
+  // ],
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -165,7 +141,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} />
+        {/* <NavProjects projects={data.projects} /> */}
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />

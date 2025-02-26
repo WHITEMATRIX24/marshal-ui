@@ -3,10 +3,14 @@
 import {
   BadgeCheck,
   Bell,
+  Blend,
   ChevronsUpDown,
   CreditCard,
+  Edit2,
   LogOut,
   Sparkles,
+  User2,
+  UserRoundPen,
 } from "lucide-react"
 
 import {
@@ -35,7 +39,7 @@ export function NavUser({
 }: {
   user: {
     name: string
-    email: string
+    role: string
     avatar: string
   }
 }) {
@@ -75,30 +79,30 @@ export function NavUser({
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">{user.name}</span>
-                  <span className="truncate text-xs">{user.email}</span>
+                  <span className="truncate text-xs">{user.role}</span>
                 </div>
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem>
-                <Sparkles />
-                Upgrade to Pro
+                <Blend />
+                Governance: Cyber Security
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem>
-                <BadgeCheck />
-                Account
+                <User2 />
+                Role Name: Client Admin
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <CreditCard />
-                Billing
+                <Edit2 />
+                Change Governence
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <Bell />
-                Notifications
+                <UserRoundPen />
+                Change Role
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
