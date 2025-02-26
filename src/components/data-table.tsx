@@ -1,6 +1,6 @@
 "use client"
 import * as React from "react"
-import { Pencil, Trash, ChevronDown, ChevronUp } from "lucide-react"
+import { Pencil, Trash, ChevronDown, ChevronUp, BarChart, Download, ChartColumnBig } from "lucide-react"
 import { saveAs } from "file-saver"
 import Papa from "papaparse"
 import {
@@ -151,8 +151,12 @@ export function DataTable<TData extends { id: string; subRows?: TData[] }, TValu
                     className="max-w-sm"
                 />
 
-                <Button variant="outline">Customize Columns</Button>
-                <Button onClick={handleExportCSV}>Export</Button>
+                <Button variant="outline" className="bg-blue-500 text-white flex items-center">
+                    <ChartColumnBig className="mr-2" /> Customize Cols
+                </Button>
+                <Button onClick={handleExportCSV} className="bg-blue-500 text-white flex items-center">
+                    <Download className="mr-2" /> Export
+                </Button>
 
             </div>
 
