@@ -1,16 +1,22 @@
 "use client";
 
-import React from "react";
+import { GovernanceSelectPopUp } from "@/components/auth/gov-select-popup";
+import React, { useState } from "react";
 
 export default function Login() {
+  const [openModal, setOpenModal] = useState<boolean>(false);
   const checkvalue = "";
+
+  const loginHandler = () => {
+    setOpenModal(true);
+  };
 
   return (
     <div className="grid md:grid-cols-5 h-dvh justify-center">
       <div className="col-span-3"></div>
       <div className="col-span-2 flex flex-col justify-center items-center gap-10 px-5 lg:px-16">
         <div>image</div>
-        <div className="flex flex-col gap-5 w-full 2xl:w-2/3">
+        <div className="flex flex-col gap-5 w-full 2xl:w-3/4">
           <div className="flex flex-col gap-2">
             <p className="m-0 w-fit">Login</p>
             <input
@@ -48,7 +54,10 @@ export default function Login() {
             </button>
           </div>
 
-          <button className="bg-colorblue rounded-md py-2 font-semibold text-white mt-4">
+          <button
+            onClick={loginHandler}
+            className="bg-colorblue rounded-md py-2 font-semibold text-white mt-4"
+          >
             Sign in
           </button>
           <div className="w-full border mt-3"></div>
@@ -58,6 +67,7 @@ export default function Login() {
           </p>
         </div>
       </div>
+      {openModal && <GovernanceSelectPopUp />}
     </div>
   );
 }
