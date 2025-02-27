@@ -1,14 +1,73 @@
 "use client";
 
-import { GovernanceSelectPopUp } from "@/components/auth/gov-select-popup";
+import Cookies from "js-cookie";
+import { loginApiHandler } from "@/services/apis";
+import { useMutation } from "@tanstack/react-query";
 import React, { useState } from "react";
+import { LoginResponse } from "./models/auth";
+import { GovernanceSelectPopUp } from "@/components/auth/gov-select-popup";
+
+interface loginCred {
+  email: string;
+  password: string;
+}
+
+interface GovernancePopUp {
+  modalState: boolean;
+  popUpData: any;
+}
 
 export default function Login() {
-  const [openModal, setOpenModal] = useState<boolean>(false);
+  const [openModal, setOpenModal] = useState<GovernancePopUp>({
+    modalState: false,
+    popUpData: null,
+  });
+  const [loginCred, setLoginCred] = useState<loginCred>({
+    email: "",
+    password: "",
+  });
   const checkvalue = "";
 
-  const loginHandler = () => {
-    setOpenModal(true);
+  const { mutateAsync: loginMutation } = useMutation({
+    mutationFn: loginApiHandler,
+    onError: (error) => {
+      console.error(error);
+    },
+    onSuccess: async (responseData) => {
+      const { data } = responseData as { data: LoginResponse };
+
+      Cookies.set("access_token", data?.access_token, { secure: true });
+      Cookies.set(
+        "roles_by_governance",
+        JSON.stringify(data?.roles_by_governance)
+      );
+      Cookies.set("user_info", JSON.stringify(data?.access_token));
+      Cookies.set("token_type", data?.token_type);
+
+      setOpenModal({ ...openModal, modalState: true });
+    },
+  });
+
+  const loginHandler = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const { email, password } = loginCred;
+    if (!email || !password) return;
+
+    const loginFormData = new URLSearchParams();
+    loginFormData.append("grand_type", "password");
+    loginFormData.append("username", "Jacob");
+    loginFormData.append("password", "Passw0rd3");
+
+    await loginMutation({
+      urlEndpoint: "/users/login",
+      method: "POST",
+      data: loginFormData,
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+    });
+
+    // setOpenModal({ ...openModal, modalState: true });
   };
 
   return (
@@ -16,11 +75,18 @@ export default function Login() {
       <div className="col-span-3"></div>
       <div className="col-span-2 flex flex-col justify-center items-center gap-10 px-5 lg:px-16">
         <div>image</div>
-        <div className="flex flex-col gap-5 w-full 2xl:w-3/4">
+        <form
+          onSubmit={loginHandler}
+          className="flex flex-col gap-5 w-full 2xl:w-3/4"
+        >
           <div className="flex flex-col gap-2">
             <p className="m-0 w-fit">Login</p>
             <input
-              type="text"
+              type="email"
+              value={loginCred.email}
+              onChange={(e) =>
+                setLoginCred({ ...loginCred, email: e.target.value })
+              }
               className="w-full outline-none border border-gray-300 bg-greycomponentbg px-3 py-2 rounded-md"
             />
           </div>
@@ -28,6 +94,10 @@ export default function Login() {
             <p className="m-0 w-fit">password</p>
             <input
               type="password"
+              value={loginCred.password}
+              onChange={(e) =>
+                setLoginCred({ ...loginCred, password: e.target.value })
+              }
               className="w-full outline-none border border-gray-300 bg-greycomponentbg ps-3 pe-16 py-2 rounded-md"
             />
             <p className="ms-auto text-textcolorblue">Link Button Label</p>
@@ -55,7 +125,7 @@ export default function Login() {
           </div>
 
           <button
-            onClick={loginHandler}
+            type="submit"
             className="bg-colorblue rounded-md py-2 font-semibold text-white mt-4"
           >
             Sign in
@@ -65,9 +135,9 @@ export default function Login() {
             Dont have an account?{" "}
             <span className="ms-2 text-textcolorblue">Sign up now</span>
           </p>
-        </div>
+        </form>
       </div>
-      {openModal && <GovernanceSelectPopUp />}
+      {openModal.modalState && <GovernanceSelectPopUp />}
     </div>
   );
 }
