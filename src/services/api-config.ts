@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
 
 export interface ApiConfigProps {
   urlEndpoint: string;
@@ -12,7 +12,7 @@ const apiConfig = async ({
   data,
   method,
   headers,
-}: ApiConfigProps): Promise<AxiosResponse | undefined> => {
+}: ApiConfigProps): Promise<AxiosResponse> => {
   try {
     const response = await axios({
       baseURL: process.env.NEXT_PUBLIC_BASE_SERVER_URL,
@@ -22,8 +22,11 @@ const apiConfig = async ({
     });
     return response;
   } catch (error) {
-    console.log(error);
-    return undefined;
+    console.error(error);
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data.detail);
+    }
+    throw new Error("unknown API error");
   }
 };
 

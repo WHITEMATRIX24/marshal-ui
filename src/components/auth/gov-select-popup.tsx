@@ -17,7 +17,7 @@ export const GovernanceSelectPopUp = () => {
     const selectedGovernance = parsedGovernanceData[selectedGovernanceKey];
     if (!selectedGovernance) return;
 
-    Cookies.set("selected_governance", selectedGovernance);
+    Cookies.set("selected_governance", JSON.stringify(selectedGovernance));
     router.replace("/home/dashboard");
   };
 
