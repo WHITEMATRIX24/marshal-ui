@@ -26,11 +26,13 @@ import { Button } from "@/components/ui/button"
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
     data: TData[]
+    onEdit?: (updatedRow: TData) => void // Add this line
 }
 
 export function DataTable<TData extends { id: string; subRows?: TData[] }, TValue>({
     columns,
     data,
+    onEdit,
 }: DataTableProps<TData, TValue>) {
     const [pageSize, setPageSize] = React.useState(10)
     const [pageIndex, setPageIndex] = React.useState(0)
@@ -38,6 +40,10 @@ export function DataTable<TData extends { id: string; subRows?: TData[] }, TValu
     const [expandedRows, setExpandedRows] = React.useState<Record<string, boolean>>({})
     const [searchQuery, setSearchQuery] = React.useState("")
     const [filteredData, setFilteredData] = React.useState(data)
+    const [editingRow, setEditingRow] = React.useState<TData | null>(null)
+    const [applicableValue, setApplicableValue] = React.useState("")
+    const [justificationValue, setJustificationValue] = React.useState("")
+
 
     React.useEffect(() => {
         setFilteredData(
@@ -71,7 +77,14 @@ export function DataTable<TData extends { id: string; subRows?: TData[] }, TValu
                 header: "Actions",
                 cell: ({ row }) => (
                     <div className="flex space-x-2">
-                        <Pencil className="h-4 w-4 text-black cursor-pointer" />
+                        <Pencil
+                            className="h-4 w-4 text-black cursor-pointer"
+                            onClick={() => {
+                                setEditingRow(row.original)
+                                setApplicableValue((row.original as any).applicable)
+                                setJustificationValue((row.original as any).justification)
+                            }}
+                        />
                         <Trash className="h-4 w-4 text-black cursor-pointer" />
                     </div>
                 ),
@@ -97,6 +110,70 @@ export function DataTable<TData extends { id: string; subRows?: TData[] }, TValu
         setIsDropdownOpen(false)
         table.setPageSize(size)
     }
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault()
+        if (editingRow && onEdit) {
+            const updatedRow = {
+                ...editingRow,
+                applicable: applicableValue,
+                justification: justificationValue
+            }
+            onEdit(updatedRow)
+            setEditingRow(null)
+        }
+    }
+    const openEditModal = (row: TData) => {
+        setEditingRow(row);
+        setApplicableValue((row as any).applicable || "");
+        setJustificationValue((row as any).justification || "");
+    };
+    const EditModal = () => (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+            <div className="bg-white p-6 rounded-lg w-96">
+                <h2 className="text-xl font-bold mb-4">Edit Row</h2>
+                <form onSubmit={handleSubmit}>
+                    <div className="mb-4">
+                        <label className="block text-sm font-medium mb-2">Applicable</label>
+                        <select
+                            className="w-full p-2 border rounded"
+                            value={applicableValue}
+                            onChange={(e) => setApplicableValue(e.target.value)}
+                        >
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
+                    </div>
+                    <div className="mb-4">
+                        <label className="block text-sm font-medium mb-2">Justification</label>
+                        <input
+                            type="text"
+                            className="w-full p-2 border rounded"
+                            value={justificationValue}
+                            onChange={(e) => setJustificationValue(e.target.value)}
+                            required={applicableValue === "Yes"}
+                        />
+                    </div>
+                    <div className="flex justify-end space-x-2">
+                        <button
+                            type="button"
+                            className="px-4 py-2 text-gray-500 hover:text-gray-700"
+                            onClick={() => setEditingRow(null)}
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            type="submit"
+                            className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
+                            disabled={applicableValue === "Yes" && !justificationValue.trim()}
+                        >
+                            Submit
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    )
+
 
     const totalItems = table.getFilteredRowModel().rows.length
     const startItem = pageIndex * pageSize + 1
@@ -129,8 +206,8 @@ export function DataTable<TData extends { id: string; subRows?: TData[] }, TValu
                     ))}
                     <TableCell>
                         <div className="flex space-x-2">
-                            <Pencil className="h-4 w-4 text-black cursor-pointer" />
-                            <Trash className="h-4 w-4 text-black cursor-pointer" />
+                            <Pencil className="h-4 w-4 text-black cursor-pointer" onClick={() => openEditModal(row)} />
+                            <Trash className="h-4 w-4 text-orange-400 cursor-pointer" />
                         </div>
                     </TableCell>
                 </TableRow>
@@ -143,6 +220,46 @@ export function DataTable<TData extends { id: string; subRows?: TData[] }, TValu
 
     return (
         <div className="w-full">
+            {editingRow && <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div className="bg-white p-6 rounded-lg w-96">
+                    <h2 className="text-xl font-bold mb-4">Edit Row</h2>
+                    <form onSubmit={handleSubmit}>
+                        <div className="mb-4">
+                            <label className="block text-sm font-medium mb-2">Applicable</label>
+                            <select
+                                className="w-full p-2 border rounded"
+                                value={applicableValue}
+                                onChange={(e) => setApplicableValue(e.target.value)}
+                            >
+                                <option value="Yes">Yes</option>
+                                <option value="No">No</option>
+                            </select>
+                        </div>
+                        <div className="mb-4">
+                            <label className="block text-sm font-medium mb-2">Justification</label>
+                            <input
+                                type="text"
+                                className="w-full p-2 border rounded"
+                                value={justificationValue}
+                                onChange={(e) => setJustificationValue(e.target.value)}
+                                required={applicableValue === "Yes"}
+                            />
+                        </div>
+                        <div className="flex justify-end space-x-2">
+                            <button type="button" className="px-4 py-2 text-gray-500" onClick={() => setEditingRow(null)}>
+                                Cancel
+                            </button>
+                            <button
+                                type="submit"
+                                className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
+                                disabled={applicableValue === "Yes" && !justificationValue.trim()}
+                            >
+                                Submit
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>}
             <div className="flex items-center justify-end py-4 space-x-5">
                 <Input
                     placeholder="Search..."
@@ -151,9 +268,9 @@ export function DataTable<TData extends { id: string; subRows?: TData[] }, TValu
                     className="max-w-sm"
                 />
 
-                <Button variant="outline" className="bg-blue-500 text-white flex items-center">
+                {/* <Button variant="outline" className="bg-blue-500 text-white flex items-center">
                     <ChartColumnBig className="mr-2" /> Customize Cols
-                </Button>
+                </Button> */}
                 <Button onClick={handleExportCSV} className="bg-blue-500 text-white flex items-center">
                     <Download className="mr-2" /> Export
                 </Button>

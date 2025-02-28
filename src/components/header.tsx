@@ -14,10 +14,10 @@ const Header = () => {
     return (
         <header className="flex items-center justify-between w-full h-16  ">
             <h1 className="text-[30px] font-semibold capitalize px-4">{getPageTitle(pathname)}</h1>
-            <div className="flex items-center gap-5 mr-2">
-                <Bell className="w-6 h-6 cursor-pointer" />
-                <Settings className="w-6 h-6 cursor-pointer" />
-                <MoreVertical className="w-6 h-6 cursor-pointer" />
+            <div className="flex items-center gap-5 mr-4">
+                <Bell className="w-[18px] h-[18px] cursor-pointer" />
+                <Settings className="w-[18px] h-[18px] cursor-pointer" />
+                <MoreVertical className="w-[18px] h-[18px] cursor-pointer" />
             </div>
         </header>
     );

@@ -1,16 +1,11 @@
 const Footer = () => {
     return (
-        <footer className="flex fixed bottom-0 items-center justify-between w-[80%] h-16 ">
-            <p className="text-[20px]">
+        <footer className="fixed bottom-0 flex justify-center items-center w-[80%] h-10 bg-white">
+            <p className="text-[14px] text-gray-400 text-center">
                 Made with <span className="text-700">♥</span> by Stellar
             </p>
-            <div className="flex items-center gap-2 mx-2">
-                <button className="bg-black text-white px-3 py-1 rounded shadow-md">
-                    Beta
-                </button>
-                <p className="text-[16px]">V1.0.0</p>
-            </div>
         </footer>
+
     );
 };
 

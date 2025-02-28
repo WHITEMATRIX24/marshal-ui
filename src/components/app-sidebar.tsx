@@ -1,152 +1,119 @@
-"use client"
-
-import * as React from "react"
-import Link from "next/link"
+"use client";
+import { useRouter } from "next/navigation";
+import * as React from "react";
+import Cookies from "js-cookie";
 import {
-  AudioWaveform,
-  BookOpen,
-  Bot,
-  Command,
-  Frame,
-  GalleryVerticalEnd,
-  Map,
-  PieChart,
-  Settings2,
-  SquareTerminal,
-  LayoutDashboard,
-  BriefcaseBusiness,
-  UserCog,
-  FileCheck2,
-  Cog,
-  FileChartColumn,
   BookMarked,
-} from "lucide-react"
+  BriefcaseBusiness,
+  Cog,
+  FileCheck2,
+  FileChartColumn,
+  LayoutDashboard,
+  UserCog,
+} from "lucide-react";
 
-import { NavMain } from "@/components/nav-main"
-import { NavProjects } from "@/components/nav-projects"
-import { NavUser } from "@/components/nav-user"
-import { TeamSwitcher } from "@/components/team-switcher"
+import { NavMain } from "@/components/nav-main";
+import { NavUser } from "@/components/nav-user";
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
+import { fetchStandardsApi } from "@/services/apis";
+import { cookies } from "next/headers";
 
-// This is sample data.
-const data = {
-  user: {
-    name: "username",
-    role: "rolename",
-    avatar: "/avatars/shadcn.jpg",
-  },
-  teams: [
-    {
-      name: "Acme Inc",
-      logo: GalleryVerticalEnd,
-      plan: "Enterprise",
-    },
-    {
-      name: "Acme Corp.",
-      logo: AudioWaveform,
-      plan: "Startup",
-    },
-    {
-      name: "Evil Corp.",
-      logo: Command,
-      plan: "Free",
-    },
-  ],
-  navMain: [
+export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const [standards, setStandards] = React.useState([]);
+  const router = useRouter();
+  const handleStandardClick = (stdId: string) => {
+    Cookies.set("std_id", stdId, { expires: 7 }); // Store for 7 days
+    console.log("Stored std_id in cookies:", stdId);
+  };
+  React.useEffect(() => {
+    const governanceData = Cookies.get("selected_governance");
+    console.log("governance", governanceData);
+    if (governanceData) {
+      try {
+        const parsedGovernance = JSON.parse(governanceData);
+        const governanceId = parsedGovernance[0]?.role_id;
+        console.log("api callig standards");
+        if (governanceId) {
+          fetchStandardsApi(governanceId).then(setStandards);
+        }
+      } catch (error) {
+        console.error("Error parsing governance data:", error);
+      }
+    }
+  }, []);
+
+  // Log updated standards when they change
+  React.useEffect(() => {
+    console.log("Updated standards:", standards);
+  }, [standards]);
+
+  // Define the navigation menu
+  const navMain = [
     {
       title: "Dashboard",
       url: "#",
       icon: LayoutDashboard,
       isActive: true,
-
     },
     {
       title: "Portfolio",
       url: "/home/portfolio",
       icon: BriefcaseBusiness,
-      items: [
-        {
-          title: "Iso 24",
+      items: standards.map((standard) => {
+        console.log("Mapping standard:", standard.std_code);
+        return {
+          title: standard.std_code,
           url: "/home/portfolio",
-        },
-        {
-          title: "Iso z 67",
-          url: "#",
-        },
-      ],
+          onClick: () => {
+            console.log("Clicked:", standard.std_code);
+            handleStandardClick(standard.std_id);
+          },
+        };
+      }),
     },
     {
       title: "Role/ User Management",
       url: "#",
       icon: UserCog,
-
     },
     {
       title: "My Activities",
       url: "#",
       icon: FileCheck2,
-
     },
-
     {
       title: "Configuration",
       url: "#",
       icon: Cog,
-
     },
     {
       title: "Reports",
       url: "#",
       icon: FileChartColumn,
-
     },
     {
       title: "Documentation",
       url: "#",
       icon: BookMarked,
-
     },
-  ],
-  // projects: [
-  //   {
-  //     name: "Design Engineering",
-  //     url: "#",
-  //     icon: Frame,
-  //   },
-  //   {
-  //     name: "Sales & Marketing",
-  //     url: "#",
-  //     icon: PieChart,
-  //   },
-  //   {
-  //     name: "Travel",
-  //     url: "#",
-  //     icon: Map,
-  //   },
-  // ],
-}
+  ];
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
-    <Sidebar collapsible="icon" {...props} className="bg-black text-white">
-      <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
-
-      </SidebarHeader>
+    <Sidebar collapsible="icon" {...props} className="bg-black text-white font-light">
+      <SidebarHeader />
       <SidebarContent>
-        <NavMain items={data.navMain} />
-        {/* <NavProjects projects={data.projects} /> */}
+        <NavMain items={navMain} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={{ name: "username", role: "rolename", avatar: "/avatars/shadcn.jpg" }} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
-  )
+  );
 }
