@@ -107,13 +107,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       {...props}
       className="bg-black text-white font-light"
     >
-      <SidebarHeader className="pt-5">
+      <SidebarHeader className="pt-5 ">
         <Image
           src="/logo-no-background.svg"
           alt="logo"
-          width={500}
-          height={500}
-          className="w-full"
+          width={800}
+          height={800}
+          className="w-full  bg-white "
         />
       </SidebarHeader>
       <SidebarContent>

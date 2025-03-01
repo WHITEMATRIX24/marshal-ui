@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import * as React from "react"
 import { Pencil, Trash, ChevronDown, ChevronUp, BarChart, Download, ChartColumnBig } from "lucide-react"
 import { saveAs } from "file-saver"
@@ -24,9 +24,10 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 
 interface DataTableProps<TData, TValue> {
-    columns: ColumnDef<TData, TValue>[]
-    data: TData[]
-    onEdit?: (updatedRow: TData) => void // Add this line
+    columns: ColumnDef<TData, TValue>[];
+    data: TData[];
+    onEdit?: (updatedRow: TData) => void;
+    onRowExpand?: (row: TData) => void; // Add this line
 }
 
 export function DataTable<TData extends { id: string; subRows?: TData[] }, TValue>({
@@ -126,6 +127,7 @@ export function DataTable<TData extends { id: string; subRows?: TData[] }, TValu
         setEditingRow(row);
         setApplicableValue((row as any).applicable || "");
         setJustificationValue((row as any).justification || "");
+
     };
     const EditModal = () => (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
@@ -207,7 +209,7 @@ export function DataTable<TData extends { id: string; subRows?: TData[] }, TValu
                     <TableCell>
                         <div className="flex space-x-2">
                             <Pencil className="h-4 w-4 text-black cursor-pointer" onClick={() => openEditModal(row)} />
-                            <Trash className="h-4 w-4 text-orange-400 cursor-pointer" />
+                            <Trash className="h-4 w-4 text-black cursor-pointer" />
                         </div>
                     </TableCell>
                 </TableRow>

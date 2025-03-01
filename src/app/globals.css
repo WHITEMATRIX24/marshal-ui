@@ -1,6 +1,14 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import url('https://geist-fonts.vercel.app/css/stylesheet.css');
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+
+.roboto-text {
+  font-family: 'Roboto', sans-serif;
+}
 
 @layer base {
   :root {
@@ -89,6 +97,8 @@
   }
 
   body {
+    font-family: 'Geist', sans-serif;
     @apply bg-background text-foreground;
   }
+
 }

@@ -8,7 +8,7 @@ import { ArrowUpDown } from "lucide-react"
 // You can use a Zod schema here if you want.
 export type Payment = {
     id: string
-    appRevAreaName: string
+    ctrl_name: string
     revAreaDetails: string
     applicable: string
     justification: string
@@ -20,11 +20,6 @@ export const columns: ColumnDef<Payment>[] = [
         accessorKey: "appRevAreaName",
         header: "App Rev Area Name",
         id: "appRevAreaName",
-    },
-    {
-        accessorKey: "revAreaDetails",
-        header: "Rev Area Details",
-        id: "revAreaDetails",
     },
     {
         accessorKey: "applicable",
