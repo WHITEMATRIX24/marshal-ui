@@ -1,30 +1,24 @@
 "use client"
 
-import { Button } from "@/components/ui/button"
+import { Control } from "@/app/models/control";
 import { ColumnDef } from "@tanstack/react-table"
-import { ArrowUpDown } from "lucide-react"
+
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
-export type Payment = {
-    id: string
-    ctrl_name: string
-    revAreaDetails: string
-    applicable: string
-    justification: string
-    subRows?: Payment[] // Ensure subRows is optional to avoid errors
-}
 
-export const columns: ColumnDef<Payment>[] = [
+export const columns: ColumnDef<Control, unknown>[] = [
+
     {
-        accessorKey: "appRevAreaName",
+        accessorKey: "ctrl_name",
         header: "App Rev Area Name",
-        id: "appRevAreaName",
+        id: "ctrl_name",
     },
     {
         accessorKey: "applicable",
         header: "Applicable",
         id: "applicable",
+        cell: ({ row }) => (row.original.applicable ? "Yes" : "No"),
     },
     {
         accessorKey: "justification",

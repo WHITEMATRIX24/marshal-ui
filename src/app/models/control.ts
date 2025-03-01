@@ -10,11 +10,14 @@ export interface Control {
     subRows?: Control[];
 }
 
-export interface Payment {
+export interface ApiResponse<T> {
+    data?: T; // Optional in case the API doesn't return data
+    error?: string; // Optional error message
+}
+export interface ControlData {
     id: string;
     appRevAreaName: string;
-    revAreaDetails: string;
     applicable: string;
     justification: string;
-    subRows?: Payment[];
+    subRows?: ControlData[];
 }

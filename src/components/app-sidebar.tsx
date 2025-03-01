@@ -23,9 +23,10 @@ import {
 } from "@/components/ui/sidebar";
 import { fetchStandardsApi } from "@/services/apis";
 import Image from "next/image";
+import { Standard } from "@/app/models/standards";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const [standards, setStandards] = useState<Standerds[] | null>([]);
+  const [standards, setStandards] = useState<Standard[] | null>([]);
   const router = useRouter();
   const govId = Cookies.get("selected_governance");
 

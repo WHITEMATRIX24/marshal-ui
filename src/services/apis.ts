@@ -1,6 +1,6 @@
-import axios, { AxiosResponse } from "axios";
+import { AxiosResponse } from "axios";
 import apiConfig, { ApiConfigProps } from "./api-config";
-import Cookies from "js-cookie";
+
 ///////////////////////////////// auth
 
 export const loginApiHandler = async ({
@@ -22,7 +22,7 @@ export const fetchStandardsApi = async ({
 };
 
 export const fetchL1ControlsByStandardApi = async ({
-  method = "GET",
+  method,
   urlEndpoint,
   headers
 }: ApiConfigProps): Promise<AxiosResponse | undefined> => {

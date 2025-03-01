@@ -5,9 +5,7 @@ import {
   Trash,
   ChevronDown,
   ChevronUp,
-  BarChart,
   Download,
-  ChartColumnBig,
 } from "lucide-react";
 import { saveAs } from "file-saver";
 import Papa from "papaparse";
@@ -35,11 +33,11 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   onEdit?: (updatedRow: TData) => void;
-  onRowExpand?: (row: TData) => void; // Add this line
+  onRowExpand?: (row: TData) => void;
 }
 
 export function DataTable<
-  TData extends { id: string; subRows?: TData[] },
+  TData extends { ctrl_id: number; subRows?: TData[] },
   TValue
 >({ columns, data, onEdit }: DataTableProps<TData, TValue>) {
   const [pageSize, setPageSize] = React.useState(10);
@@ -54,23 +52,44 @@ export function DataTable<
   const [applicableValue, setApplicableValue] = React.useState("");
   const [justificationValue, setJustificationValue] = React.useState("");
 
+  //search
   React.useEffect(() => {
-    setFilteredData(
-      data.filter((row) =>
-        Object.values(row).some((value) =>
-          String(value).toLowerCase().includes(searchQuery.toLowerCase())
-        )
-      )
-    );
+    const filterNestedData = (rows: TData[]): TData[] => {
+      return rows
+        .map(row => ({ ...row, subRows: row.subRows ? filterNestedData(row.subRows) : [] }))
+        .filter(row => {
+          const rowMatches = Object.values(row).some(value =>
+            String(value).toLowerCase().includes(searchQuery.toLowerCase())
+          );
+          const subRowsMatch = row.subRows?.length > 0;
+
+          return rowMatches || subRowsMatch;
+        });
+    };
+
+    setFilteredData(filterNestedData(data));
   }, [searchQuery, data]);
 
+  const flattenDataForExport = (data: TData[]): any[] => {
+    const flatten = (items: TData[]): any[] => {
+      return items.flatMap(item => {
+        const { subRows, ...rest } = item as any;
+        const flattenedItem = { ...rest };
+        const subItems = subRows ? flatten(subRows) : [];
+        return [flattenedItem, ...subItems];
+      });
+    };
+
+    return flatten(data);
+  };
+
   const handleExportCSV = () => {
-    const csv = Papa.unparse(filteredData);
+    const exportData = flattenDataForExport(filteredData);
+    const csv = Papa.unparse(exportData);
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     saveAs(blob, "exported_data.csv");
   };
-
-  const toggleRow = (rowId: string) => {
+  const toggleRow = (rowId: number) => {
     setExpandedRows((prev) => ({
       ...prev,
       [rowId]: !prev[rowId],
@@ -78,14 +97,14 @@ export function DataTable<
   };
 
   const table = useReactTable({
-    data,
+    data: filteredData,
     columns: [
       ...columns,
       {
         id: "actions",
         header: "Actions",
         cell: ({ row }) => (
-          <div className="flex space-x-2">
+          <div className="flex space-x-2 justify-end">
             <Pencil
               className="h-4 w-4 text-black cursor-pointer"
               onClick={() => {
@@ -117,6 +136,7 @@ export function DataTable<
     },
   });
 
+
   const handlePageSizeChange = (size: number) => {
     setPageSize(size);
     setIsDropdownOpen(false);
@@ -139,107 +159,63 @@ export function DataTable<
     setApplicableValue((row as any).applicable || "");
     setJustificationValue((row as any).justification || "");
   };
-  const EditModal = () => (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-      <div className="bg-white p-6 rounded-lg w-96">
-        <h2 className="text-xl font-bold mb-4">Edit Row</h2>
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label className="block text-sm font-medium mb-2">Applicable</label>
-            <select
-              className="w-full p-2 border rounded"
-              value={applicableValue}
-              onChange={(e) => setApplicableValue(e.target.value)}
-            >
-              <option value="Yes">Yes</option>
-              <option value="No">No</option>
-            </select>
-          </div>
-          <div className="mb-4">
-            <label className="block text-sm font-medium mb-2">
-              Justification
-            </label>
-            <input
-              type="text"
-              className="w-full p-2 border rounded"
-              value={justificationValue}
-              onChange={(e) => setJustificationValue(e.target.value)}
-              required={applicableValue === "Yes"}
-            />
-          </div>
-          <div className="flex justify-end space-x-2">
-            <button
-              type="button"
-              className="px-4 py-2 text-gray-500 hover:text-gray-700"
-              onClick={() => setEditingRow(null)}
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
-              disabled={applicableValue === "Yes" && !justificationValue.trim()}
-            >
-              Submit
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  );
 
   const totalItems = table.getFilteredRowModel().rows.length;
   const startItem = pageIndex * pageSize + 1;
   const endItem = Math.min(startItem + pageSize - 1, totalItems);
 
-  // Recursive function to render rows with indentation
-  const renderRows = (rows: TData[], level: number = 0) => {
-    return rows.map((row) => (
-      <React.Fragment key={row.id}>
-        <TableRow
-          className={`transition-colors ${
-            expandedRows[row.id] ? "bg-gray-100" : ""
-          }`}
-        >
-          {/* {columns.map((column, colIndex) => (
-                        <TableCell key={column.id}>
-                            {colIndex === 0 ? (
-                                <div className="flex items-center space-x-2" style={{ paddingLeft: `${level * 20}px` }}>
-                                    {row.subRows && row.subRows.length > 0 && (
-                                        <button onClick={() => toggleRow(row.id)} className="flex items-center">
-                                            {expandedRows[row.id] ? (
-                                                <ChevronUp className="h-4 w-4" />
-                                            ) : (
-                                                <ChevronDown className="h-4 w-4" />
-                                            )}
-                                        </button>
-                                    )}
-                                    <span>{row[column.accessorKey as keyof TData]}</span>
-                                </div>
-                            ) : (
-                                row[column.accessorKey as keyof TData]
-                            )}
-                        </TableCell>
-                    ))} */}
-          <TableCell>
-            <div className="flex space-x-2">
-              <Pencil
-                className="h-4 w-4 text-black cursor-pointer"
-                onClick={() => openEditModal(row)}
-              />
-              <Trash className="h-4 w-4 text-black cursor-pointer" />
-            </div>
-          </TableCell>
-        </TableRow>
 
-        {/* Render nested subrows if expanded */}
-        {expandedRows[row.id] &&
-          row.subRows &&
-          row.subRows.length > 0 &&
-          renderRows(row.subRows, level + 1)}
-      </React.Fragment>
-    ));
+  const renderRows = (rows: TData[], level: number = 0) => {
+
+    return table.getRowModel().rows.map((tableRow) => {
+      const row = tableRow.original;
+      return (
+        <React.Fragment key={row.ctrl_id}>
+          <TableRow className={`transition-colors ${expandedRows[row.ctrl_id] ? "bg-gray-100" : ""}`}>
+            {columns.map((column, colIndex) => (
+              <TableCell key={column.id}>
+                {colIndex === 0 ? (
+                  <div className="flex items-center space-x-2" style={{ paddingLeft: `${level * 20}px` }}>
+                    {row.subRows && row.subRows.length > 0 && (
+                      <button onClick={() => toggleRow(row.ctrl_id)} className="flex items-center">
+                        {expandedRows[row.ctrl_id] ? (
+                          <ChevronUp className="h-4 w-4" />
+                        ) : (
+                          <ChevronDown className="h-4 w-4" />
+                        )}
+                      </button>
+                    )}
+                    <span>{String(row[column.id as keyof TData] ?? "")}</span>
+                  </div>
+                ) : (
+                  String(row[column.id as keyof TData] ?? "")
+                )}
+              </TableCell>
+            ))}
+            <TableCell>
+              <div className="flex space-x-2">
+                <Pencil
+                  className="h-4 w-4 text-black cursor-pointer"
+                  onClick={() => openEditModal(row)}
+                />
+                <Trash
+                  className="h-4 w-4 text-orange-500 cursor-pointer"
+                  onClick={() => openEditModal(row)}
+                />
+
+              </div>
+            </TableCell>
+          </TableRow>
+
+          {expandedRows[row.ctrl_id] &&
+            row.subRows &&
+            row.subRows.length > 0 &&
+            renderRows(row.subRows, level + 1)}
+        </React.Fragment>
+      );
+    });
   };
+
 
   return (
     <div className="w-full">
@@ -323,16 +299,19 @@ export function DataTable<
                   {header.isPlaceholder
                     ? null
                     : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
+                      header.column.columnDef.header,
+                      header.getContext()
+                    )}
                 </TableHead>
               ))}
             </TableRow>
           ))}
         </TableHeader>
 
-        <TableBody>{renderRows(data)}</TableBody>
+
+        <TableBody>
+          {renderRows(filteredData)}
+        </TableBody>
       </Table>
 
       <div className="flex items-center justify-between py-4">

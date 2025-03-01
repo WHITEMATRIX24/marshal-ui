@@ -17,7 +17,7 @@ const Header = () => {
 
     return (
         <header className="flex items-center justify-between w-full">
-            <h1 className="roboto-text text-[28px] font-medium capitalize px-4">
+            <h1 className="roboto-text text-[28px] font-[700] capitalize px-4">
                 {getPageTitle(pathname)}
             </h1>
             <div className="flex items-center gap-5 mr-4">
