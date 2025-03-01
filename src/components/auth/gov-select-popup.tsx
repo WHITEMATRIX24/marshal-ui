@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
-import { Role } from "@/app/models/auth";
+import { Role } from "@/models/auth";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/lib/global-redux/store";
 import {
@@ -29,6 +29,7 @@ export const GovernanceSelectPopUp = () => {
     if (!selectedGovernance) return;
 
     Cookies.set("selected_governance", JSON.stringify(selectedGovernance));
+    Cookies.set("selected_governance_key", selectedGovernanceKey);
     Cookies.set("login_popup_initila_render", JSON.stringify(false));
     dispatch(hideGovernanceModal());
     router.refresh();

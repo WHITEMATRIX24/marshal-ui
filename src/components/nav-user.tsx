@@ -31,18 +31,18 @@ import {
 } from "@/components/ui/sidebar";
 import { showGovernanveModal } from "@/lib/global-redux/features/uiSlice";
 import { useDispatch } from "react-redux";
+import { Role, UserInfo } from "@/models/auth";
+import Cookies from "js-cookie";
 
-export function NavUser({
-  user,
-}: {
-  user: {
-    name: string;
-    role: string;
-    avatar: string;
-  };
-}) {
+export function NavUser({ user, avatar }: { user: UserInfo; avatar: string }) {
   const { isMobile } = useSidebar();
   const dispatch = useDispatch();
+  const selectedGovernance = Cookies.get("selected_governance");
+  const selectedGovernanceKey = Cookies.get("selected_governance_key");
+  const parsedSelectedGovernance = selectedGovernance
+    ? JSON.parse(selectedGovernance)
+    : [];
+  console.log(parsedSelectedGovernance);
 
   const handleChangeGovernance = () => {
     dispatch(showGovernanveModal());
@@ -58,12 +58,12 @@ export function NavUser({
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage src={user.avatar} alt={user.name} />
+                <AvatarImage src={avatar} alt={user.username} />
                 <AvatarFallback className="rounded-lg">CN</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">{user.name}</span>
-                <span className="truncate text-xs">email</span>
+                <span className="truncate font-semibold">{user.username}</span>
+                <span className="truncate text-xs">{user.email}</span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
@@ -77,12 +77,18 @@ export function NavUser({
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={user.avatar} alt={user.name} />
+                  <AvatarImage src={avatar} alt={user.username} />
                   <AvatarFallback className="rounded-lg">CN</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">{user.name}</span>
-                  <span className="truncate text-xs">{user.role}</span>
+                  <span className="truncate font-semibold">
+                    {user.username}
+                  </span>
+                  {parsedSelectedGovernance && (
+                    <span className="truncate text-xs">
+                      {parsedSelectedGovernance[0]?.role_name}
+                    </span>
+                  )}
                 </div>
               </div>
             </DropdownMenuLabel>
@@ -90,19 +96,15 @@ export function NavUser({
             <DropdownMenuGroup>
               <DropdownMenuItem>
                 <Blend />
-                Governance: Cyber Security
+                {`Governance: ${selectedGovernanceKey}`}
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem>
-                <User2 />
-                Role Name: Client Admin
-              </DropdownMenuItem>
-              <DropdownMenuItem>
                 <Edit2 />
                 <button onClick={handleChangeGovernance}>
-                  Change Governence
+                  Change Governance
                 </button>
               </DropdownMenuItem>
               <DropdownMenuItem>

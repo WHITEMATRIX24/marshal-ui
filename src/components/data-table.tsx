@@ -164,58 +164,55 @@ export function DataTable<
   const startItem = pageIndex * pageSize + 1;
   const endItem = Math.min(startItem + pageSize - 1, totalItems);
 
-
+  // Recursive function to render rows with indentation
   const renderRows = (rows: TData[], level: number = 0) => {
+    return rows.map((row) => (
+      <React.Fragment key={row.ctrl_id}>
+        <TableRow
+          className={`transition-colors ${expandedRows[row.ctrl_id] ? "bg-gray-100" : ""
+            }`}
+        >
+          {columns.map((column, colIndex) => (
+            <TableCell key={column.id}>
+              {colIndex === 0 ? (
+                <div className="flex items-center space-x-2" style={{ paddingLeft: `${level * 20}px` }}>
+                  {row.subRows && row.subRows.length > 0 && (
+                    <button onClick={() => toggleRow(row.ctrl_id)} className="flex items-center">
+                      {expandedRows[row.ctrl_id] ? (
+                        <ChevronUp className="h-4 w-4" />
+                      ) : (
+                        <ChevronDown className="h-4 w-4" />
+                      )}
+                    </button>
+                  )}
+                  <span>{String(row[column.id as keyof TData] ?? "")}</span>
 
-    return table.getRowModel().rows.map((tableRow) => {
-      const row = tableRow.original;
-      return (
-        <React.Fragment key={row.ctrl_id}>
-          <TableRow className={`transition-colors ${expandedRows[row.ctrl_id] ? "bg-gray-100" : ""}`}>
-            {columns.map((column, colIndex) => (
-              <TableCell key={column.id}>
-                {colIndex === 0 ? (
-                  <div className="flex items-center space-x-2" style={{ paddingLeft: `${level * 20}px` }}>
-                    {row.subRows && row.subRows.length > 0 && (
-                      <button onClick={() => toggleRow(row.ctrl_id)} className="flex items-center">
-                        {expandedRows[row.ctrl_id] ? (
-                          <ChevronUp className="h-4 w-4" />
-                        ) : (
-                          <ChevronDown className="h-4 w-4" />
-                        )}
-                      </button>
-                    )}
-                    <span>{String(row[column.id as keyof TData] ?? "")}</span>
-                  </div>
-                ) : (
-                  String(row[column.id as keyof TData] ?? "")
-                )}
-              </TableCell>
-            ))}
-            <TableCell>
-              <div className="flex space-x-2">
-                <Pencil
-                  className="h-4 w-4 text-black cursor-pointer"
-                  onClick={() => openEditModal(row)}
-                />
-                <Trash
-                  className="h-4 w-4 text-orange-500 cursor-pointer"
-                  onClick={() => openEditModal(row)}
-                />
-
-              </div>
+                </div>
+              ) : (
+                String(row[column.id as keyof TData] ?? "") // ✅ Convert to a string
+              )}
             </TableCell>
-          </TableRow>
 
-          {expandedRows[row.ctrl_id] &&
-            row.subRows &&
-            row.subRows.length > 0 &&
-            renderRows(row.subRows, level + 1)}
-        </React.Fragment>
-      );
-    });
+          ))}
+          <TableCell>
+            <div className="flex space-x-2">
+              <Pencil
+                className="h-4 w-4 text-black cursor-pointer"
+                onClick={() => openEditModal(row)}
+              />
+              <Trash className="h-4 w-4 text-black cursor-pointer" />
+            </div>
+          </TableCell>
+        </TableRow>
+
+        {/* Render nested subrows if expanded */}
+        {expandedRows[row.ctrl_id] &&
+          row.subRows &&
+          row.subRows.length > 0 &&
+          renderRows(row.subRows, level + 1)}
+      </React.Fragment>
+    ));
   };
-
 
   return (
     <div className="w-full">
@@ -308,10 +305,7 @@ export function DataTable<
           ))}
         </TableHeader>
 
-
-        <TableBody>
-          {renderRows(filteredData)}
-        </TableBody>
+        <TableBody>{renderRows(filteredData)}</TableBody>
       </Table>
 
       <div className="flex items-center justify-between py-4">

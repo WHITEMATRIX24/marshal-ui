@@ -2,10 +2,12 @@
 
 import { configureStore } from "@reduxjs/toolkit";
 import UiReducer from "./features/uiSlice";
+import StanderdsReducer from "./features/standerdsSlice";
 
 export const store = configureStore({
   reducer: {
     ui: UiReducer,
+    Standerds: StanderdsReducer,
   },
 });
 

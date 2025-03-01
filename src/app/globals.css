@@ -1,13 +1,18 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import url('https://geist-fonts.vercel.app/css/stylesheet.css');
+@import url("https://geist-fonts.vercel.app/css/stylesheet.css");
 
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
 
+* {
+  font-display: swap;
+  text-rendering: optimizeLegibility;
+}
 
 .roboto-text {
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
+  font-display: swap;
 }
 
 @layer base {
@@ -97,8 +102,7 @@
   }
 
   body {
-    font-family: 'Geist', sans-serif;
+    font-family: "Geist", sans-serif;
     @apply bg-background text-foreground;
   }
-
 }

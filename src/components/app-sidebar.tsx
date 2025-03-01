@@ -23,12 +23,27 @@ import {
 } from "@/components/ui/sidebar";
 import { fetchStandardsApi } from "@/services/apis";
 import Image from "next/image";
-import { Standard } from "@/app/models/standards";
+import { Standard } from "@/models/standards";
+import { useDispatch } from "react-redux";
+import { changeSelectedStanderds } from "@/lib/global-redux/features/standerdsSlice";
+import { setSubBredCrum } from "@/lib/global-redux/features/uiSlice";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const dispatch = useDispatch();
   const [standards, setStandards] = useState<Standard[] | null>([]);
   const router = useRouter();
   const govId = Cookies.get("selected_governance");
+  const userData = Cookies.get("user_info");
+  const parsedUserData = userData ? JSON.parse(userData) : {};
+
+  const handleStandardClick = (stdId: number, stdCode: string) => {
+    // Cookies.set("std_id", JSON.stringify(stdId), { expires: 7 }); // Store for 7 days
+    // console.log("Stored std_id in cookies:", stdId);
+    // router.push("/home/portfolio");
+    // window.location.reload();
+    dispatch(setSubBredCrum(stdCode));
+    dispatch(changeSelectedStanderds(stdId));
+  };
 
   const handleFetchStanders = async (parsedGovId: number) => {
     try {
@@ -70,7 +85,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           url: "/home/portfolio",
           onClick: () => {
             console.log("Clicked:", standard.std_code);
-            // handleStandardClick(standard.std_id);
+            handleStandardClick(standard.std_id, standard.std_code);
           },
         };
       }),
@@ -121,13 +136,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavMain items={navMain} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser
-          user={{
-            name: "username",
-            role: "rolename",
-            avatar: "/avatars/shadcn.jpg",
-          }}
-        />
+        {parsedUserData && (
+          <NavUser user={parsedUserData} avatar="/avatars/shadcn.jpg" />
+        )}
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

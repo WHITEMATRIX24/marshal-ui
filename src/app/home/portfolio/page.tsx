@@ -15,7 +15,10 @@ import {
 import { DataTable } from "@/components/data-table";
 import { columns } from "@/components/columns";
 import { fetchL1ControlsByStandardApi } from "@/services/apis";
-import { ApiResponse, Control } from "@/app/models/control";
+
+import { useSelector } from "react-redux";
+import { RootState } from "@/lib/global-redux/store";
+import { ApiResponse, Control } from "@/models/control";
 
 // Interface for fetched data
 // columns.tsx
@@ -30,21 +33,22 @@ const fetchControls = async (stdId: string): Promise<Control[]> => {
     Accept: "application/json",
     Authorization: `Bearer ${token}`,
   };
-  console.log(stdId)
+  console.log(stdId);
   // Remove level filter to get all controls
   const urlEndpoint = `/controls/?std_code_id=${stdId}`;
   const method = "GET";
-  const response: ApiResponse<Control[]> | undefined = await fetchL1ControlsByStandardApi({ urlEndpoint, method, headers });
+  const response: ApiResponse<Control[]> | undefined =
+    await fetchL1ControlsByStandardApi({ urlEndpoint, method, headers });
 
   return Array.isArray(response?.data) ? response.data : [];
 };
-
 
 // Breadcrumb Component
 function Breadcrumbs() {
   const pathname = usePathname();
   const pathSegments = pathname.split("/").filter(Boolean);
   const lastSegment = pathSegments[pathSegments.length - 1];
+  const subMenu = useSelector((state: RootState) => state.ui.subBreadCrum);
 
   return (
     <Breadcrumb>
@@ -66,6 +70,14 @@ function Breadcrumbs() {
             </BreadcrumbItem>
           </>
         )}
+        {subMenu && (
+          <>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>{subMenu}</BreadcrumbPage>
+            </BreadcrumbItem>
+          </>
+        )}
       </BreadcrumbList>
     </Breadcrumb>
   );
@@ -77,27 +89,30 @@ function updateData(data: Control[], updatedRow: Control): Control[] {
     row.ctrl_id === updatedRow.ctrl_id
       ? updatedRow
       : row.subRows
-        ? { ...row, subRows: updateData(row.subRows, updatedRow) }
-        : row
+      ? { ...row, subRows: updateData(row.subRows, updatedRow) }
+      : row
   );
 }
 
 // Main Page Component
 export default function Page() {
-  const [stdId, setStdId] = useState<string | null>(null);
+  const stdId = useSelector(
+    (state: RootState) => state.Standerds.selected_std_id
+  );
+  const parsedStdId = JSON.stringify(stdId);
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
-    setStdId(Cookies.get("std_id") || null);
   }, []);
 
   const [tableData, setTableData] = useState<Control[]>([]);
 
   const { data, error, isLoading } = useQuery<Control[], Error>({
-    queryKey: ["controls", stdId],
-    queryFn: () => (stdId ? fetchControls(stdId) : Promise.resolve([])),
-    enabled: !!stdId,
+    queryKey: ["controls"],
+    queryFn: () =>
+      parsedStdId ? fetchControls(parsedStdId) : Promise.resolve([]),
+    enabled: !!parsedStdId,
   });
 
   useEffect(() => {
@@ -142,7 +157,7 @@ export default function Page() {
     }
   }, [data]);
 
-  if (!isMounted) return null
+  if (!isMounted) return null;
   if (isLoading) return <p>Loading...</p>;
   if (error instanceof Error) return <p>Error: {error.message}</p>;
 
@@ -161,7 +176,6 @@ export default function Page() {
             setTableData((prev) => updateData(prev, updatedRow));
           }}
         />
-
       </div>
     </div>
   );

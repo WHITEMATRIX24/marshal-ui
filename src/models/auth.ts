@@ -8,7 +8,7 @@ interface UserGovernanceStructure {
   [key: string]: Role[];
 }
 
-interface UserInfo {
+export interface UserInfo {
   email: string;
   is_active: boolean;
   login_id: string;

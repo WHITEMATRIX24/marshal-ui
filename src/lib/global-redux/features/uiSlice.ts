@@ -4,10 +4,12 @@ import { createSlice } from "@reduxjs/toolkit";
 
 export interface UiStates {
   governanceModalState: boolean;
+  subBreadCrum: string;
 }
 
 const initialState: UiStates = {
   governanceModalState: false,
+  subBreadCrum: "",
 };
 
 export const UiSlice = createSlice({
@@ -20,9 +22,20 @@ export const UiSlice = createSlice({
     hideGovernanceModal: (state) => {
       state.governanceModalState = false;
     },
+    setSubBredCrum: (state, action) => {
+      state.subBreadCrum = action.payload;
+    },
+    removeSubBredCrum: (state) => {
+      state.subBreadCrum = "";
+    },
   },
 });
 
-export const { hideGovernanceModal, showGovernanveModal } = UiSlice.actions;
+export const {
+  hideGovernanceModal,
+  showGovernanveModal,
+  removeSubBredCrum,
+  setSubBredCrum,
+} = UiSlice.actions;
 
 export default UiSlice.reducer;

@@ -6,7 +6,7 @@ import { useMutation } from "@tanstack/react-query";
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye } from "@fortawesome/free-regular-svg-icons";
-import { LoginResponse } from "./models/auth";
+import { LoginResponse } from "../models/auth";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 
@@ -43,7 +43,7 @@ export default function Login() {
         "roles_by_governance",
         JSON.stringify(data?.roles_by_governance)
       );
-      Cookies.set("user_info", JSON.stringify(data?.access_token));
+      Cookies.set("user_info", JSON.stringify(data?.user_info));
       Cookies.set("token_type", data?.token_type);
       Cookies.set("login_popup_initila_render", JSON.stringify(true));
       router.replace("/home/dashboard");
