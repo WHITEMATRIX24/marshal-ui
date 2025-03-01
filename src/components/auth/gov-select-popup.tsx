@@ -1,9 +1,16 @@
 "use client";
-import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { Role } from "@/app/models/auth";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/lib/global-redux/store";
+import {
+  hideGovernanceModal,
+  showGovernanveModal,
+} from "@/lib/global-redux/features/uiSlice";
 import { useRouter } from "next/navigation";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 
 export const GovernanceSelectPopUp = () => {
   const router = useRouter();
@@ -11,6 +18,10 @@ export const GovernanceSelectPopUp = () => {
   if (!governanceData) return;
   const parsedGovernanceData = JSON.parse(governanceData);
   const governanceKeys = Object.keys(parsedGovernanceData);
+  const isPopupVisible = useSelector(
+    (state: RootState) => state.ui.governanceModalState
+  );
+  const dispatch = useDispatch();
 
   // select handler
   const handleSelect = (selectedGovernanceKey: string) => {
@@ -18,24 +29,39 @@ export const GovernanceSelectPopUp = () => {
     if (!selectedGovernance) return;
 
     Cookies.set("selected_governance", JSON.stringify(selectedGovernance));
-    router.replace("/home/dashboard");
+    Cookies.set("login_popup_initila_render", JSON.stringify(false));
+    dispatch(hideGovernanceModal());
+    router.refresh();
   };
 
+  useEffect(() => {
+    const cookieValue = Cookies.get("login_popup_initila_render");
+    const isInitialRender = cookieValue === "true";
+    if (isInitialRender) dispatch(showGovernanveModal());
+    else dispatch(hideGovernanceModal());
+  }, [Cookies]);
+
+  if (!isPopupVisible) return;
+
   return (
-    <div className="fixed h-full w-full bg-black/30 flex justify-center items-center">
+    <div className="fixed h-full w-full bg-black/30 flex justify-center items-center pointer-events-auto">
       <div className="flex flex-col gap-6 w-full md:w-[30rem] h-auto bg-white px-5 py-4 rounded-md">
         <h6 className="text-xl font-semibold">Select the governance</h6>
         <div className="flex flex-col gap-3 h-80 overflow-y-auto">
-          {governanceKeys.map((governanceKey: string, index: number) => (
-            <button
-              key={index}
-              className="flex justify-between items-center px-4 py-5 border border-grey-300 rounded-lg"
-              onClick={() => handleSelect(governanceKey)}
-            >
-              <h6>{governanceKey}</h6>
-              <p>arrow</p>
-            </button>
-          ))}
+          {governanceKeys.length > 0 ? (
+            governanceKeys.map((governanceKey: string, index: number) => (
+              <button
+                key={index}
+                className="flex justify-between items-center px-4 py-5 border border-grey-300 rounded-lg"
+                onClick={() => handleSelect(governanceKey)}
+              >
+                <h6>{governanceKey}</h6>
+                <FontAwesomeIcon icon={faArrowRight} />
+              </button>
+            ))
+          ) : (
+            <p>No governance found</p>
+          )}
         </div>
       </div>
     </div>

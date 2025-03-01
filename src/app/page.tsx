@@ -4,29 +4,31 @@ import Cookies from "js-cookie";
 import { loginApiHandler } from "@/services/apis";
 import { useMutation } from "@tanstack/react-query";
 import React, { useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye } from "@fortawesome/free-regular-svg-icons";
 import { LoginResponse } from "./models/auth";
-import { GovernanceSelectPopUp } from "@/components/auth/gov-select-popup";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 interface loginCred {
   email: string;
   password: string;
 }
 
-interface GovernancePopUp {
-  modalState: boolean;
-  popUpData: any;
-}
-
 export default function Login() {
-  const [openModal, setOpenModal] = useState<GovernancePopUp>({
-    modalState: false,
-    popUpData: null,
-  });
+  const router = useRouter();
   const [loginCred, setLoginCred] = useState<loginCred>({
     email: "",
     password: "",
   });
+  const [passVissible, setPassVisible] = useState<boolean>(false);
   const checkvalue = "";
+
+  // password visible handler
+  const togglePasswordVisiblity = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    setPassVisible(!passVissible);
+  };
 
   const { mutateAsync: loginMutation } = useMutation({
     mutationFn: loginApiHandler,
@@ -43,8 +45,8 @@ export default function Login() {
       );
       Cookies.set("user_info", JSON.stringify(data?.access_token));
       Cookies.set("token_type", data?.token_type);
-
-      setOpenModal({ ...openModal, modalState: true });
+      Cookies.set("login_popup_initila_render", JSON.stringify(true));
+      router.replace("/home/dashboard");
     },
   });
 
@@ -74,8 +76,15 @@ export default function Login() {
     <div className="h-dvh">
       <div className="grid md:grid-cols-5 h-full justify-center">
         <div className="col-span-3"></div>
-        <div className="col-span-2 flex flex-col justify-center items-center gap-10 px-5 lg:px-16">
-          <div>image</div>
+        <div className="col-span-2 flex flex-col justify-center items-center gap-10 px-5 lg:px-16 bg-black/25">
+          <div className="relative block w-full min-h-fit">
+            <Image
+              src="/logo-no-background.svg"
+              alt="logo"
+              width={500}
+              height={500}
+            />
+          </div>
           <form
             onSubmit={loginHandler}
             className="flex flex-col gap-5 w-full 2xl:w-3/4"
@@ -94,7 +103,7 @@ export default function Login() {
             <div className="relative flex flex-col gap-2">
               <p className="m-0 w-fit">password</p>
               <input
-                type="password"
+                type={passVissible ? "text" : "password"}
                 value={loginCred.password}
                 onChange={(e) =>
                   setLoginCred({ ...loginCred, password: e.target.value })
@@ -102,7 +111,13 @@ export default function Login() {
                 className="w-full outline-none border border-gray-300 bg-greycomponentbg ps-3 pe-16 py-2 rounded-md"
               />
               <p className="ms-auto text-textcolorblue">Link Button Label</p>
-              <span className="absolute right-5 top-10">icon</span>
+              <button
+                type="button"
+                onClick={togglePasswordVisiblity}
+                className="absolute right-5 top-10 cursor-pointer"
+              >
+                <FontAwesomeIcon icon={faEye} />
+              </button>
             </div>
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-3">
@@ -138,7 +153,6 @@ export default function Login() {
             </p>
           </form>
         </div>
-        {openModal.modalState && <GovernanceSelectPopUp />}
       </div>
       <video
         className="fixed top-0 left-0 -z-10 w-screen h-full object-cover"

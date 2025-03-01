@@ -19,10 +19,11 @@ const apiConfig = async ({
       url: `/api/v1${urlEndpoint}`,
       data,
       method,
+      headers,
     });
     return response;
   } catch (error) {
-    console.error(error);
+    console.log(error);
     if (axios.isAxiosError(error)) {
       throw new Error(error.response?.data.detail);
     }

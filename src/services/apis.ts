@@ -12,21 +12,17 @@ export const loginApiHandler = async ({
   return apiConfig({ urlEndpoint, data, method, headers });
 };
 
-export const fetchStandardsApi = async (govId: string): Promise<any[]> => {
-  try {
-    const response: AxiosResponse | undefined = await apiConfig({
-      urlEndpoint: `/standards/governance/${govId}`,
-      method: "GET",
-    });
-
-    console.log("API Response:", response?.data);
-    return response?.data || [];
-  } catch (error) {
-    console.error("Error fetching standards:", error);
-    return [];
-  }
+export const fetchStandardsApi = async ({
+  method,
+  urlEndpoint,
+  data,
+  headers,
+}: ApiConfigProps): Promise<AxiosResponse> => {
+  return await apiConfig({ urlEndpoint, data, method, headers });
 };
-export const fetchControlsByStandardApi = async (stdId: string): Promise<any[]> => {
+export const fetchControlsByStandardApi = async (
+  stdId: string
+): Promise<any[]> => {
   try {
     const token = Cookies.get("access_token"); // ✅ Get token from cookies
 
@@ -39,8 +35,8 @@ export const fetchControlsByStandardApi = async (stdId: string): Promise<any[]> 
       `http://3.108.62.30:8000/api/v1/controls/?std_code_id=${stdId}`,
       {
         headers: {
-          "Authorization": `Bearer ${token}`, // ✅ Pass token in headers
-          "Accept": "application/json",
+          Authorization: `Bearer ${token}`, // ✅ Pass token in headers
+          Accept: "application/json",
         },
       }
     );
@@ -48,7 +44,10 @@ export const fetchControlsByStandardApi = async (stdId: string): Promise<any[]> 
     console.log("API Response:", response.data);
     return response.data || [];
   } catch (error: any) {
-    console.error("Error fetching controls:", error.response?.data || error.message);
+    console.error(
+      "Error fetching controls:",
+      error.response?.data || error.message
+    );
     return [];
   }
 };
