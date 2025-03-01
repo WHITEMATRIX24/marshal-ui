@@ -99,7 +99,7 @@ export default function Page() {
   const stdId = useSelector(
     (state: RootState) => state.Standerds.selected_std_id
   );
-  const parsedStdId = JSON.stringify(stdId);
+
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -109,10 +109,10 @@ export default function Page() {
   const [tableData, setTableData] = useState<Control[]>([]);
 
   const { data, error, isLoading } = useQuery<Control[], Error>({
-    queryKey: ["controls"],
+    queryKey: ["controls", stdId],
     queryFn: () =>
-      parsedStdId ? fetchControls(parsedStdId) : Promise.resolve([]),
-    enabled: !!parsedStdId,
+      stdId ? fetchControls(JSON.stringify(stdId)) : Promise.resolve([]),
+    enabled: !!stdId,
   });
 
   useEffect(() => {

@@ -27,6 +27,7 @@ import { Standard } from "@/models/standards";
 import { useDispatch } from "react-redux";
 import { changeSelectedStanderds } from "@/lib/global-redux/features/standerdsSlice";
 import { setSubBredCrum } from "@/lib/global-redux/features/uiSlice";
+import { UserInfo } from "@/models/auth";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const dispatch = useDispatch();
@@ -34,7 +35,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const router = useRouter();
   const govId = Cookies.get("selected_governance");
   const userData = Cookies.get("user_info");
-  const parsedUserData = userData ? JSON.parse(userData) : {};
+  const [parsedUserData, setParsedUserData] = useState(null);
 
   const handleStandardClick = (stdId: number, stdCode: string) => {
     // Cookies.set("std_id", JSON.stringify(stdId), { expires: 7 }); // Store for 7 days
@@ -66,6 +67,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       handleFetchStanders(parsedGovId[0].role_id);
     }
   }, [govId]);
+
+  useEffect(() => {
+    if (userData) {
+      setParsedUserData(JSON.parse(userData));
+    }
+  }, []);
 
   // Define the navigation menu
   const navMain = [
