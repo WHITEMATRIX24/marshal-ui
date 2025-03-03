@@ -17,6 +17,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import Cookies from "js-cookie";
 
 import {
   Table,
@@ -28,6 +29,7 @@ import {
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { updateControlsApi } from "@/services/apis";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -52,13 +54,16 @@ export function DataTable<
   const [applicableValue, setApplicableValue] = React.useState("");
   const [justificationValue, setJustificationValue] = React.useState("");
 
-  //search
+  // Search
   React.useEffect(() => {
     const filterNestedData = (rows: TData[]): TData[] => {
       return rows
-        .map(row => ({ ...row, subRows: row.subRows ? filterNestedData(row.subRows) : [] }))
-        .filter(row => {
-          const rowMatches = Object.values(row).some(value =>
+        .map((row) => ({
+          ...row,
+          subRows: row.subRows ? filterNestedData(row.subRows) : [],
+        }))
+        .filter((row) => {
+          const rowMatches = Object.values(row).some((value) =>
             String(value).toLowerCase().includes(searchQuery.toLowerCase())
           );
           const subRowsMatch = row.subRows?.length > 0;
@@ -72,7 +77,7 @@ export function DataTable<
 
   const flattenDataForExport = (data: TData[]): any[] => {
     const flatten = (items: TData[]): any[] => {
-      return items.flatMap(item => {
+      return items.flatMap((item) => {
         const { subRows, ...rest } = item as any;
         const flattenedItem = { ...rest };
         const subItems = subRows ? flatten(subRows) : [];
@@ -89,13 +94,13 @@ export function DataTable<
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     saveAs(blob, "exported_data.csv");
   };
+
   const toggleRow = (rowId: number) => {
     setExpandedRows((prev) => ({
       ...prev,
       [rowId]: !prev[rowId],
     }));
   };
-
   const table = useReactTable({
     data: filteredData,
     columns: [
@@ -113,7 +118,7 @@ export function DataTable<
                 setJustificationValue((row.original as any).justification);
               }}
             />
-            <Trash className="h-4 w-4 text-black cursor-pointer" />
+            <Trash className="h-4 w-4 text-orange-500 cursor-pointer" />
           </div>
         ),
       },
@@ -135,28 +140,69 @@ export function DataTable<
       setPageIndex(newState.pageIndex);
     },
   });
-
-
   const handlePageSizeChange = (size: number) => {
     setPageSize(size);
     setIsDropdownOpen(false);
     table.setPageSize(size);
   };
-  const handleSubmit = (e: React.FormEvent) => {
+
+  const updateControl = async (ctrlId: number, updatedData: any) => {
+    const token = Cookies.get("access_token");
+    const headers = {
+      Accept: "application/json",
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    };
+
+    const urlEndpoint = `/controls/${ctrlId}`;
+    const method = "PUT";
+
+    try {
+      const response = await updateControlsApi({
+        method,
+        urlEndpoint,
+        headers,
+        data: JSON.stringify(updatedData),
+      });
+
+      if (!response?.data) {
+        throw new Error("Failed to update control");
+      }
+
+      return response.data;
+    } catch (error) {
+      console.error("Error updating control:", error);
+      throw error;
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (editingRow && onEdit) {
       const updatedRow = {
         ...editingRow,
-        applicable: applicableValue,
+        applicable: applicableValue === "Yes",
         justification: justificationValue,
       };
-      onEdit(updatedRow);
-      setEditingRow(null);
+
+      try {
+        const response = await updateControl(editingRow.ctrl_id, updatedRow);
+        console.log("Control updated successfully:", response);
+
+        // Call the onEdit callback to update the local state
+        onEdit(updatedRow);
+
+        // Close the edit modal
+        setEditingRow(null);
+      } catch (error) {
+        console.error("Error updating control:", error);
+      }
     }
   };
+
   const openEditModal = (row: TData) => {
     setEditingRow(row);
-    setApplicableValue((row as any).applicable || "");
+    setApplicableValue((row as any).applicable ? "Yes" : "No");
     setJustificationValue((row as any).justification || "");
   };
 
@@ -166,11 +212,12 @@ export function DataTable<
 
   // Recursive function to render rows with indentation
   const renderRows = (rows: TData[], level: number = 0) => {
-    return rows.map((row) => (
+    const paginatedRows = rows.slice(pageIndex * pageSize, (pageIndex + 1) * pageSize);
+
+    return paginatedRows.map((row) => (
       <React.Fragment key={row.ctrl_id}>
         <TableRow
-          className={`transition-colors ${expandedRows[row.ctrl_id] ? "bg-gray-100" : ""
-            }`}
+          className={`transition-colors ${expandedRows[row.ctrl_id] ? "bg-gray-100" : ""}`}
         >
           {columns.map((column, colIndex) => (
             <TableCell key={column.id}>
@@ -186,13 +233,11 @@ export function DataTable<
                     </button>
                   )}
                   <span>{String(row[column.id as keyof TData] ?? "")}</span>
-
                 </div>
               ) : (
-                String(row[column.id as keyof TData] ?? "") // ✅ Convert to a string
+                String(row[column.id as keyof TData] ?? "")
               )}
             </TableCell>
-
           ))}
           <TableCell>
             <div className="flex space-x-2">
@@ -200,7 +245,7 @@ export function DataTable<
                 className="h-4 w-4 text-black cursor-pointer"
                 onClick={() => openEditModal(row)}
               />
-              <Trash className="h-4 w-4 text-black cursor-pointer" />
+              <Trash className="h-4 w-4 text-orange-500 cursor-pointer" />
             </div>
           </TableCell>
         </TableRow>
@@ -276,9 +321,6 @@ export function DataTable<
           className="max-w-sm"
         />
 
-        {/* <Button variant="outline" className="bg-blue-500 text-white flex items-center">
-                    <ChartColumnBig className="mr-2" /> Customize Cols
-                </Button> */}
         <Button
           onClick={handleExportCSV}
           className="bg-blue-500 text-white flex items-center"
@@ -312,18 +354,21 @@ export function DataTable<
         <div className="flex items-center space-x-2 relative">
           <span className="text-sm">Items per page</span>
           <button
-            className="border px-2 py-1 rounded flex items-center"
+            className="border px-2 py-1 rounded flex justify-end"
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
           >
             {pageSize} ▼
           </button>
           {isDropdownOpen && (
-            <div className="absolute bg-white border mt-1 rounded shadow-lg z-10">
+            <div className="absolute top-full left-[60%] mt-1 bg-white border rounded shadow-lg z-10">
               {[10, 25, 50].map((size) => (
                 <button
                   key={size}
-                  className="block w-full px-4 py-2 hover:bg-gray-100"
-                  onClick={() => handlePageSizeChange(size)}
+                  className="block w-full px-4 py-2 hover:bg-gray-100 text-left"
+                  onClick={() => {
+                    handlePageSizeChange(size);
+                    setIsDropdownOpen(false); // Close the dropdown after selection
+                  }}
                 >
                   {size}
                 </button>

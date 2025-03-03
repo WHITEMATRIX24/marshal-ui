@@ -28,3 +28,11 @@ export const fetchL1ControlsByStandardApi = async ({
 }: ApiConfigProps): Promise<AxiosResponse | undefined> => {
   return apiConfig({ method, urlEndpoint, headers });
 }
+export const updateControlsApi = async ({
+  method,
+  urlEndpoint,
+  headers,
+  data,
+}: ApiConfigProps): Promise<AxiosResponse | undefined> => {
+  return apiConfig({ method, urlEndpoint, headers, data });
+}

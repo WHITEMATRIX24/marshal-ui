@@ -2,6 +2,7 @@ export interface Control {
     ctrl_id: number;
     ctrl_name: string;
     applicable: boolean;
+    applicable_str: string,
     justification: string;
     parentCID: number;
     std_code_id: number;

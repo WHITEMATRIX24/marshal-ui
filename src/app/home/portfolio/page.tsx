@@ -20,11 +20,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/lib/global-redux/store";
 import { ApiResponse, Control } from "@/models/control";
 
-// Interface for fetched data
-// columns.tsx
 
-// API function
-// Modified fetchControls function to get ALL controls
 const fetchControls = async (stdId: string): Promise<Control[]> => {
   if (!stdId) throw new Error("stdId is required");
   const token = Cookies.get("access_token");
@@ -89,8 +85,8 @@ function updateData(data: Control[], updatedRow: Control): Control[] {
     row.ctrl_id === updatedRow.ctrl_id
       ? updatedRow
       : row.subRows
-      ? { ...row, subRows: updateData(row.subRows, updatedRow) }
-      : row
+        ? { ...row, subRows: updateData(row.subRows, updatedRow) }
+        : row
   );
 }
 
@@ -117,6 +113,7 @@ export default function Page() {
 
   useEffect(() => {
     if (data) {
+      console.log("Fetched Data:", data);
       setTableData(data);
     }
   }, [data]); // Runs when `data` updates
@@ -130,6 +127,7 @@ export default function Page() {
           ctrl_id: item.ctrl_id,
           ctrl_name: item.ctrl_name,
           applicable: item.applicable,
+          applicable_str: item.applicable === true ? "Yes" : "No",
           justification: item.justification,
           parentCID: item.parentCID,
           std_code_id: item.std_code_id,
@@ -171,6 +169,7 @@ export default function Page() {
       <div className="py-0 w-full px-4">
         <DataTable<Control, unknown>
           columns={columns}
+
           data={Array.isArray(tableData) ? tableData : []}
           onEdit={(updatedRow) => {
             setTableData((prev) => updateData(prev, updatedRow));

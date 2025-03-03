@@ -27,10 +27,11 @@ import { Standard } from "@/models/standards";
 import { useDispatch } from "react-redux";
 import { changeSelectedStanderds } from "@/lib/global-redux/features/standerdsSlice";
 import { setSubBredCrum } from "@/lib/global-redux/features/uiSlice";
-import { UserInfo } from "@/models/auth";
+import { useSidebar } from "@/components/ui/sidebar";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const dispatch = useDispatch();
+  const { open } = useSidebar(); // Get the sidebar state
   const [standards, setStandards] = useState<Standard[] | null>([]);
   const router = useRouter();
   const govId = Cookies.get("selected_governance");
@@ -38,15 +39,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const [parsedUserData, setParsedUserData] = useState(null);
 
   const handleStandardClick = (stdId: number, stdCode: string) => {
-    // Cookies.set("std_id", JSON.stringify(stdId), { expires: 7 }); // Store for 7 days
-    // console.log("Stored std_id in cookies:", stdId);
-    // router.push("/home/portfolio");
-    // window.location.reload();
     dispatch(setSubBredCrum(stdCode));
     dispatch(changeSelectedStanderds(stdId));
   };
 
-  const handleFetchStanders = async (parsedGovId: number) => {
+  const handleFetchStandards = async (parsedGovId: number) => {
     try {
       const response = await fetchStandardsApi({
         method: "GET",
@@ -63,8 +60,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   useEffect(() => {
     if (govId) {
       const parsedGovId = JSON.parse(govId);
-      console.log(parsedGovId);
-      handleFetchStanders(parsedGovId[0].role_id);
+      handleFetchStandards(parsedGovId[0].role_id);
     }
   }, [govId]);
 
@@ -86,66 +82,35 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       title: "Portfolio",
       url: "/home/portfolio",
       icon: BriefcaseBusiness,
-      items: standards?.map((standard) => {
-        return {
-          title: standard.std_code,
-          url: "/home/portfolio",
-          onClick: () => {
-            console.log("Clicked:", standard.std_code);
-            handleStandardClick(standard.std_id, standard.std_code);
-          },
-        };
-      }),
+      items: standards?.map((standard) => ({
+        title: standard.std_code,
+        url: "/home/portfolio",
+        onClick: () => handleStandardClick(standard.std_id, standard.std_code),
+      })),
     },
-    {
-      title: "Role/ User Management",
-      url: "#",
-      icon: UserCog,
-    },
-    {
-      title: "My Activities",
-      url: "#",
-      icon: FileCheck2,
-    },
-    {
-      title: "Configuration",
-      url: "#",
-      icon: Cog,
-    },
-    {
-      title: "Reports",
-      url: "#",
-      icon: FileChartColumn,
-    },
-    {
-      title: "Documentation",
-      url: "#",
-      icon: BookMarked,
-    },
+    { title: "Role/ User Management", url: "#", icon: UserCog },
+    { title: "My Activities", url: "#", icon: FileCheck2 },
+    { title: "Configuration", url: "#", icon: Cog },
+    { title: "Reports", url: "#", icon: FileChartColumn },
+    { title: "Documentation", url: "#", icon: BookMarked },
   ];
 
   return (
-    <Sidebar
-      collapsible="icon"
-      {...props}
-      className="bg-black text-white font-light"
-    >
-      <SidebarHeader className="pt-5 ">
+    <Sidebar collapsible="icon" {...props} className="bg-black text-white font-light">
+      <SidebarHeader className="pt-5">
         <Image
-          src="/logo-no-background.svg"
+          src={open ? "/logo-no-background.svg" : "/logo-short.png"} // Different logos based on sidebar state
           alt="logo"
-          width={800}
-          height={800}
-          className="w-full  bg-white "
+          width={open ? 40 : 800}
+          height={open ? 40 : 800}
+          className="w-full  bg-white rounded-[7px]"
         />
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={navMain} />
       </SidebarContent>
       <SidebarFooter>
-        {parsedUserData && (
-          <NavUser user={parsedUserData} avatar="/avatars/shadcn.jpg" />
-        )}
+        {parsedUserData && <NavUser user={parsedUserData} avatar="/avatars/shadcn.jpg" />}
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
