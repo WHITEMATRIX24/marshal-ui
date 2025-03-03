@@ -5,10 +5,11 @@ import { loginApiHandler } from "@/services/apis";
 import { useMutation } from "@tanstack/react-query";
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye } from "@fortawesome/free-regular-svg-icons";
+import { faEye, faUser } from "@fortawesome/free-regular-svg-icons";
 import { LoginResponse } from "../models/auth";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { toast } from "sonner";
 
 interface loginCred {
   email: string;
@@ -33,12 +34,13 @@ export default function Login() {
   const { mutateAsync: loginMutation } = useMutation({
     mutationFn: loginApiHandler,
     onError: (error) => {
-      return alert(error.message);
+      return toast(error.message);
     },
     onSuccess: async (responseData) => {
       const { data } = responseData as { data: LoginResponse };
+      console.log(data);
 
-      Cookies.set("access_token", data?.access_token, { secure: true });
+      Cookies.set("access_token", data?.access_token);
       Cookies.set(
         "roles_by_governance",
         JSON.stringify(data?.roles_by_governance)
@@ -77,32 +79,38 @@ export default function Login() {
       <div className="grid md:grid-cols-5 h-full justify-center">
         <div className="col-span-3"></div>
         <div className="col-span-2 flex flex-col justify-center items-center gap-10 px-5 lg:px-16 bg-black/25">
-          <div className="relative block w-full min-h-fit">
+          <div className="relative flex justify-center w-full min-h-fit">
             <Image
               src="/logo-no-background.svg"
               alt="logo"
-              width={500}
-              height={500}
+              width={300}
+              height={66}
             />
           </div>
           <form
             onSubmit={loginHandler}
             className="flex flex-col gap-5 w-full 2xl:w-3/4"
           >
-            <div className="flex flex-col gap-2">
-              <p className="m-0 w-fit">Login</p>
+            <div className="relative flex flex-col gap-2">
+              {/* <p className="m-0 w-fit">Login</p> */}
               <input
                 type="text"
+                placeholder="Login"
                 value={loginCred.email}
                 onChange={(e) =>
                   setLoginCred({ ...loginCred, email: e.target.value })
                 }
                 className="w-full outline-none border border-gray-300 bg-greycomponentbg px-3 py-2 rounded-md"
               />
+              <FontAwesomeIcon
+                className="absolute top-3 right-4"
+                icon={faUser}
+              />
             </div>
             <div className="relative flex flex-col gap-2">
-              <p className="m-0 w-fit">password</p>
+              {/* <p className="m-0 w-fit">Password</p> */}
               <input
+                placeholder="Password"
                 type={passVissible ? "text" : "password"}
                 value={loginCred.password}
                 onChange={(e) =>
@@ -110,13 +118,16 @@ export default function Login() {
                 }
                 className="w-full outline-none border border-gray-300 bg-greycomponentbg ps-3 pe-16 py-2 rounded-md"
               />
-              <p className="ms-auto text-textcolorblue">Link Button Label</p>
+              {/* <p className="ms-auto text-textcolorblue">Link Button Label</p> */}
               <button
                 type="button"
                 onClick={togglePasswordVisiblity}
-                className="absolute right-5 top-10 cursor-pointer"
+                className={`absolute right-4 top-2.5 cursor-pointer`}
               >
-                <FontAwesomeIcon icon={faEye} />
+                <FontAwesomeIcon
+                  icon={faEye}
+                  color={passVissible ? "#0079ff" : "black"}
+                />
               </button>
             </div>
             <div className="flex justify-between items-center">
@@ -146,7 +157,7 @@ export default function Login() {
             >
               Sign in
             </button>
-            <div className="w-full border mt-3"></div>
+            <div className="w-full border mt-3 dark:border-white"></div>
             <p className="m-0 text-center">
               Dont have an account?{" "}
               <span className="ms-2 text-textcolorblue">Sign up now</span>

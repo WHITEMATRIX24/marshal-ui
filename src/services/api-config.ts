@@ -25,7 +25,11 @@ const apiConfig = async ({
   } catch (error) {
     console.log(error);
     if (axios.isAxiosError(error)) {
-      throw new Error(error.response?.data.detail);
+      if (error.response) {
+        throw new Error(error.response?.data.detail);
+      } else {
+        throw new Error(error.message);
+      }
     }
     throw new Error("unknown API error");
   }
