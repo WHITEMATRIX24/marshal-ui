@@ -58,9 +58,9 @@ export const SettingsPopUp: React.FC<SettingsPopUpProps> = ({ onClose }) => {
                 </label>
                 <input type="file" id="chnage-profilePic" className="hidden" />
               </div>
-              <div className="h-16 w-16 bg-greycomponentbg relative flex justify-center items-center">
+              <div className="h-16 w-16 bg-greycomponentbg rounded-[5px] relative flex justify-center items-center">
                 <Image
-                  src="/user.png"
+                  src="/user.svg"
                   alt="user"
                   fill
                   className="object-contain"
