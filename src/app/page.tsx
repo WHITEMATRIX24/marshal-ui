@@ -34,7 +34,9 @@ export default function Login() {
   const { mutateAsync: loginMutation } = useMutation({
     mutationFn: loginApiHandler,
     onError: (error) => {
-      return toast(error.message);
+      return toast.error(error.message, {
+        style: { backgroundColor: "#ff5555", color: "white", border: "none" },
+      });
     },
     onSuccess: async (responseData) => {
       const { data } = responseData as { data: LoginResponse };
