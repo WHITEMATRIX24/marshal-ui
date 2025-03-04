@@ -85,7 +85,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       items: standards?.map((standard) => ({
         title: standard.std_code,
         url: "/home/portfolio",
-        onClick: () => handleStandardClick(standard.std_id, standard.std_code),
+        onClick: () => handleStandardClick(standard.id, standard.std_code),
       })),
     },
     { title: "Role/ User Management", url: "#", icon: UserCog },
@@ -96,7 +96,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   ];
 
   return (
-    <Sidebar collapsible="icon" {...props} className="bg-black text-white font-light">
+    <Sidebar
+      collapsible="icon"
+      {...props}
+      className="bg-black text-white font-light"
+    >
       <SidebarHeader className="pt-5">
         <Image
           src={open ? "/logo-no-background.svg" : "/logo-short.png"} // Different logos based on sidebar state
@@ -110,7 +114,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavMain items={navMain} />
       </SidebarContent>
       <SidebarFooter>
-        {parsedUserData && <NavUser user={parsedUserData} avatar="/avatars/shadcn.jpg" />}
+        {parsedUserData && (
+          <NavUser user={parsedUserData} avatar="/avatars/shadcn.jpg" />
+        )}
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

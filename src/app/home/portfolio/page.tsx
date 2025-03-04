@@ -20,7 +20,6 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/lib/global-redux/store";
 import { ApiResponse, Control } from "@/models/control";
 
-
 const fetchControls = async (stdId: string): Promise<Control[]> => {
   if (!stdId) throw new Error("stdId is required");
   const token = Cookies.get("access_token");
@@ -29,7 +28,6 @@ const fetchControls = async (stdId: string): Promise<Control[]> => {
     Accept: "application/json",
     Authorization: `Bearer ${token}`,
   };
-  console.log(stdId);
   // Remove level filter to get all controls
   const urlEndpoint = `/controls/?std_code_id=${stdId}`;
   const method = "GET";
@@ -85,8 +83,8 @@ function updateData(data: Control[], updatedRow: Control): Control[] {
     row.ctrl_id === updatedRow.ctrl_id
       ? updatedRow
       : row.subRows
-        ? { ...row, subRows: updateData(row.subRows, updatedRow) }
-        : row
+      ? { ...row, subRows: updateData(row.subRows, updatedRow) }
+      : row
   );
 }
 
@@ -169,7 +167,6 @@ export default function Page() {
       <div className="py-0 w-full px-4">
         <DataTable<Control, unknown>
           columns={columns}
-
           data={Array.isArray(tableData) ? tableData : []}
           onEdit={(updatedRow) => {
             setTableData((prev) => updateData(prev, updatedRow));
