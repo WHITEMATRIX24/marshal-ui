@@ -11,9 +11,9 @@ export default async function Layout({
 }: {
   children: React.ReactNode;
 }) {
-  // const Cookie = await cookies();
-  // const accessToken = Cookie.get("access_token");
-  // if (!accessToken) redirect("/");
+  const Cookie = await cookies();
+  const accessToken = Cookie.get("access_token");
+  if (!accessToken) redirect("/");
 
   return (
     <SidebarProvider>

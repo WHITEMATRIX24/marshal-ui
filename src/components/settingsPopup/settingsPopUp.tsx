@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import DeleteCnfModal from "../ui/delete-cnf-modal";
 import Image from "next/image";
+import Cookies from "js-cookie";
 
 interface SettingsPopUpProps {
   onClose: () => void;
@@ -11,6 +12,8 @@ interface SettingsPopUpProps {
 
 export const SettingsPopUp: React.FC<SettingsPopUpProps> = ({ onClose }) => {
   const [deleteCnfModalShow, setDeleteCnfModalShow] = useState<boolean>(false);
+  const userData = Cookies.get("user_info");
+  const parsedUserData = userData ? JSON.parse(userData) : {};
 
   // delete btn handler
   const handleDeleteBtn = () => {
@@ -49,7 +52,9 @@ export const SettingsPopUp: React.FC<SettingsPopUpProps> = ({ onClose }) => {
           <div className="h-62 flex flex-col gap-5">
             <div className="flex items-center justify-end gap-3">
               <div className="flex flex-col items-end">
-                <h6 className="font-semibold">Jacob</h6>
+                <h6 className="font-semibold">
+                  {parsedUserData?.username || "user"}
+                </h6>
                 <label
                   htmlFor="chnage-profilePic"
                   className="text-sm text-textcolorblue cursor-pointer"
