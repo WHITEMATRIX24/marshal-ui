@@ -16,6 +16,7 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
+  getExpandedRowModel, // Add this
 } from "@tanstack/react-table";
 import Cookies from "js-cookie";
 
@@ -107,7 +108,7 @@ export function DataTable<
       ...columns,
       {
         id: "actions",
-        header: "Actions",
+        header: () => <span className="text-right w-full block px-4">Actions</span>,
         cell: ({ row }) => (
           <div className="flex space-x-2 justify-end">
             <Pencil
@@ -182,6 +183,7 @@ export function DataTable<
       const updatedRow = {
         ...editingRow,
         applicable: applicableValue === "Yes",
+        applicable_str: applicableValue,
         justification: justificationValue,
       };
 
@@ -210,9 +212,12 @@ export function DataTable<
   const startItem = pageIndex * pageSize + 1;
   const endItem = Math.min(startItem + pageSize - 1, totalItems);
 
-  // Recursive function to render rows with indentation
+
   const renderRows = (rows: TData[], level: number = 0) => {
-    const paginatedRows = rows.slice(pageIndex * pageSize, (pageIndex + 1) * pageSize);
+    // Apply pagination only to top-level rows
+    const paginatedRows = level === 0
+      ? rows.slice(pageIndex * pageSize, (pageIndex + 1) * pageSize)
+      : rows; // Keep subRows intact
 
     return paginatedRows.map((row) => (
       <React.Fragment key={row.ctrl_id}>
@@ -220,7 +225,8 @@ export function DataTable<
           className={`transition-colors ${expandedRows[row.ctrl_id] ? "bg-gray-100" : ""}`}
         >
           {columns.map((column, colIndex) => (
-            <TableCell key={column.id}>
+            <TableCell key={column.id} className={`text-[11px] p-0 ${colIndex === 1 ? "w-[50px] text-center" : colIndex === 2 ? "max-w-[350px] break-words" : "flex-1"
+              }`} >
               {colIndex === 0 ? (
                 <div className="flex items-center space-x-2" style={{ paddingLeft: `${level * 20}px` }}>
                   {row.subRows && row.subRows.length > 0 && (
@@ -239,15 +245,16 @@ export function DataTable<
               )}
             </TableCell>
           ))}
-          <TableCell>
-            <div className="flex space-x-2">
+          <TableCell className="text-right pr-4 w-[50px]">
+            <div className="flex justify-end space-x-2">
               <Pencil
-                className="h-4 w-4 text-black cursor-pointer"
+                className="h-3 w-3 text-black cursor-pointer"
                 onClick={() => openEditModal(row)}
               />
-              <Trash className="h-4 w-4 text-orange-500 cursor-pointer" />
+              <Trash className="h-3 w-3 text-orange-500 cursor-pointer" />
             </div>
           </TableCell>
+
         </TableRow>
 
         {/* Render nested subrows if expanded */}
@@ -258,6 +265,7 @@ export function DataTable<
       </React.Fragment>
     ));
   };
+
 
   return (
     <div className="w-full">
@@ -313,20 +321,20 @@ export function DataTable<
           </div>
         </div>
       )}
-      <div className="flex items-center justify-end py-4 space-x-5">
+      <div className="flex items-center justify-end py-2 space-x-1">
         <Input
           placeholder="Search..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="max-w-sm"
+          className="max-w-sm px-3 h-7"
         />
 
-        <Button
+        {/* <Button
           onClick={handleExportCSV}
           className="bg-blue-500 text-white flex items-center"
         >
           <Download className="mr-2" /> Export
-        </Button>
+        </Button> */}
       </div>
 
       <Table className="w-full">
@@ -334,7 +342,7 @@ export function DataTable<
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
-                <TableHead key={header.id} className="bg-black text-white">
+                <TableHead key={header.id} className="bg-blue-900 text-white text-[12px] px-1 h-7">
                   {header.isPlaceholder
                     ? null
                     : flexRender(
@@ -350,17 +358,17 @@ export function DataTable<
         <TableBody>{renderRows(filteredData)}</TableBody>
       </Table>
 
-      <div className="flex items-center justify-between py-4">
+      <div className="flex items-center justify-between py-4 bottom-[20px]">
         <div className="flex items-center space-x-2 relative">
-          <span className="text-sm">Items per page</span>
+          <span className="text-[11px]">Items per page</span>
           <button
-            className="border px-2 py-1 rounded flex justify-end"
+            className="border px-2 py-1 rounded flex justify-end text-[10px]"
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
           >
             {pageSize} ▼
           </button>
           {isDropdownOpen && (
-            <div className="absolute top-full left-[60%] mt-1 bg-white border rounded shadow-lg z-10">
+            <div className="absolute top-full left-[60%] mt-1 bg-white border rounded shadow-lg z-10 text-[10px]" >
               {[10, 25, 50].map((size) => (
                 <button
                   key={size}
@@ -377,21 +385,24 @@ export function DataTable<
           )}
         </div>
 
-        <div className="flex items-center space-x-4 text-sm">
+        <div className="flex items-center space-x-4 text-[10px]">
+
+          <Button
+            variant="outline"
+            size="sm"
+            className="text-[10px]"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            {"<"}
+          </Button>
           <span>
             {startItem} - {endItem} of {totalItems}
           </span>
           <Button
             variant="outline"
             size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            {"<"}
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
+            className="text-[10px]"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >

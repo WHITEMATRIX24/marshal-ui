@@ -1,13 +1,18 @@
-export interface Control {
+// models/control.ts
+export interface ApiControl {
     ctrl_id: number;
     ctrl_name: string;
     applicable: boolean;
-    applicable_str: string,
-    justification: string;
+    applicable_str?: string;
+    justification?: string;
     parentCID: number;
     std_code_id: number;
     ctrl_LVLID: string;
     is_active: boolean;
+    children?: ApiControl[];
+}
+
+export interface Control extends Omit<ApiControl, 'children'> {
     subRows?: Control[];
 }
 
