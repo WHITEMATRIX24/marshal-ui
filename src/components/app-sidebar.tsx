@@ -99,7 +99,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     <Sidebar
       collapsible="icon"
       {...props}
-      className="bg-blue-900 text-white font-light"
+      className="bg-blue-950 text-white font-light"
     >
       <SidebarHeader className="pt-5">
         <Image

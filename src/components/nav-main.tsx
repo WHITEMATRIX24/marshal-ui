@@ -44,7 +44,10 @@ export function NavMain({
           >
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
-                <SidebarMenuButton tooltip={item.title}>
+                <SidebarMenuButton
+                  tooltip={item.title}
+                  className="hover:bg-gray-400/20 after:bg-gray-400/20"
+                >
                   {item.icon && <item.icon className="text-textcolorblue" />}
                   <span className="text-[12px]">{item.title}</span>
                   <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
@@ -61,9 +64,9 @@ export function NavMain({
                           if (subItem.onClick) subItem.onClick();
                           router.push(subItem.url);
                         }}
-                        className="cursor-pointer"
+                        className="cursor-pointer hover:bg-gray-400/20"
                       >
-                        <span className="text-[12px]">{subItem.title}</span>
+                        <span className="text-[11.5px]">{subItem.title}</span>
                       </SidebarMenuSubButton>
                     </SidebarMenuSubItem>
                   ))}
