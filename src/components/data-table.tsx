@@ -219,13 +219,17 @@ export function DataTable<
       ? rows.slice(pageIndex * pageSize, (pageIndex + 1) * pageSize)
       : rows; // Keep subRows intact
 
-    return paginatedRows.map((row) => (
+    return paginatedRows.map((row, index) => (
       <React.Fragment key={row.ctrl_id}>
+
         <TableRow
-          className={`transition-colors ${expandedRows[row.ctrl_id] ? "bg-gray-100" : ""}`}
+          key={row.ctrl_id}
+          className={`transition-colors hover:bg-[var(--hover-bg)] ${expandedRows[row.ctrl_id] ? "bg-[var(--hover-bg)]" : index % 2 === 0 ? 'bg-[var(--table-bg-even)]' : 'bg-[var(--table-bg-odd)]'
+            }`}
         >
+
           {columns.map((column, colIndex) => (
-            <TableCell key={column.id} className={`text-[11px] p-0 ${colIndex === 1 ? "w-[50px] text-center" : colIndex === 2 ? "max-w-[350px] break-words" : "flex-1"
+            <TableCell key={column.id} className={`text-[11px]  px-2 py-1 ${colIndex === 1 ? "w-[50px] text-center" : colIndex === 2 ? "max-w-[350px] break-words" : "flex-1"
               }`} >
               {colIndex === 0 ? (
                 <div className="flex items-center space-x-2" style={{ paddingLeft: `${level * 20}px` }}>
