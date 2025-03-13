@@ -11,10 +11,7 @@ const ChangeThemeButton = () => {
   };
 
   return (
-    <button
-      onClick={toggleTheme}
-      className="relative border p-2 rounded-full dark:border-white"
-    >
+    <button onClick={toggleTheme} className="relative p-2 rounded-full">
       {theme == "light" ? (
         <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
       ) : (

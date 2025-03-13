@@ -42,6 +42,14 @@ export const GovernanceSelectPopUp = () => {
     else dispatch(hideGovernanceModal());
   }, [Cookies]);
 
+  useEffect(() => {
+    if (isPopupVisible) {
+      if (governanceKeys.length === 1) {
+        handleSelect(governanceKeys[0]);
+      }
+    }
+  }, [isPopupVisible]);
+
   if (!isPopupVisible) return;
 
   return (

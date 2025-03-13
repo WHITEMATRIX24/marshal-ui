@@ -17,7 +17,7 @@
 
 @layer base {
   :root {
-    --sidebar-background: 0 0% 0%;
+    /* --sidebar-background: 0 0% 0%; */
     /* Black background */
     --sidebar-foreground: 0 0% 100%;
     /* White text */
