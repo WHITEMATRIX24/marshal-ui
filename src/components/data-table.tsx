@@ -369,7 +369,7 @@ export function DataTable<
             {pageSize} ▼
           </button>
           {isDropdownOpen && (
-            <div className="absolute top-full left-[60%] mt-1 bg-white border rounded shadow-lg z-10 text-[10px]" >
+            <div className="absolute top-[-60px] left-[60%] mt-1 bg-white border rounded shadow-lg z-10 text-[10px]" >
               {[10, 25, 50].map((size) => (
                 <button
                   key={size}
