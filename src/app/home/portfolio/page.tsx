@@ -1,5 +1,5 @@
 "use client";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { useQuery } from "@tanstack/react-query";
@@ -20,7 +20,6 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/lib/global-redux/store";
 import { ApiResponse, Control } from "@/models/control";
 
-
 const fetchControls = async (stdId: string): Promise<Control[]> => {
   if (!stdId) throw new Error("stdId is required");
   const token = Cookies.get("access_token");
@@ -29,8 +28,8 @@ const fetchControls = async (stdId: string): Promise<Control[]> => {
     Accept: "application/json",
     Authorization: `Bearer ${token}`,
   };
+
   console.log(stdId);
-  // Remove level filter to get all controls
   const urlEndpoint = `/controls/?std_code_id=${stdId}`;
   const method = "GET";
   const response: ApiResponse<Control[]> | undefined =
@@ -50,17 +49,17 @@ function Breadcrumbs() {
     <Breadcrumb>
       <BreadcrumbList>
         <BreadcrumbItem>
-          <BreadcrumbLink href="/">Home</BreadcrumbLink>
+          <BreadcrumbLink href="/" className="text-[11px]">Home</BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>
-          <BreadcrumbEllipsis />
+          <BreadcrumbEllipsis className="text-[11px]" />
         </BreadcrumbItem>
         {lastSegment && (
           <>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>
+              <BreadcrumbPage className="text-[11px]">
                 {decodeURIComponent(lastSegment).replace(/-/g, " ")}
               </BreadcrumbPage>
             </BreadcrumbItem>
@@ -70,7 +69,7 @@ function Breadcrumbs() {
           <>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>{subMenu}</BreadcrumbPage>
+              <BreadcrumbPage className="text-[11px]">{subMenu}</BreadcrumbPage>
             </BreadcrumbItem>
           </>
         )}
@@ -96,13 +95,13 @@ export default function Page() {
     (state: RootState) => state.Standerds.selected_std_id
   );
 
+  const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);
+  const [tableData, setTableData] = useState<Control[]>([]);
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
-
-  const [tableData, setTableData] = useState<Control[]>([]);
 
   const { data, error, isLoading } = useQuery<Control[], Error>({
     queryKey: ["controls", stdId],
@@ -112,16 +111,24 @@ export default function Page() {
   });
 
   useEffect(() => {
+    if (error) {
+      console.error("Error fetching controls:", error);
+      router.push("/"); // Redirect to home if an error occurs
+    }
+  }, [error, router]);
+
+  useEffect(() => {
     if (data) {
       console.log("Fetched Data:", data);
       setTableData(data);
     }
-  }, [data]); // Runs when `data` updates
+  }, [data]);
 
   useEffect(() => {
     if (data && Array.isArray(data)) {
       const controlsMap = new Map<number, Control>();
       const hierarchicalData: Control[] = [];
+
       data.forEach((item) => {
         const control: Control = {
           ctrl_id: item.ctrl_id,
@@ -157,7 +164,6 @@ export default function Page() {
 
   if (!isMounted) return null;
   if (isLoading) return <p>Loading...</p>;
-  if (error instanceof Error) return <p>Error: {error.message}</p>;
 
   return (
     <div className="flex flex-col w-full mb-[50px]">
@@ -169,7 +175,6 @@ export default function Page() {
       <div className="py-0 w-full px-4">
         <DataTable<Control, unknown>
           columns={columns}
-
           data={Array.isArray(tableData) ? tableData : []}
           onEdit={(updatedRow) => {
             setTableData((prev) => updateData(prev, updatedRow));

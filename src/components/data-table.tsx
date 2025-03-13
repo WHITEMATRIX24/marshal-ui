@@ -40,7 +40,7 @@ interface DataTableProps<TData, TValue> {
 }
 
 export function DataTable<
-  TData extends { ctrl_id: number; subRows?: TData[] },
+  TData extends { ctrl_id: number; subRows?: TData[]; applicable_str?: string },
   TValue
 >({ columns, data, onEdit }: DataTableProps<TData, TValue>) {
   const [pageSize, setPageSize] = React.useState(10);
@@ -229,7 +229,7 @@ export function DataTable<
               }`} >
               {colIndex === 0 ? (
                 <div className="flex items-center space-x-2" style={{ paddingLeft: `${level * 20}px` }}>
-                  {row.subRows && row.subRows.length > 0 && (
+                  {row.subRows && row.subRows.length > 0 && row.applicable_str === "Yes" && (
                     <button onClick={() => toggleRow(row.ctrl_id)} className="flex items-center">
                       {expandedRows[row.ctrl_id] ? (
                         <ChevronUp className="h-4 w-4" />
@@ -238,6 +238,7 @@ export function DataTable<
                       )}
                     </button>
                   )}
+
                   <span>{String(row[column.id as keyof TData] ?? "")}</span>
                 </div>
               ) : (
@@ -248,7 +249,7 @@ export function DataTable<
           <TableCell className="text-right pr-4 w-[50px]">
             <div className="flex justify-end space-x-2">
               <Pencil
-                className="h-3 w-3 text-black cursor-pointer"
+                className="h-3 w-3 text-blue-900 cursor-pointer"
                 onClick={() => openEditModal(row)}
               />
               <Trash className="h-3 w-3 text-orange-500 cursor-pointer" />
@@ -358,7 +359,7 @@ export function DataTable<
         <TableBody>{renderRows(filteredData)}</TableBody>
       </Table>
 
-      <div className="flex items-center justify-between py-4 bottom-[20px]">
+      <div className="fixed bottom-[20px] w-[80%] flex items-center justify-between py-4 mr-4">
         <div className="flex items-center space-x-2 relative">
           <span className="text-[11px]">Items per page</span>
           <button
