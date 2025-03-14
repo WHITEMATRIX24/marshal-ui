@@ -66,7 +66,9 @@ export function NavMain({
                         }}
                         className="cursor-pointer hover:bg-gray-400/20"
                       >
-                        <span className="text-[11.5px]">{subItem.title}</span>
+                        <span style={{ fontSize: "11px" }}>
+                          {subItem.title}
+                        </span>
                       </SidebarMenuSubButton>
                     </SidebarMenuSubItem>
                   ))}
