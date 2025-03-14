@@ -31,18 +31,20 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { updateControlsApi } from "@/services/apis";
+import DeleteModal from "./deleteControlModal";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   onEdit?: (updatedRow: TData) => void;
+  onDelete?: (deletedCtrlId: number) => void;
   onRowExpand?: (row: TData) => void;
 }
 
 export function DataTable<
   TData extends { ctrl_id: number; subRows?: TData[]; applicable_str?: string },
   TValue
->({ columns, data, onEdit }: DataTableProps<TData, TValue>) {
+>({ columns, data, onEdit, onDelete }: DataTableProps<TData, TValue>) {
   const [pageSize, setPageSize] = React.useState(10);
   const [pageIndex, setPageIndex] = React.useState(0);
   const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
@@ -52,6 +54,7 @@ export function DataTable<
   const [searchQuery, setSearchQuery] = React.useState("");
   const [filteredData, setFilteredData] = React.useState(data);
   const [editingRow, setEditingRow] = React.useState<TData | null>(null);
+  const [deletingCtrlId, setDeletingCtrlId] = React.useState<number | null>(null);
   const [applicableValue, setApplicableValue] = React.useState("");
   const [justificationValue, setJustificationValue] = React.useState("");
 
@@ -256,13 +259,12 @@ export function DataTable<
                 className="h-3 w-3 text-blue-900 cursor-pointer"
                 onClick={() => openEditModal(row)}
               />
-              <Trash className="h-3 w-3 text-orange-500 cursor-pointer" />
+              <Trash className="h-3 w-3 text-orange-500 cursor-pointer"
+                onClick={() => setDeletingCtrlId(row.ctrl_id)} />
             </div>
           </TableCell>
 
         </TableRow>
-
-        {/* Render nested subrows if expanded */}
         {expandedRows[row.ctrl_id] &&
           row.subRows &&
           row.subRows.length > 0 &&
@@ -326,12 +328,23 @@ export function DataTable<
           </div>
         </div>
       )}
+      <DeleteModal
+        ctrlId={deletingCtrlId}
+        isOpen={deletingCtrlId !== null}
+        onClose={() => setDeletingCtrlId(null)}
+        onDeleteSuccess={(deletedCtrlId: any) => {
+          setFilteredData(prev => prev.filter(item => item.ctrl_id !== deletedCtrlId));
+          if (onDelete) {
+            onDelete(deletedCtrlId);
+          }
+        }}
+      />
       <div className="flex items-center justify-end py-2 space-x-1">
         <Input
           placeholder="Search..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="max-w-sm px-3 h-7"
+          className="max-w-sm px-3 h-7  text-[11px]"
         />
 
         {/* <Button
@@ -342,26 +355,31 @@ export function DataTable<
         </Button> */}
       </div>
 
-      <Table className="w-full">
-        <TableHeader>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map((header) => (
-                <TableHead key={header.id} className="bg-blue-900 text-white text-[12px] px-1 h-7">
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
-                      header.column.columnDef.header,
-                      header.getContext()
-                    )}
-                </TableHead>
-              ))}
-            </TableRow>
-          ))}
-        </TableHeader>
-
-        <TableBody>{renderRows(filteredData)}</TableBody>
-      </Table>
+      <div className="max-h-[70vh] overflow-auto relative">
+        <Table className="w-full border-collapse">
+          <TableHeader className="sticky top-0 bg-blue-900 z-100">
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id}>
+                {headerGroup.headers.map((header) => (
+                  <TableHead
+                    key={header.id}
+                    className="text-white text-[12px] px-1 h-7 bg-blue-900 shadow-md">
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
+                  </TableHead>
+                ))}
+              </TableRow>
+            ))}
+          </TableHeader>
+          <TableBody className="overflow-y-auto">
+            {renderRows(filteredData)}
+          </TableBody>
+        </Table>
+      </div>
 
       <div className="fixed bottom-[20px] w-[80%] flex items-center justify-between py-4 mr-4">
         <div className="flex items-center space-x-2 relative">
