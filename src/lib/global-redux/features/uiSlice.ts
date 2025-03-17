@@ -6,12 +6,14 @@ export interface UiStates {
   governanceModalState: boolean;
   subBreadCrum: string;
   mainBreadcrumb: string;
+  addNewUserOnRoleMenuModal: boolean;
 }
 
 const initialState: UiStates = {
   governanceModalState: false,
   subBreadCrum: "",
-  mainBreadcrumb: 'Dashboard',
+  mainBreadcrumb: "Dashboard",
+  addNewUserOnRoleMenuModal: false,
 };
 
 export const UiSlice = createSlice({
@@ -33,6 +35,12 @@ export const UiSlice = createSlice({
     setMainBreadcrumb: (state, action) => {
       state.mainBreadcrumb = action.payload;
     },
+    showNewUserAddForm: (state) => {
+      state.addNewUserOnRoleMenuModal = true;
+    },
+    hideNewUserAddForm: (state) => {
+      state.addNewUserOnRoleMenuModal = false;
+    },
   },
 });
 
@@ -42,6 +50,8 @@ export const {
   removeSubBredCrum,
   setSubBredCrum,
   setMainBreadcrumb,
+  hideNewUserAddForm,
+  showNewUserAddForm,
 } = UiSlice.actions;
 
 export default UiSlice.reducer;
