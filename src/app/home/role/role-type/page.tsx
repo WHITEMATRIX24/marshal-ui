@@ -5,13 +5,9 @@ import { Input } from "@/components/ui/input";
 import { useState } from "react";
 
 const roles = [
-    { id: 1, name: "Admin" },
-    { id: 2, name: "Editor" },
-    { id: 3, name: "Viewer" },
-    { id: 4, name: "Moderator" },
-    { id: 5, name: "Manager" },
-    { id: 6, name: "Support" },
-    { id: 7, name: "Developer" },
+    { id: 1, name: "Client Admin" },
+    { id: 2, name: "Performer" },
+    { id: 3, name: "Auditor" },
 ];
 
 export default function HomePage() {
@@ -71,7 +67,7 @@ export default function HomePage() {
                         ))
                     ) : (
                         <tr>
-                            <td colSpan={2} className="p-2 text-center">
+                            <td colSpan={2} className="p-2 text-center text-[11px]">
                                 No results found
                             </td>
                         </tr>

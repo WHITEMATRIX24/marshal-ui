@@ -110,7 +110,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       items: [
         {
           title: "Role Type",
-          url: "/home/role/roleType",
+          url: "/home/role/role-type",
           onClick: () => {
             dispatch(setMainBreadcrumb("Role/ User Management"));
             dispatch(setSubBredCrum(""));

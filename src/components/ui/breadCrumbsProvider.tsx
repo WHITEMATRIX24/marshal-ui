@@ -14,6 +14,12 @@ import {
   BreadcrumbSeparator,
 } from "./breadcrumb";
 
+const formatBreadcrumb = (text: string) => {
+  return text
+    .replace(/-/g, " ")
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+};
+
 const BreadCrumbsProvider = () => {
   const pathname = usePathname();
   const pathSegments = pathname.split("/").filter(Boolean);
@@ -33,19 +39,18 @@ const BreadCrumbsProvider = () => {
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>
-          <BreadcrumbEllipsis className="text-[11px]" />
+          <BreadcrumbEllipsis />
         </BreadcrumbItem>
-        {lastTwoSegment &&
-          lastTwoSegment.length > 0 &&
-          lastTwoSegment.map((lastSegment) => (
-            <div className="flex items-center gap-3" key={lastSegment}>
-              <BreadcrumbSeparator className="ms-3" />
+        {lastTwoSegment.length > 0 &&
+          lastTwoSegment.map((segment) => (
+            <React.Fragment key={segment}>
+              <BreadcrumbSeparator />
               <BreadcrumbItem>
                 <BreadcrumbPage className="text-[11px]">
-                  {decodeURIComponent(lastSegment).replace(/-/g, " ")}
+                  {formatBreadcrumb(decodeURIComponent(segment))}
                 </BreadcrumbPage>
               </BreadcrumbItem>
-            </div>
+            </React.Fragment>
           ))}
         {subMenu && (
           <>
