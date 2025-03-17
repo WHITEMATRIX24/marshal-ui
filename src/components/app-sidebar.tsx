@@ -28,6 +28,7 @@ import { useDispatch } from "react-redux";
 import { changeSelectedStanderds } from "@/lib/global-redux/features/standerdsSlice";
 import { setSubBredCrum } from "@/lib/global-redux/features/uiSlice";
 import { useSidebar } from "@/components/ui/sidebar";
+import { title } from "process";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const dispatch = useDispatch();
@@ -67,6 +68,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   useEffect(() => {
     if (userData) {
       setParsedUserData(JSON.parse(userData));
+      console.log("userData", userData);
     }
   }, []);
 
@@ -88,7 +90,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         onClick: () => handleStandardClick(standard.id, standard.std_code),
       })),
     },
-    { title: "Role/ User Management", url: "#", icon: UserCog },
+    {
+      title: "Role/ User Management", url: "#", icon: UserCog, items: [{
+        title: "Role Type",
+        url: "/home/role/roleType",
+      },
+      { title: "Create-Update Roles", url: "#", },
+      {
+        title: "Create-Update Users", url: "#",
+
+      },]
+    },
     { title: "My Activities", url: "#", icon: FileCheck2 },
     { title: "Configuration", url: "#", icon: Cog },
     { title: "Reports", url: "#", icon: FileChartColumn },
