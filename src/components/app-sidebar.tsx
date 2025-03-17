@@ -26,9 +26,9 @@ import Image from "next/image";
 import { Standard } from "@/models/standards";
 import { useDispatch } from "react-redux";
 import { changeSelectedStanderds } from "@/lib/global-redux/features/standerdsSlice";
-import { setSubBredCrum } from "@/lib/global-redux/features/uiSlice";
+import { setMainBreadcrumb, setSubBredCrum } from "@/lib/global-redux/features/uiSlice";
 import { useSidebar } from "@/components/ui/sidebar";
-import { title } from "process";
+
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const dispatch = useDispatch();
@@ -36,9 +36,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const [standards, setStandards] = useState<Standard[] | null>([]);
   const router = useRouter();
   const govId = Cookies.get("selected_governance");
+  console.log("governveven", govId);
   const userData = Cookies.get("user_info");
   const [parsedUserData, setParsedUserData] = useState(null);
-
+  const [role, setRole] = useState<string | null>(null);
   const handleStandardClick = (stdId: number, stdCode: string) => {
     dispatch(setSubBredCrum(stdCode));
     dispatch(changeSelectedStanderds(stdId));
@@ -62,6 +63,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     if (govId) {
       const parsedGovId = JSON.parse(govId);
       handleFetchStandards(parsedGovId[0].role_id);
+      setRole(parsedGovId[0].role_name);
     }
   }, [govId]);
 
@@ -79,6 +81,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       url: "#",
       icon: LayoutDashboard,
       isActive: true,
+      onClick: () => dispatch(setMainBreadcrumb("Dashboard")),
     },
     {
       title: "Portfolio",
@@ -87,25 +90,46 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       items: standards?.map((standard) => ({
         title: standard.std_code,
         url: "/home/portfolio",
-        onClick: () => handleStandardClick(standard.id, standard.std_code),
-      })),
-    },
-    {
-      title: "Role/ User Management", url: "#", icon: UserCog, items: [{
-        title: "Role Type",
-        url: "/home/role/roleType",
-      },
-      { title: "Create-Update Roles", url: "#", },
-      {
-        title: "Create-Update Users", url: "#",
+        onClick: () => {
+          handleStandardClick(standard.id, standard.std_code);
+          dispatch(setMainBreadcrumb("Portfolio"));
 
-      },]
+        },
+      })),
     },
     { title: "My Activities", url: "#", icon: FileCheck2 },
     { title: "Configuration", url: "#", icon: Cog },
     { title: "Reports", url: "#", icon: FileChartColumn },
     { title: "Documentation", url: "#", icon: BookMarked },
   ];
+  if (role?.toLowerCase().includes("admin")) {
+    navMain.splice(2, 0, {
+      title: "Role/ User Management",
+      url: "#",
+      icon: UserCog,
+      items: [
+        {
+          title: "Role Type",
+          url: "/home/role/roleType",
+          onClick: () => {
+            dispatch(setMainBreadcrumb("Role/ User Management"));
+            dispatch(setSubBredCrum(""));
+          },
+        },
+        {
+          title: "Create-Update Roles",
+          url: "/home/role/create-update-roles",
+          onClick: () => dispatch(setSubBredCrum("")),
+        },
+        {
+          title: "Create-Update Users",
+          url: "#",
+          onClick: () => dispatch(setSubBredCrum("")),
+        },
+      ],
+    });
+  }
+
 
   return (
     <Sidebar

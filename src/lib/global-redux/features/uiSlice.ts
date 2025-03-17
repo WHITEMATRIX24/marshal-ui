@@ -5,11 +5,13 @@ import { createSlice } from "@reduxjs/toolkit";
 export interface UiStates {
   governanceModalState: boolean;
   subBreadCrum: string;
+  mainBreadcrumb: string;
 }
 
 const initialState: UiStates = {
   governanceModalState: false,
   subBreadCrum: "",
+  mainBreadcrumb: 'Dashboard',
 };
 
 export const UiSlice = createSlice({
@@ -28,6 +30,9 @@ export const UiSlice = createSlice({
     removeSubBredCrum: (state) => {
       state.subBreadCrum = "";
     },
+    setMainBreadcrumb: (state, action) => {
+      state.mainBreadcrumb = action.payload;
+    },
   },
 });
 
@@ -36,6 +41,7 @@ export const {
   showGovernanveModal,
   removeSubBredCrum,
   setSubBredCrum,
+  setMainBreadcrumb,
 } = UiSlice.actions;
 
 export default UiSlice.reducer;

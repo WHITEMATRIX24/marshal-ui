@@ -5,7 +5,6 @@ import {
   Trash,
   ChevronDown,
   ChevronUp,
-  Download,
 } from "lucide-react";
 import { saveAs } from "file-saver";
 import Papa from "papaparse";
@@ -16,7 +15,6 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-  getExpandedRowModel, // Add this
 } from "@tanstack/react-table";
 import Cookies from "js-cookie";
 
@@ -79,25 +77,25 @@ export function DataTable<
     setFilteredData(filterNestedData(data));
   }, [searchQuery, data]);
 
-  const flattenDataForExport = (data: TData[]): any[] => {
-    const flatten = (items: TData[]): any[] => {
-      return items.flatMap((item) => {
-        const { subRows, ...rest } = item as any;
-        const flattenedItem = { ...rest };
-        const subItems = subRows ? flatten(subRows) : [];
-        return [flattenedItem, ...subItems];
-      });
-    };
+  // const flattenDataForExport = (data: TData[]): any[] => {
+  //   const flatten = (items: TData[]): any[] => {
+  //     return items.flatMap((item) => {
+  //       const { subRows, ...rest } = item as any;
+  //       const flattenedItem = { ...rest };
+  //       const subItems = subRows ? flatten(subRows) : [];
+  //       return [flattenedItem, ...subItems];
+  //     });
+  //   };
 
-    return flatten(data);
-  };
+  //   return flatten(data);
+  // };
 
-  const handleExportCSV = () => {
-    const exportData = flattenDataForExport(filteredData);
-    const csv = Papa.unparse(exportData);
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-    saveAs(blob, "exported_data.csv");
-  };
+  // const handleExportCSV = () => {
+  //   const exportData = flattenDataForExport(filteredData);
+  //   const csv = Papa.unparse(exportData);
+  //   const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  //   saveAs(blob, "exported_data.csv");
+  // };
 
   const toggleRow = (rowId: number) => {
     setExpandedRows((prev) => ({
