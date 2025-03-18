@@ -50,8 +50,8 @@ export default function HomePage() {
 
             {/* Table */}
             <table className="w-full border-collapse">
-                <thead className="sticky top-0 bg-blue-900 z-100">
-                    <tr className="text-white text-[12px] px-1 h-7 bg-blue-900 text-left">
+                <thead className="sticky top-0 bg-black z-100">
+                    <tr className="text-white text-[12px] px-1 h-7 bg-black text-left">
                         <th >Role ID</th>
                         <th >Role Name</th>
                     </tr>

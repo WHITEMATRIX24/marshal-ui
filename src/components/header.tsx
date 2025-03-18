@@ -7,7 +7,7 @@ import { SettingsPopUp } from "./settingsPopup/settingsPopUp";
 import ChangeThemeButton from "./ui/chnage-theme-btn";
 import { useSelector } from "react-redux";
 import { RootState } from "@/lib/global-redux/store";
-import BreadCrumbsProvider from "./ui/breadCrumbsProvider";
+
 
 const Header = () => {
 

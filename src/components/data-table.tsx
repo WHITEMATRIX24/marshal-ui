@@ -355,13 +355,13 @@ export function DataTable<
 
       <div className="max-h-[70vh] overflow-auto relative">
         <Table className="w-full border-collapse">
-          <TableHeader className="sticky top-0 bg-blue-900 z-100">
+          <TableHeader className="sticky top-0 bg-black z-100">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
                   <TableHead
                     key={header.id}
-                    className="text-white text-[12px] px-1 h-7 bg-blue-900 shadow-md">
+                    className="text-white text-[12px] px-1 h-7 bg-black shadow-md">
                     {header.isPlaceholder
                       ? null
                       : flexRender(

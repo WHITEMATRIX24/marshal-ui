@@ -112,18 +112,18 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           title: "Role Type",
           url: "/home/role/role-type",
           onClick: () => {
-            dispatch(setMainBreadcrumb("Role/ User Management"));
+            dispatch(setMainBreadcrumb("Role / User Management"));
             dispatch(setSubBredCrum(""));
           },
         },
         {
-          title: "Create-Update Roles",
-          url: "/home/role/create-update-roles",
+          title: "Create-Update Users",
+          url: "/home/role/create-update-users",
           onClick: () => dispatch(setSubBredCrum("")),
         },
         {
-          title: "Create-Update Users",
-          url: "#",
+          title: "Create-Update Roles",
+          url: "/home/role/create-update-roles",
           onClick: () => dispatch(setSubBredCrum("")),
         },
       ],
@@ -135,7 +135,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     <Sidebar
       collapsible="icon"
       {...props}
-      className="bg-blue-950 text-white font-light"
+      className="bg-black text-white font-light"
     >
       <SidebarHeader className="pt-5">
         <Image
