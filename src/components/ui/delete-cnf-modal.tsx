@@ -11,22 +11,22 @@ const DeleteCnfModal = ({
   const handleCancelClick = () => modalCloseHandler();
 
   return (
-    <div className="fixed top-[50%] left-[50%] z-30 -translate-x-[50%] -translate-y-[50%] flex flex-col items-center gap-4 bg-white px-4 py-2 border w-96">
-      <h6 className="font-bold text-xl">Confirm Delete</h6>
-      <div className="flex flex-col gap-3">
-        <p className="">Are you sure about it?</p>
-        <div className="flex gap-8 justify-center">
-          <Link
-            href="/home/dashboard/deleteaccount"
-            className="px-3 py-2 bg-red-600 rounded-md text-white"
-          >
-            Yes
-          </Link>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+        <h2 className="text-lg font-semibold mb-3">Are you sure?</h2>
+        <p className="text-gray-600 mb-4 text-sm">
+          You are about to delete this item. This action cannot be undone.
+        </p>
+
+        <div className="flex justify-end space-x-4">
           <button
             onClick={handleCancelClick}
-            className="px-3 py-2 bg-green-600 rounded-md text-white"
+            className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 text-sm"
           >
-            No
+            Cancel
+          </button>
+          <button className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 text-sm">
+            {"Confirm"}
           </button>
         </div>
       </div>

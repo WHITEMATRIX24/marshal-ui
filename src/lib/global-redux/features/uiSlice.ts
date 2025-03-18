@@ -1,21 +1,35 @@
 "use client";
 
+import { RoleManagement } from "@/app/home/role-user-management/create-update-roles/page";
+import { UserManagement } from "@/app/home/role-user-management/create-update-users/page";
 import { createSlice } from "@reduxjs/toolkit";
 
 export interface UiStates {
   governanceModalState: boolean;
   subBreadCrum: string;
   mainBreadcrumb: string;
-  addNewUserOnRoleMenuModal: boolean;
-  addNewRoleOnRoleMenuModal: boolean;
+  addNewUserOnRoleMenuModal: {
+    isVisible: boolean;
+    data: UserManagement | null;
+  };
+  addNewRoleOnRoleMenuModal: {
+    isVisible: boolean;
+    data: RoleManagement | null;
+  };
 }
 
 const initialState: UiStates = {
   governanceModalState: false,
   subBreadCrum: "",
   mainBreadcrumb: "Dashboard",
-  addNewUserOnRoleMenuModal: false,
-  addNewRoleOnRoleMenuModal: false,
+  addNewUserOnRoleMenuModal: {
+    isVisible: false,
+    data: null,
+  },
+  addNewRoleOnRoleMenuModal: {
+    isVisible: false,
+    data: null,
+  },
 };
 
 export const UiSlice = createSlice({
@@ -37,17 +51,21 @@ export const UiSlice = createSlice({
     setMainBreadcrumb: (state, action) => {
       state.mainBreadcrumb = action.payload;
     },
-    showNewUserAddForm: (state) => {
-      state.addNewUserOnRoleMenuModal = true;
+    showNewUserAddForm: (state, action) => {
+      state.addNewUserOnRoleMenuModal.isVisible = true;
+      state.addNewUserOnRoleMenuModal.data = action.payload;
     },
     hideNewUserAddForm: (state) => {
-      state.addNewUserOnRoleMenuModal = false;
+      state.addNewUserOnRoleMenuModal.isVisible = false;
+      state.addNewUserOnRoleMenuModal.data = null;
     },
-    showNewRoleAddForm: (state) => {
-      state.addNewRoleOnRoleMenuModal = true;
+    showNewRoleAddForm: (state, action) => {
+      state.addNewRoleOnRoleMenuModal.isVisible = true;
+      state.addNewRoleOnRoleMenuModal.data = action.payload;
     },
     hideNewRoleAddForm: (state) => {
-      state.addNewRoleOnRoleMenuModal = false;
+      state.addNewRoleOnRoleMenuModal.isVisible = false;
+      state.addNewRoleOnRoleMenuModal.data = null;
     },
   },
 });

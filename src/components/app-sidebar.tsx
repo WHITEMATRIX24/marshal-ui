@@ -120,12 +120,18 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         {
           title: "Create-Update Users",
           url: "/home/role-user-management/create-update-users",
-          onClick: () => dispatch(setSubBredCrum("")),
+          onClick: () => {
+            dispatch(setMainBreadcrumb("Role / User Management"));
+            dispatch(setSubBredCrum(""));
+          },
         },
         {
           title: "Create-Update Roles",
           url: "/home/role-user-management/create-update-roles",
-          onClick: () => dispatch(setSubBredCrum("")),
+          onClick: () => {
+            dispatch(setMainBreadcrumb("Role / User Management"));
+            dispatch(setSubBredCrum(""));
+          },
         },
       ],
     });

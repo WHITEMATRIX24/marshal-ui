@@ -43,7 +43,7 @@ export function RolesManagementDataTable<TData, TValue>({
   const [pageSize, setPageSize] = React.useState(10);
   const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
 
-  const handelOpenAddNewRoleForm = () => dispatch(showNewRoleAddForm());
+  const handelOpenAddNewRoleForm = () => dispatch(showNewRoleAddForm(null));
 
   const table = useReactTable({
     data,
@@ -77,7 +77,9 @@ export function RolesManagementDataTable<TData, TValue>({
       <div className="flex justify-end gap-3 py-4">
         <Input
           placeholder="Search role names..."
-          value={(table.getColumn("role_name")?.getFilterValue() as string) ?? ""}
+          value={
+            (table.getColumn("role_name")?.getFilterValue() as string) ?? ""
+          }
           onChange={(event) =>
             table.getColumn("role_name")?.setFilterValue(event.target.value)
           }
@@ -100,14 +102,14 @@ export function RolesManagementDataTable<TData, TValue>({
                 {headerGroup.headers.map((header) => (
                   <TableHead
                     key={header.id}
-                    className="text-white text-[12px] h-7 p-1"
+                    className="text-white text-[12px] h-7 p-1 bg-black"
                   >
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                   </TableHead>
                 ))}
               </TableRow>
@@ -116,10 +118,19 @@ export function RolesManagementDataTable<TData, TValue>({
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row, index) => (
-                <TableRow key={row.id} className={`text-[11px] transition-colors hover:bg-[var(--hover-bg)] ${index % 2 === 0 ? 'bg-[var(--table-bg-even)]' : 'bg-[var(--table-bg-odd)]'
-                  }`}>
+                <TableRow
+                  key={row.id}
+                  className={`text-[11px] transition-colors hover:bg-[var(--hover-bg)] ${
+                    index % 2 === 0
+                      ? "bg-[var(--table-bg-even)]"
+                      : "bg-[var(--table-bg-odd)]"
+                  }`}
+                >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className="p-1 text-[11px] border-b">
+                    <TableCell
+                      key={cell.id}
+                      className="p-1 text-[11px] border-b"
+                    >
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
@@ -130,7 +141,10 @@ export function RolesManagementDataTable<TData, TValue>({
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
                   No results.
                 </TableCell>
               </TableRow>

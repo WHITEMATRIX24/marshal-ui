@@ -2,16 +2,32 @@
 
 import AddNewUserModal from "@/components/add_newuser_form";
 import BreadCrumbsProvider from "@/components/ui/breadCrumbsProvider";
+import DeleteCnfModal from "@/components/ui/delete-cnf-modal";
 import { UserManagementDataTable } from "@/components/userManagement/userManagement_dataTable";
+import { showNewUserAddForm } from "@/lib/global-redux/features/uiSlice";
 import { RootState } from "@/lib/global-redux/store";
 import { Pencil, Trash } from "lucide-react";
-import React from "react";
-import { useSelector } from "react-redux";
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+
+export interface UserManagement {
+  name: string;
+  email_id: string;
+  governance: string;
+  role: string;
+  status: string;
+}
 
 const CreateUpdateRole = () => {
+  const dispatch = useDispatch();
   const isModalVisible = useSelector(
-    (state: RootState) => state.ui.addNewUserOnRoleMenuModal
+    (state: RootState) => state.ui.addNewUserOnRoleMenuModal.isVisible
   );
+  const [deleteModal, setDeleteModal] = useState<boolean>(false);
+
+  // delete modal close handler
+  const handleDeletemodalClose = () => setDeleteModal(false);
+
   const columnData = [
     {
       accessorKey: "name",
@@ -41,12 +57,28 @@ const CreateUpdateRole = () => {
     {
       id: "actions",
       header: "Actions",
-      cell: () => (
-        <div className="flex gap-2 ">
-          <Pencil className="h-3 w-3 text-blue-900 cursor-pointer" />
-          <Trash className="h-3 w-3 text-orange-500 cursor-pointer" />
-        </div>
-      ),
+      cell: ({ row }: any) => {
+        const handleEditOption = () => {
+          dispatch(showNewUserAddForm(row.original));
+        };
+
+        const handleDeleteOption = () => {
+          setDeleteModal(true);
+        };
+
+        return (
+          <div className="flex gap-2 ">
+            <Pencil
+              onClick={handleEditOption}
+              className="h-3 w-3 text-blue-900 cursor-pointer"
+            />
+            <Trash
+              onClick={handleDeleteOption}
+              className="h-3 w-3 text-orange-500 cursor-pointer"
+            />
+          </div>
+        );
+      },
     },
   ];
   const tableData = [
@@ -72,6 +104,9 @@ const CreateUpdateRole = () => {
         </div>
       </div>
       {isModalVisible && <AddNewUserModal />}
+      {deleteModal && (
+        <DeleteCnfModal modalCloseHandler={handleDeletemodalClose} />
+      )}
     </>
   );
 };
