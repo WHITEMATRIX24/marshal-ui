@@ -26,7 +26,9 @@ const AddNewUserModal = () => {
     <div className="fixed top-0 -left-0 h-full w-full bg-black/50 flex justify-center items-center pointer-events-auto">
       <div className="flex flex-col gap-10 w-full md:w-[30rem] h-auto bg-white dark:bg-black px-5 py-4 rounded-md dark:border dark:border-white">
         <div className="flex justify-between items-center">
-          <h6 className="text-[14px] font-semibold">Add New User</h6>
+          <h6 className="text-[14px] font-semibold">
+            {userEditData ? "Edit User" : "Add New User"}
+          </h6>
           <button onClick={handleModalClose}>X</button>
         </div>
         <form className="flex flex-col gap-4">
