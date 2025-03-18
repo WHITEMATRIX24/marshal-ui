@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { toast } from "sonner";
-import Cookies from "js-cookie";
-import { Trash2 } from "lucide-react";
+import Cookies from "js-cookie";;
 import { deleteControlsApi } from "@/services/apis";
 
 interface DeleteModalProps {
@@ -65,27 +64,30 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-                <h2 className="text-lg font-semibold mb-4">Are you sure?</h2>
-                <p className="text-gray-600 mb-4">
+            <div className="bg-white p-6 rounded-lg shadow-lg w-96  dark:bg-black dark:border dark:border-gray-600">
+                <div className="flex justify-between items-center">
+                    <h6 className="text-[14px] font-semibold py-2" >Are you sure?</h6>
+                    <button onClick={onClose}>X</button>
+                </div>
+                <p className="text-gray-600 mb-4 text-[12px] dark:text-gray-300">
                     You are about to delete this item. This action cannot be undone.
                 </p>
-
-                <div className="flex justify-end space-x-4">
+                <div className="flex gap-4 mx-auto mt-3 justify-end">
                     <button
                         onClick={onClose}
-                        className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300"
+                        className="px-4 py-0.5 bg-transparent border border-black text-black text-[12px] rounded-[5px] dark:text-white dark:bg-[var(--table-bg-even)]"
+                        type="reset"
                     >
                         Cancel
                     </button>
-                    <button
+                    <button className="px-4 py-0.5 bg-black text-white border-black text-[12px] rounded-[5px] dark:text-white dark:bg-[var(--table-bg-even)]"
                         onClick={deleteControl}
-                        disabled={loading}
-                        className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
-                    >
+                        disabled={loading}>
                         {loading ? "Deleting..." : "Confirm"}
                     </button>
                 </div>
+
+
             </div>
         </div>
     );

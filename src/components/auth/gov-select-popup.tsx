@@ -54,7 +54,7 @@ export const GovernanceSelectPopUp = () => {
 
   return (
     <div className="fixed h-full w-full bg-black/50 flex justify-center items-center pointer-events-auto">
-      <div className="flex flex-col gap-4 w-full md:w-[30rem] h-auto bg-white dark:bg-black px-5 py-4 rounded-md dark:border dark:border-white">
+      <div className="flex flex-col gap-4 w-full md:w-[30rem] h-auto bg-white dark:bg-black px-5 py-4 rounded-md dark:border dark:border-gray-600">
         <h6 className="text-[16px] font-semibold">Select the governance</h6>
         <div className="flex flex-col gap-3 max-h-90 overflow-y-auto">
           {governanceKeys.length > 0 ? (

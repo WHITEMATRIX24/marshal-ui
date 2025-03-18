@@ -276,15 +276,18 @@ export function DataTable<
     <div className="w-full">
       {editingRow && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg w-96">
-            <h2 className="text-xl font-bold mb-4">Edit Row</h2>
+          <div className="bg-white p-4 rounded-lg w-96  dark:bg-black dark:border dark:border-gray-600">
+            <div className="flex justify-between items-center">
+              <h6 className="text-[14px] font-semibold py-2" >Edit Item</h6>
+              <button onClick={() => setEditingRow(null)}>X</button>
+            </div>
             <form onSubmit={handleSubmit}>
-              <div className="mb-4">
-                <label className="block text-sm font-medium mb-2">
+              <div className="mb-2">
+                <label className="block text-[11px] mb-2">
                   Applicable
                 </label>
                 <select
-                  className="w-full p-2 border rounded"
+                  className="w-full p-1 text-[11px] border rounded"
                   value={applicableValue}
                   onChange={(e) => setApplicableValue(e.target.value)}
                 >
@@ -293,12 +296,12 @@ export function DataTable<
                 </select>
               </div>
               <div className="mb-4">
-                <label className="block text-sm font-medium mb-2">
+                <label className="block text-[11px] mb-2">
                   Justification
                 </label>
                 <input
                   type="text"
-                  className="w-full p-2 border rounded"
+                  className="w-full text-[11px] p-1 border rounded"
                   value={justificationValue}
                   onChange={(e) => setJustificationValue(e.target.value)}
                   required={applicableValue === "Yes"}
@@ -307,14 +310,14 @@ export function DataTable<
               <div className="flex justify-end space-x-2">
                 <button
                   type="button"
-                  className="px-4 py-2 text-gray-500"
+                  className="px-4 py-0.5 bg-transparent border border-black text-black text-[12px] rounded-[5px] dark:text-white dark:bg-[var(--table-bg-even)]"
                   onClick={() => setEditingRow(null)}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-blue-500 text-white rounded disabled:opacity-50"
+                  className="px-4 py-0.5 bg-black border border-black text-white text-[12px] rounded-[5px] dark:text-white dark:bg-[var(--table-bg-even)]"
                   disabled={
                     applicableValue === "Yes" && !justificationValue.trim()
                   }

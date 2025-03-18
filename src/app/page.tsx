@@ -102,7 +102,7 @@ export default function Login() {
                 onChange={(e) =>
                   setLoginCred({ ...loginCred, email: e.target.value })
                 }
-                className="w-full outline-none border border-gray-300 bg-greycomponentbg px-3 py-2 rounded-md"
+                className="w-full outline-none border border-gray-600 bg-greycomponentbg px-3 py-2 rounded-md"
               />
               <FontAwesomeIcon
                 className="absolute top-3 right-4"
@@ -118,7 +118,7 @@ export default function Login() {
                 onChange={(e) =>
                   setLoginCred({ ...loginCred, password: e.target.value })
                 }
-                className="w-full outline-none border border-gray-300 bg-greycomponentbg ps-3 pe-16 py-2 rounded-md"
+                className="w-full outline-none border border-gray-600 bg-greycomponentbg ps-3 pe-16 py-2 rounded-md"
               />
               {/* <p className="ms-auto text-textcolorblue">Link Button Label</p> */}
               <button
@@ -139,7 +139,7 @@ export default function Login() {
                     value={checkvalue}
                     id="switch-component"
                     type="checkbox"
-                    className="peer appearance-none w-11 h-5 bg-greycomponentbg rounded-full checked:bg-slate-800 cursor-pointer transition-colors duration-300 border border-gray-300"
+                    className="peer appearance-none w-11 h-5 bg-greycomponentbg rounded-full checked:bg-slate-800 cursor-pointer transition-colors duration-300 border border-gray-600"
                   />
                   <label
                     htmlFor="switch-component"
@@ -159,7 +159,7 @@ export default function Login() {
             >
               Sign in
             </button>
-            <div className="w-full border mt-3 dark:border-white"></div>
+            <div className="w-full border mt-3 dark:border-gray-600"></div>
             <p className="m-0 text-center">
               Dont have an account?{" "}
               <span className="ms-2 text-textcolorblue">Sign up now</span>

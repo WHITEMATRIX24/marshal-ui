@@ -100,14 +100,15 @@ export function UserManagementDataTable<TData, TValue>({
                 {headerGroup.headers.map((header) => (
                   <TableHead
                     key={header.id}
-                    className="text-white text-[12px] h-7 p-1 bg-black"
+                    className={`text-white text-[12px] h-7 p-1  ${header.id === "actions" ? "text-center" : ""}`}
                   >
+
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
                   </TableHead>
                 ))}
               </TableRow>
@@ -118,11 +119,10 @@ export function UserManagementDataTable<TData, TValue>({
               table.getRowModel().rows.map((row, index) => (
                 <TableRow
                   key={row.id}
-                  className={`text-[11px] transition-colors hover:bg-[var(--hover-bg)] ${
-                    index % 2 === 0
-                      ? "bg-[var(--table-bg-even)]"
-                      : "bg-[var(--table-bg-odd)]"
-                  }`}
+                  className={`text-[11px] transition-colors hover:bg-[var(--hover-bg)] ${index % 2 === 0
+                    ? "bg-[var(--table-bg-even)]"
+                    : "bg-[var(--table-bg-odd)]"
+                    }`}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell

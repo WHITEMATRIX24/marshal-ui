@@ -67,7 +67,7 @@ const CreateUpdateRole = () => {
         };
 
         return (
-          <div className="flex gap-2 ">
+          <div className="flex justify-center space-x-2 mr-4">
             <Pencil
               onClick={handleEditOption}
               className="h-3 w-3 text-blue-900 cursor-pointer"
