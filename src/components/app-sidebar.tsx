@@ -26,9 +26,11 @@ import Image from "next/image";
 import { Standard } from "@/models/standards";
 import { useDispatch } from "react-redux";
 import { changeSelectedStanderds } from "@/lib/global-redux/features/standerdsSlice";
-import { setMainBreadcrumb, setSubBredCrum } from "@/lib/global-redux/features/uiSlice";
+import {
+  setMainBreadcrumb,
+  setSubBredCrum,
+} from "@/lib/global-redux/features/uiSlice";
 import { useSidebar } from "@/components/ui/sidebar";
-
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const dispatch = useDispatch();
@@ -93,7 +95,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         onClick: () => {
           handleStandardClick(standard.id, standard.std_code);
           dispatch(setMainBreadcrumb("Portfolio"));
-
         },
       })),
     },
@@ -110,7 +111,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       items: [
         {
           title: "Role Type",
-          url: "/home/role/role-type",
+          url: "/home/role-user-management/role-type",
           onClick: () => {
             dispatch(setMainBreadcrumb("Role / User Management"));
             dispatch(setSubBredCrum(""));
@@ -118,18 +119,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         },
         {
           title: "Create-Update Users",
-          url: "/home/role/create-update-users",
+          url: "/home/role-user-management/create-update-users",
           onClick: () => dispatch(setSubBredCrum("")),
         },
         {
           title: "Create-Update Roles",
-          url: "/home/role/create-update-roles",
+          url: "/home/role-user-management/create-update-roles",
           onClick: () => dispatch(setSubBredCrum("")),
         },
       ],
     });
   }
-
 
   return (
     <Sidebar

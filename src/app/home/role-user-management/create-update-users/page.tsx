@@ -43,12 +43,8 @@ const CreateUpdateRole = () => {
       header: "Actions",
       cell: () => (
         <div className="flex gap-2 ">
-          <Pencil
-            className="h-3 w-3 text-blue-900 cursor-pointer"
-
-          />
-          <Trash className="h-3 w-3 text-orange-500 cursor-pointer"
-          />
+          <Pencil className="h-3 w-3 text-blue-900 cursor-pointer" />
+          <Trash className="h-3 w-3 text-orange-500 cursor-pointer" />
         </div>
       ),
     },
