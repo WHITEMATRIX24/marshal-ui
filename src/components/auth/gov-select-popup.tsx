@@ -54,18 +54,18 @@ export const GovernanceSelectPopUp = () => {
 
   return (
     <div className="fixed h-full w-full bg-black/50 flex justify-center items-center pointer-events-auto">
-      <div className="flex flex-col gap-6 w-full md:w-[30rem] h-auto bg-white dark:bg-black px-5 py-4 rounded-md dark:border dark:border-white">
-        <h6 className="text-xl font-semibold">Select the governance</h6>
-        <div className="flex flex-col gap-3 h-80 overflow-y-auto">
+      <div className="flex flex-col gap-4 w-full md:w-[30rem] h-auto bg-white dark:bg-black px-5 py-4 rounded-md dark:border dark:border-white">
+        <h6 className="text-[16px] font-semibold">Select the governance</h6>
+        <div className="flex flex-col gap-3 max-h-90 overflow-y-auto">
           {governanceKeys.length > 0 ? (
             governanceKeys.map((governanceKey: string, index: number) => (
               <button
                 key={index}
-                className="flex justify-between items-center px-4 py-5 border border-grey-300 rounded-lg"
+                className="flex justify-between items-center px-2 py-1 border-b border-grey-300 "
                 onClick={() => handleSelect(governanceKey)}
               >
-                <h6 className="dark:text-white">{governanceKey}</h6>
-                <FontAwesomeIcon icon={faArrowRight} />
+                <h6 className="dark:text-white text-[11px]">{governanceKey}</h6>
+                <FontAwesomeIcon icon={faArrowRight} className="text-[11px]" />
               </button>
             ))
           ) : (

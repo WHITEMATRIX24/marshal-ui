@@ -19,7 +19,7 @@ const Header = () => {
   return (
     <header >
       <div className="flex items-center justify-between w-full px-4">
-        <h1 className="roboto-text text-[28px] font-[700] capitalize ">
+        <h1 className="roboto-text text-[22px] font-[700] capitalize ">
           {mainBreadcrumb}
         </h1>
         <div className="flex items-center gap-5 mr-4">

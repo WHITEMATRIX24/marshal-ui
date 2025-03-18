@@ -79,8 +79,8 @@ export function NavUser({ user, avatar }: { user: UserInfo; avatar: string }) {
                 <AvatarFallback className="rounded-lg">CN</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">{user?.username}</span>
-                <span className="truncate text-xs">{user?.email}</span>
+                <span className="truncate font-semibold text-[11px]">{user?.username}</span>
+                <span className="truncate text-[10px]">{user?.email}</span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
@@ -93,19 +93,19 @@ export function NavUser({ user, avatar }: { user: UserInfo; avatar: string }) {
           >
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                <Avatar className="h-8 w-8 rounded-lg">
+                <Avatar className="h-6 w-6 rounded-lg">
                   <AvatarImage
                     src="/user.svg"
                     alt={user?.username}
-                    className="w-[30px] h-[30px] p-0.5 bg-white rounded-[5px]"
+                    className="w-[25px] h-[25px] p-0 bg-white rounded-[5px]"
                   />
                 </Avatar>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">
+                <div className="grid flex-1 text-left text-[11px] leading-tight">
+                  <span className="truncate font-semibold text-[13px]">
                     {user?.username}
                   </span>
                   {parsedSelectedGovernance && (
-                    <span className="truncate text-xs">
+                    <span className="truncate text-[11px]">
                       {parsedSelectedGovernance[0]?.role_name}
                     </span>
                   )}
@@ -114,26 +114,26 @@ export function NavUser({ user, avatar }: { user: UserInfo; avatar: string }) {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem className="text-[11px]">
                 <Blend />
                 {`Governance: ${selectedGovernanceKey}`}
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem className="text-[11px]">
                 <Edit2 />
-                <button onClick={handleChangeGovernance}>
+                <button onClick={handleChangeGovernance} className="text-[11px]">
                   Change Governance
                 </button>
               </DropdownMenuItem>
-              <DropdownMenuItem className="pointer-events-none opacity-50">
+              <DropdownMenuItem className="pointer-events-none opacity-50 text-[11px]">
                 <UserRoundPen />
                 Change Role
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleLogout}>
+            <DropdownMenuItem onClick={handleLogout} className="text-[11px]">
               <LogOut />
               Log out
             </DropdownMenuItem>
