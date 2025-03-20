@@ -3,15 +3,6 @@ import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { useQuery } from "@tanstack/react-query";
-import {
-  Breadcrumb,
-  BreadcrumbEllipsis,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
 import { DataTable } from "@/components/data-table";
 import { columns } from "@/components/columns";
 import { fetchL1ControlsByStandardApi } from "@/services/apis";
@@ -19,6 +10,7 @@ import { fetchL1ControlsByStandardApi } from "@/services/apis";
 import { useSelector } from "react-redux";
 import { RootState } from "@/lib/global-redux/store";
 import { ApiResponse, Control } from "@/models/control";
+import BreadCrumbsProvider from "@/components/ui/breadCrumbsProvider";
 
 const fetchControls = async (stdId: string): Promise<Control[]> => {
   if (!stdId) throw new Error("stdId is required");
@@ -39,44 +31,6 @@ const fetchControls = async (stdId: string): Promise<Control[]> => {
 };
 
 // Breadcrumb Component
-function Breadcrumbs() {
-  const pathname = usePathname();
-  const pathSegments = pathname.split("/").filter(Boolean);
-  const lastSegment = pathSegments[pathSegments.length - 1];
-  const subMenu = useSelector((state: RootState) => state.ui.subBreadCrum);
-
-  return (
-    <Breadcrumb>
-      <BreadcrumbList>
-        <BreadcrumbItem>
-          <BreadcrumbLink href="/" className="text-[11px]">Home</BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator />
-        <BreadcrumbItem>
-          <BreadcrumbEllipsis className="text-[11px]" />
-        </BreadcrumbItem>
-        {lastSegment && (
-          <>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbPage className="text-[11px]">
-                {decodeURIComponent(lastSegment).replace(/-/g, " ")}
-              </BreadcrumbPage>
-            </BreadcrumbItem>
-          </>
-        )}
-        {subMenu && (
-          <>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbPage className="text-[11px]">{subMenu}</BreadcrumbPage>
-            </BreadcrumbItem>
-          </>
-        )}
-      </BreadcrumbList>
-    </Breadcrumb>
-  );
-}
 
 // Function to update the DataTable data
 function updateData(data: Control[], updatedRow: Control): Control[] {
@@ -169,7 +123,7 @@ export default function Page() {
     <div className="flex flex-col w-full mb-[50px]">
       <header className="flex flex-col shrink-0 gap-0 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
         <div className="flex items-center gap-2 px-4">
-          <Breadcrumbs />
+          <BreadCrumbsProvider />
         </div>
       </header>
       <div className="py-0 w-full px-4">

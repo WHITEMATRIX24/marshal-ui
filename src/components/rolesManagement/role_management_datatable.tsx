@@ -83,11 +83,11 @@ export function RolesManagementDataTable<TData, TValue>({
           onChange={(event) =>
             table.getColumn("role_name")?.setFilterValue(event.target.value)
           }
-          className="max-w-sm px-3 h-7 text-[11px]"
+          className="max-w-sm px-3 h-7 text-[11px] bg-[#f9fafb] dark:bg-[#e5e5e5]"
         />
         <div className="flex gap-5">
           <button
-            className="bg-black text-white text-[11px] px-2 py-1 rounded-[5px]"
+            className="bg-[#0890CA] text-white text-[11px] px-2 py-1 rounded-[5px] dark:bg-[#6BC1E6] dark:text-[black]"
             onClick={handelOpenAddNewRoleForm}
           >
             Add New Role
@@ -96,20 +96,20 @@ export function RolesManagementDataTable<TData, TValue>({
       </div>
       <div className="rounded-md border">
         <Table>
-          <TableHeader className="bg-black">
+          <TableHeader className="bg-[var(--purple)]">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
                   <TableHead
                     key={header.id}
-                    className="text-white text-[12px] h-7 p-1 bg-black"
+                    className={`text-white text-[12px] h-7 p-1  ${header.id === "actions" ? "text-center" : ""}`}
                   >
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
                   </TableHead>
                 ))}
               </TableRow>
@@ -120,11 +120,10 @@ export function RolesManagementDataTable<TData, TValue>({
               table.getRowModel().rows.map((row, index) => (
                 <TableRow
                   key={row.id}
-                  className={`text-[11px] transition-colors hover:bg-[var(--hover-bg)] ${
-                    index % 2 === 0
-                      ? "bg-[var(--table-bg-even)]"
-                      : "bg-[var(--table-bg-odd)]"
-                  }`}
+                  className={`text-[11px] transition-colors hover:bg-[var(--hover-bg)] ${index % 2 === 0
+                    ? "bg-[var(--table-bg-even)] text-[black]"
+                    : "bg-[var(--table-bg-odd)] text-[black]"
+                    }`}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell
@@ -184,7 +183,7 @@ export function RolesManagementDataTable<TData, TValue>({
           <Button
             variant="outline"
             size="sm"
-            className="text-[10px]"
+            className="text-[10px] text-[var(--blue)]"
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
@@ -196,7 +195,7 @@ export function RolesManagementDataTable<TData, TValue>({
           <Button
             variant="outline"
             size="sm"
-            className="text-[10px]"
+            className="text-[10px] text-[var(--blue)]"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
@@ -204,6 +203,6 @@ export function RolesManagementDataTable<TData, TValue>({
           </Button>
         </div>
       </div>
-    </div>
+    </div >
   );
 }

@@ -61,6 +61,12 @@
     --hover-bg: #0b8cd6;
     --table-bg-even: #f9fafb;
     --table-bg-odd: #ffffff;
+    --blue: #0890CA;
+    --red: #C20114;
+    --grey: #7C9299;
+    --purple: #531CB3;
+    --black: #000000;
+
   }
 
   .dark {
@@ -99,6 +105,11 @@
     --table-bg-even: #E5E5E5;
     --table-bg-odd: #ffffff;
     --hover-bg: #6BC1E6;
+    --blue: #6BC1E6;
+    --red: #E18358;
+    --grey: #E5e5e5;
+    --purple: #6E3A99;
+    --black: #FFFFFF;
   }
 }
 

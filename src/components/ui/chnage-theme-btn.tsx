@@ -1,6 +1,7 @@
 import React from "react";
 import { useTheme } from "next-themes";
-import { Moon, Sun } from "lucide-react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faMoon, faSun } from "@fortawesome/free-solid-svg-icons";
 
 const ChangeThemeButton = () => {
   const { setTheme, theme } = useTheme();
@@ -11,11 +12,12 @@ const ChangeThemeButton = () => {
   };
 
   return (
-    <button onClick={toggleTheme} className="relative p-2 rounded-full">
+    <button onClick={toggleTheme} className="relative rounded-full pt-[2px]">
       {theme == "light" ? (
-        <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+        <FontAwesomeIcon icon={faSun} className=" w-[18px] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0 text-[#7c9299] dark:text-[#e5e5e5]" />
+
       ) : (
-        <Moon className="h-[1.2rem] w-[1.2rem] scale-0 transition-all dark:scale-100" />
+        <FontAwesomeIcon icon={faMoon} className=" w-[18px] scale-0 transition-all dark:scale-100 text-[#7c9299] dark:text-[#e5e5e5]" />
       )}
     </button>
   );

@@ -44,14 +44,14 @@ export default function HomePage() {
                     placeholder="Search..."
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    className="max-w-sm px-3 h-7 text-[11px]"
+                    className="max-w-sm px-3 h-7 text-[11px] bg-[#f9fafb] dark:bg-[#e5e5e5]"
                 />
             </div>
 
             {/* Table */}
             <table className="w-full border-collapse">
-                <thead className="sticky top-0 bg-black z-100">
-                    <tr className="text-white text-[12px] px-1 h-7 bg-black text-left">
+                <thead className="sticky top-0 bg-[#4F028F] dark:bg-[#6E3A99] z-100">
+                    <tr className="text-white text-[12px] px-1 h-7 bg-[#4F028F] dark:bg-[#6E3A99] text-left">
                         <th >Role ID</th>
                         <th >Role Name</th>
                     </tr>
@@ -59,7 +59,7 @@ export default function HomePage() {
                 <tbody className="overflow-y-auto">
                     {currentRoles.length > 0 ? (
                         currentRoles.map((role, index) => (
-                            <tr key={role.id} className={`text-[11px] transition-colors hover:bg-[var(--hover-bg)] ${index % 2 === 0 ? 'bg-[var(--table-bg-even)]' : 'bg-[var(--table-bg-odd)]'
+                            <tr key={role.id} className={`text-[11px] transition-colors hover:bg-[var(--hover-bg)] ${index % 2 === 0 ? 'bg-[var(--table-bg-even)] text-black' : 'bg-[var(--table-bg-odd)] text-black'
                                 }`}>
                                 <td className="border-b p-1">{role.id}</td>
                                 <td className="border-b p-1">{role.name}</td>
@@ -107,7 +107,7 @@ export default function HomePage() {
                     <Button
                         variant="outline"
                         size="sm"
-                        className="text-[10px]"
+                        className="text-[10px] text-[#0392cb] dark:text-[#69c3df]"
                         onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                         disabled={currentPage === 1}
                     >
@@ -119,7 +119,7 @@ export default function HomePage() {
                     <Button
                         variant="outline"
                         size="sm"
-                        className="text-[10px]"
+                        className="text-[10px] text-[#0392cb] dark:text-[#69c3df]"
                         onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
                         disabled={currentPage === totalPages}
                     >

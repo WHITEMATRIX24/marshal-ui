@@ -120,7 +120,7 @@ export function DataTable<
                 setJustificationValue((row.original as any).justification);
               }}
             />
-            <Trash className="h-4 w-4 text-orange-500 cursor-pointer" />
+            <Trash className="h-4 w-4 text-[#C20114] cursor-pointer" />
           </div>
         ),
       },
@@ -225,7 +225,7 @@ export function DataTable<
 
         <TableRow
           key={row.ctrl_id}
-          className={`transition-colors hover:bg-[var(--hover-bg)] ${expandedRows[row.ctrl_id] ? "bg-[var(--hover-bg)]" : index % 2 === 0 ? 'bg-[var(--table-bg-even)]' : 'bg-[var(--table-bg-odd)]'
+          className={`transition-colors hover:bg-[var(--hover-bg)] ${expandedRows[row.ctrl_id] ? "bg-[var(--hover-bg)]" : index % 2 === 0 ? 'bg-[var(--table-bg-even)] text-black' : 'bg-[var(--table-bg-odd)] text-black'
             }`}
         >
 
@@ -257,7 +257,7 @@ export function DataTable<
                 className="h-3 w-3 text-blue-900 cursor-pointer"
                 onClick={() => openEditModal(row)}
               />
-              <Trash className="h-3 w-3 text-orange-500 cursor-pointer"
+              <Trash className="h-3 w-3 text-[#C20114] cursor-pointer"
                 onClick={() => setDeletingCtrlId(row.ctrl_id)} />
             </div>
           </TableCell>
@@ -345,7 +345,7 @@ export function DataTable<
           placeholder="Search..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="max-w-sm px-3 h-7  text-[11px]"
+          className="max-w-sm px-3 h-7  text-[11px] bg-[#f9fafb] dark:bg-[#e5e5e5]"
         />
 
         {/* <Button
@@ -358,13 +358,13 @@ export function DataTable<
 
       <div className="max-h-[70vh] overflow-auto relative">
         <Table className="w-full border-collapse">
-          <TableHeader className="sticky top-0 bg-black z-100">
+          <TableHeader className="sticky top-0 bg-[#4F028F] dark:bg-[#6E3A99] z-100">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
                   <TableHead
                     key={header.id}
-                    className="text-white text-[12px] px-1 h-7 bg-black shadow-md">
+                    className="text-white text-[12px] px-1 h-7 bg-[#4F028F] dark:bg-[#6E3A99] shadow-md">
                     {header.isPlaceholder
                       ? null
                       : flexRender(
@@ -414,7 +414,7 @@ export function DataTable<
           <Button
             variant="outline"
             size="sm"
-            className="text-[10px]"
+            className="text-[10px] text-[#0392cb] dark:text-[#69c3df]"
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
@@ -426,7 +426,7 @@ export function DataTable<
           <Button
             variant="outline"
             size="sm"
-            className="text-[10px]"
+            className="text-[10px] text-[#0392cb] dark:text-[#69c3df]"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
