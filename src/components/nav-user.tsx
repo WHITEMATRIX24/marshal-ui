@@ -79,8 +79,8 @@ export function NavUser({ user, avatar }: { user: UserInfo; avatar: string }) {
                 <AvatarFallback className="rounded-lg">CN</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold text-[11px]">{user?.username}</span>
-                <span className="truncate text-[10px]">{user?.email}</span>
+                <span className="truncate font-semibold text-[11px] dark:text-[#E18358] text-[#c20114]">{user?.username}</span>
+                <span className="truncate text-[10px] text-white">{user?.email}</span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>

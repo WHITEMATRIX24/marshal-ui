@@ -33,7 +33,7 @@ const BreadCrumbsProvider = () => {
     <Breadcrumb>
       <BreadcrumbList>
         <BreadcrumbItem>
-          <BreadcrumbLink href="/" className="text-[11px]">
+          <BreadcrumbLink href="/" className="text-[11px] text-[#4f0290] dark:text-[#6E3A99f]">
             Home
           </BreadcrumbLink>
         </BreadcrumbItem>

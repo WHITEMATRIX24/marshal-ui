@@ -58,7 +58,7 @@
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
-    --hover-bg: #dbeafe;
+    --hover-bg: #0b8cd6;
     --table-bg-even: #f9fafb;
     --table-bg-odd: #ffffff;
   }
@@ -72,7 +72,7 @@
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
-    --background: 224 18% 7%;
+    --background: #2a2a2a;
     --foreground: 210 20% 98%;
     --card: 224 71.4% 4.1%;
     --card-foreground: 210 20% 98%;
@@ -96,9 +96,9 @@
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
-    --table-bg-even: #1e1e1e;
-    --table-bg-odd: #2a2a2a;
-    --hover-bg: #374151;
+    --table-bg-even: #E5E5E5;
+    --table-bg-odd: #ffffff;
+    --hover-bg: #6BC1E6;
   }
 }
 

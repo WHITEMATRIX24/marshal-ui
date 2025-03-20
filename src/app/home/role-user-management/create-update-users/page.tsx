@@ -74,7 +74,7 @@ const CreateUpdateRole = () => {
             />
             <Trash
               onClick={handleDeleteOption}
-              className="h-3 w-3 text-orange-500 cursor-pointer"
+              className="h-3 w-3 text-[#C20114] cursor-pointer"
             />
           </div>
         );
@@ -82,6 +82,27 @@ const CreateUpdateRole = () => {
     },
   ];
   const tableData = [
+    {
+      name: "test",
+      email_id: "test",
+      governance: "test",
+      role: "test",
+      status: "test",
+    },
+    {
+      name: "test",
+      email_id: "test",
+      governance: "test",
+      role: "test",
+      status: "test",
+    },
+    {
+      name: "test",
+      email_id: "test",
+      governance: "test",
+      role: "test",
+      status: "test",
+    },
     {
       name: "test",
       email_id: "test",

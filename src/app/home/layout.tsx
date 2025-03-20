@@ -18,7 +18,7 @@ export default async function Layout({
   return (
     <SidebarProvider>
       <AppSidebar />
-      <SidebarTrigger />
+      <SidebarTrigger className="py-2" />
       <main className="w-full ml-[0px] mt-[10px]">
         <Header />
         {children}

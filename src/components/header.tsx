@@ -7,6 +7,8 @@ import { SettingsPopUp } from "./settingsPopup/settingsPopUp";
 import ChangeThemeButton from "./ui/chnage-theme-btn";
 import { useSelector } from "react-redux";
 import { RootState } from "@/lib/global-redux/store";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBell } from "@fortawesome/free-solid-svg-icons";
 
 
 const Header = () => {
@@ -19,11 +21,11 @@ const Header = () => {
   return (
     <header >
       <div className="flex items-center justify-between w-full px-4">
-        <h1 className="roboto-text text-[22px] font-[700] capitalize ">
+        <h1 className="roboto-text text-[22px] font-[700] capitalize text-[#068cca] dark:text-[#6bc2e6] ">
           {mainBreadcrumb}
         </h1>
         <div className="flex items-center gap-5 mr-4">
-          <Bell className="w-[18px] h-[18px] cursor-pointer" />
+          <FontAwesomeIcon className="w-[18px] h-[18px] cursor-pointer" icon={faBell} />
           <ChangeThemeButton />
           <Settings
             className="w-[18px] h-[18px] cursor-pointer"

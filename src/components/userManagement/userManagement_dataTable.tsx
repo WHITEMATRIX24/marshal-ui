@@ -81,11 +81,11 @@ export function UserManagementDataTable<TData, TValue>({
           onChange={(event) =>
             table.getColumn("name")?.setFilterValue(event.target.value)
           }
-          className="max-w-sm px-3 h-7 text-[11px]"
+          className="max-w-sm px-3 h-7 text-[11px] bg-[#f9fafb] dark:bg-[#e5e5e5]"
         />
         <div className="flex gap-5">
           <button
-            className="bg-black text-white text-[11px] px-2 py-1 rounded-[5px]"
+            className="bg-[#0890CA] text-white text-[11px] px-2 py-1 rounded-[5px] dark:bg-[#6BC1E6] dark:text-[black]"
             onClick={handelOpenAddNewUserForm}
           >
             Add New User
@@ -94,7 +94,7 @@ export function UserManagementDataTable<TData, TValue>({
       </div>
       <div className="rounded-md border">
         <Table>
-          <TableHeader className="bg-black">
+          <TableHeader className="bg-[#4F028F] dark:bg-[#6E3A99]">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
@@ -120,8 +120,8 @@ export function UserManagementDataTable<TData, TValue>({
                 <TableRow
                   key={row.id}
                   className={`text-[11px] transition-colors hover:bg-[var(--hover-bg)] ${index % 2 === 0
-                    ? "bg-[var(--table-bg-even)]"
-                    : "bg-[var(--table-bg-odd)]"
+                    ? "bg-[var(--table-bg-even)] text-[black]"
+                    : "bg-[var(--table-bg-odd)] text-[black]"
                     }`}
                 >
                   {row.getVisibleCells().map((cell) => (
@@ -182,7 +182,7 @@ export function UserManagementDataTable<TData, TValue>({
           <Button
             variant="outline"
             size="sm"
-            className="text-[10px]"
+            className="text-[10px] text-[#0392cb] dark:text-[#69c3df]"
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
@@ -194,7 +194,7 @@ export function UserManagementDataTable<TData, TValue>({
           <Button
             variant="outline"
             size="sm"
-            className="text-[10px]"
+            className="text-[10px] text-[#0392cb] dark:text-[#69c3df]"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
