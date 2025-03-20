@@ -14,10 +14,10 @@ const ChangeThemeButton = () => {
   return (
     <button onClick={toggleTheme} className="relative rounded-full pt-[2px]">
       {theme == "light" ? (
-        <FontAwesomeIcon icon={faSun} className=" w-[18px] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0 text-[#7c9299] dark:text-[#e5e5e5]" />
+        <FontAwesomeIcon icon={faSun} className=" w-[18px] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0 text-[var(--grey)]" />
 
       ) : (
-        <FontAwesomeIcon icon={faMoon} className=" w-[18px] scale-0 transition-all dark:scale-100 text-[#7c9299] dark:text-[#e5e5e5]" />
+        <FontAwesomeIcon icon={faMoon} className=" w-[18px] scale-0 transition-all dark:scale-100 text-[var(--grey)]" />
       )}
     </button>
   );

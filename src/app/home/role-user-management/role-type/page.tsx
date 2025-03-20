@@ -44,14 +44,14 @@ export default function HomePage() {
                     placeholder="Search..."
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    className="max-w-sm px-3 h-7 text-[11px] bg-[#f9fafb] dark:bg-[#e5e5e5]"
+                    className="max-w-sm px-3 h-7 text-[11px] bg-[#f9fafb] dark:bg-[#E5e5e5]"
                 />
             </div>
 
             {/* Table */}
             <table className="w-full border-collapse">
-                <thead className="sticky top-0 bg-[#4F028F] dark:bg-[#6E3A99] z-100">
-                    <tr className="text-white text-[12px] px-1 h-7 bg-[#4F028F] dark:bg-[#6E3A99] text-left">
+                <thead className="sticky top-0 z-100">
+                    <tr className="text-white text-[12px] px-1 h-7 bg-[var(--purple)] text-left">
                         <th >Role ID</th>
                         <th >Role Name</th>
                     </tr>
