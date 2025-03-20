@@ -57,6 +57,7 @@ const CreateUpdateRole = () => {
     {
       id: "actions",
       header: "Actions",
+      className: "w-10",
       cell: ({ row }: any) => {
         const handleEditOption = () => {
           dispatch(showNewUserAddForm(row.original));
@@ -67,7 +68,7 @@ const CreateUpdateRole = () => {
         };
 
         return (
-          <div className="flex justify-center space-x-2 mr-4">
+          <div className="w-full flex justify-center space-x-2">
             <Pencil
               onClick={handleEditOption}
               className="h-3 w-3 text-blue-900 cursor-pointer"

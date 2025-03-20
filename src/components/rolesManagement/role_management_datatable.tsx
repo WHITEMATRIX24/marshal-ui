@@ -102,14 +102,16 @@ export function RolesManagementDataTable<TData, TValue>({
                 {headerGroup.headers.map((header) => (
                   <TableHead
                     key={header.id}
-                    className={`text-white text-[12px] h-7 p-1  ${header.id === "actions" ? "text-center" : ""}`}
+                    className={`text-white text-[12px] h-7 p-1  ${
+                      header.id === "actions" ? "text-center w-20" : ""
+                    }`}
                   >
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                   </TableHead>
                 ))}
               </TableRow>
@@ -120,10 +122,11 @@ export function RolesManagementDataTable<TData, TValue>({
               table.getRowModel().rows.map((row, index) => (
                 <TableRow
                   key={row.id}
-                  className={`text-[11px] transition-colors hover:bg-[var(--hover-bg)] ${index % 2 === 0
-                    ? "bg-[var(--table-bg-even)] text-[black]"
-                    : "bg-[var(--table-bg-odd)] text-[black]"
-                    }`}
+                  className={`text-[11px] transition-colors hover:bg-[var(--hover-bg)] ${
+                    index % 2 === 0
+                      ? "bg-[var(--table-bg-even)] text-[black]"
+                      : "bg-[var(--table-bg-odd)] text-[black]"
+                  }`}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell
@@ -203,6 +206,6 @@ export function RolesManagementDataTable<TData, TValue>({
           </Button>
         </div>
       </div>
-    </div >
+    </div>
   );
 }

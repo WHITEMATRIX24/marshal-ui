@@ -48,7 +48,9 @@ export function NavMain({
                   tooltip={item.title}
                   className="hover:bg-gray-400/20 after:bg-gray-400/20"
                 >
-                  {item.icon && <item.icon className="text-textcolorblue" />}
+                  {item.icon && (
+                    <item.icon className="text-lightThemeblue dark:text-darkThemeblue" />
+                  )}
                   <span className="text-[12px]">{item.title}</span>
                   <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                 </SidebarMenuButton>
