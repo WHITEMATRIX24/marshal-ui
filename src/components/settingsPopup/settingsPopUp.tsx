@@ -42,9 +42,9 @@ export const SettingsPopUp: React.FC<SettingsPopUpProps> = ({ onClose }) => {
         id="settings-popup-overlay"
         className="fixed inset-0 bg-black/50 flex justify-center items-center z-20"
       >
-        <div className="flex flex-col gap-6 w-full md:w-[35rem] h-auto bg-white dark:bg-black px-5 py-4 rounded-md dark:border">
+        <div className="flex flex-col gap-6 w-full md:w-[30rem] h-auto bg-white dark:bg-black px-5 py-4 rounded-md dark:border">
           <div className="flex justify-between items-center">
-            <h6 className="text-xl font-semibold ">Settings</h6>
+            <h6 className="text-sm font-semibold ">Settings</h6>
             <button onClick={onClose} className="text-lg font-bold">
               ✖
             </button>
@@ -57,7 +57,7 @@ export const SettingsPopUp: React.FC<SettingsPopUpProps> = ({ onClose }) => {
                 </h6>
                 <label
                   htmlFor="chnage-profilePic"
-                  className="text-sm text-textcolorblue cursor-pointer"
+                  className="text-[11px] text-textcolorblue cursor-pointer"
                 >
                   Change Profile Picture
                 </label>
@@ -73,13 +73,19 @@ export const SettingsPopUp: React.FC<SettingsPopUpProps> = ({ onClose }) => {
               </div>
             </div>
             <div className="flex flex-col gap-1 bg-greycomponentbg h-full px-3 py-2 rounded-md">
-              <Link href="/home/dashboard/changepassword" className="w-fit">
+              <Link
+                href="/home/dashboard/changepassword"
+                className="w-fit text-[11px]"
+              >
                 Change password
               </Link>
-              <Link href="/home/dashboard/subscriptionplan" className="w-fit">
+              <Link
+                href="/home/dashboard/subscriptionplan"
+                className="w-fit text-[11px]"
+              >
                 View subscription option
               </Link>
-              <button onClick={handleDeleteBtn} className="w-fit">
+              <button onClick={handleDeleteBtn} className="w-fit text-[11px]">
                 Delete Account
               </button>
             </div>
