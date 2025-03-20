@@ -85,7 +85,7 @@ export function UserManagementDataTable<TData, TValue>({
         />
         <div className="flex gap-5">
           <button
-            className="bg-[#0890CA] text-white text-[11px] px-2 py-1 rounded-[5px] dark:bg-[#6BC1E6] dark:text-[black]"
+            className="bg-[var(--blue)] text-white text-[11px] px-2 py-1 rounded-[5px] ] dark:text-[black]"
             onClick={handelOpenAddNewUserForm}
           >
             Add New User
@@ -94,24 +94,23 @@ export function UserManagementDataTable<TData, TValue>({
       </div>
       <div className="rounded-md border">
         <Table>
-          <TableHeader className="bg-[#4F028F] dark:bg-[#6E3A99]">
+          <TableHeader className="bg-[var(--purple)]">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
                   <TableHead
                     key={header.id}
-                    className={`text-white text-[12px] h-7 p-1  ${
-                      header.id === "actions" ? "text-center w-20" : ""
-                    }
+                    className={`text-white text-[12px] h-7 p-1  ${header.id === "actions" ? "text-center w-20" : ""
+                      }
                     ${header.id === "status" ? "text-center w-20" : ""}
                     `}
                   >
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
                   </TableHead>
                 ))}
               </TableRow>
@@ -122,11 +121,10 @@ export function UserManagementDataTable<TData, TValue>({
               table.getRowModel().rows.map((row, index) => (
                 <TableRow
                   key={row.id}
-                  className={`text-[11px] transition-colors hover:bg-[var(--hover-bg)] ${
-                    index % 2 === 0
-                      ? "bg-[var(--table-bg-even)] text-[black]"
-                      : "bg-[var(--table-bg-odd)] text-[black]"
-                  }`}
+                  className={`text-[11px] transition-colors hover:bg-[var(--hover-bg)] ${index % 2 === 0
+                    ? "bg-[var(--table-bg-even)] text-[black]"
+                    : "bg-[var(--table-bg-odd)] text-[black]"
+                    }`}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell
@@ -191,7 +189,7 @@ export function UserManagementDataTable<TData, TValue>({
           <Button
             variant="outline"
             size="sm"
-            className="text-[10px] text-[#0392cb] dark:text-[#69c3df]"
+            className="text-[10px] text-[var(--blue)]"
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
@@ -203,7 +201,7 @@ export function UserManagementDataTable<TData, TValue>({
           <Button
             variant="outline"
             size="sm"
-            className="text-[10px] text-[#0392cb] dark:text-[#69c3df]"
+            className="text-[10px] text-[var(--blue)]"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >

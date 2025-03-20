@@ -21,14 +21,14 @@ const Header = () => {
   return (
     <header >
       <div className="flex items-center justify-between w-full px-4">
-        <h1 className="roboto-text text-[22px] font-[700] capitalize text-[#068cca] dark:text-[#6bc2e6]">
+        <h1 className="roboto-text text-[22px] font-[700] capitalize text-[var(--blue)]">
           {mainBreadcrumb}
         </h1>
         <div className="flex items-center gap-2 mr-4">
-          <FontAwesomeIcon className="w-[18px] cursor-pointer text-[#7c9299] dark:text-[#e5e5e5]" icon={faBell} />
+          <FontAwesomeIcon className="w-[18px] cursor-pointer text-[var(--grey)]" icon={faBell} />
           <ChangeThemeButton />
-          <FontAwesomeIcon icon={faGear} className="w-[18px] cursor-pointer text-[#7c9299] dark:text-[#e5e5e5]" onClick={() => setShowSettings(true)} />
-          <MoreVertical className="w-[18px] cursor-pointer text-[#7c9299] dark:text-[#e5e5e5]" />
+          <FontAwesomeIcon icon={faGear} className="w-[18px] cursor-pointer text-[var(--grey)]" onClick={() => setShowSettings(true)} />
+          <MoreVertical className="w-[18px] cursor-pointer text-[var(--grey)]" />
         </div>
       </div>
 

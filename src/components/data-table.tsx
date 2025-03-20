@@ -120,7 +120,7 @@ export function DataTable<
                 setJustificationValue((row.original as any).justification);
               }}
             />
-            <Trash className="h-4 w-4 text-[#C20114] cursor-pointer" />
+            <Trash className="h-4 w-4 text-[var(--red)] cursor-pointer" />
           </div>
         ),
       },
@@ -257,7 +257,7 @@ export function DataTable<
                 className="h-3 w-3 text-blue-900 cursor-pointer"
                 onClick={() => openEditModal(row)}
               />
-              <Trash className="h-3 w-3 text-[#C20114] cursor-pointer"
+              <Trash className="h-3 w-3 text-[var(--red)] cursor-pointer"
                 onClick={() => setDeletingCtrlId(row.ctrl_id)} />
             </div>
           </TableCell>
@@ -278,16 +278,16 @@ export function DataTable<
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-4 rounded-lg w-96  dark:bg-black dark:border dark:border-gray-600">
             <div className="flex justify-between items-center">
-              <h6 className="text-[14px] font-semibold py-2" >Edit Item</h6>
-              <button onClick={() => setEditingRow(null)}>X</button>
+              <h6 className="text-[14px] font-semibold py-2 text-[var(--blue)]" >Edit Item</h6>
+              <Button onClick={() => setEditingRow(null)} className="bg-transparent">X</Button>
             </div>
             <form onSubmit={handleSubmit}>
               <div className="mb-2">
-                <label className="block text-[11px] mb-2">
+                <label className="block text-[11px] mb-2 dark:text-black">
                   Applicable
                 </label>
                 <select
-                  className="w-full p-1 text-[11px] border rounded"
+                  className="w-full p-1 text-[11px] border rounded bg-[var(--table-bg-even)] dark:text-black"
                   value={applicableValue}
                   onChange={(e) => setApplicableValue(e.target.value)}
                 >
@@ -296,12 +296,12 @@ export function DataTable<
                 </select>
               </div>
               <div className="mb-4">
-                <label className="block text-[11px] mb-2">
+                <label className="block text-[11px] mb-2 dark:text-black">
                   Justification
                 </label>
                 <input
                   type="text"
-                  className="w-full text-[11px] p-1 border rounded"
+                  className="w-full text-[11px] p-1 border rounded bg-[var(--table-bg-even)]  dark:text-black"
                   value={justificationValue}
                   onChange={(e) => setJustificationValue(e.target.value)}
                   required={applicableValue === "Yes"}
@@ -310,14 +310,14 @@ export function DataTable<
               <div className="flex justify-end space-x-2">
                 <button
                   type="button"
-                  className="px-4 py-0.5 bg-transparent border border-black text-black text-[12px] rounded-[5px] dark:text-white dark:bg-[var(--table-bg-even)]"
+                  className="px-4 py-0.5 bg-[var(--red)] text-white text-[12px] rounded-[5px] dark:text-black "
                   onClick={() => setEditingRow(null)}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-0.5 bg-black border border-black text-white text-[12px] rounded-[5px] dark:text-white dark:bg-[var(--table-bg-even)]"
+                  className="px-4 py-0.5 bg-[var(--blue)] text-white text-[12px] rounded-[5px] dark:text-black"
                   disabled={
                     applicableValue === "Yes" && !justificationValue.trim()
                   }
@@ -345,7 +345,7 @@ export function DataTable<
           placeholder="Search..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="max-w-sm px-3 h-7  text-[11px] bg-[#f9fafb] dark:bg-[#e5e5e5]"
+          className="max-w-sm px-3 h-7  text-[11px] bg-[#f9fafb] dark:bg-[#E5e5e5]"
         />
 
         {/* <Button
@@ -358,13 +358,13 @@ export function DataTable<
 
       <div className="max-h-[70vh] overflow-auto relative">
         <Table className="w-full border-collapse">
-          <TableHeader className="sticky top-0 bg-[#4F028F] dark:bg-[#6E3A99] z-100">
+          <TableHeader className="sticky top-0 z-100">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
                   <TableHead
                     key={header.id}
-                    className="text-white text-[12px] px-1 h-7 bg-[#4F028F] dark:bg-[#6E3A99] shadow-md">
+                    className="text-white text-[12px] px-1 h-7 bg-[var(--purple)] shadow-md">
                     {header.isPlaceholder
                       ? null
                       : flexRender(
@@ -414,7 +414,7 @@ export function DataTable<
           <Button
             variant="outline"
             size="sm"
-            className="text-[10px] text-[#0392cb] dark:text-[#69c3df]"
+            className="text-[10px] text-[var(--blue)]"
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
@@ -426,7 +426,7 @@ export function DataTable<
           <Button
             variant="outline"
             size="sm"
-            className="text-[10px] text-[#0392cb] dark:text-[#69c3df]"
+            className="text-[10px] text-[var(--blue)]"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >

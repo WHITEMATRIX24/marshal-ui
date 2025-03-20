@@ -56,7 +56,7 @@ const CreateUpdateRole = () => {
             />
             <Trash
               onClick={handleDeleteOption}
-              className="h-3 w-3 text-orange-500 cursor-pointer"
+              className="h-3 w-3 text-[var(--red)]cursor-pointer"
             />
           </div>
         );
