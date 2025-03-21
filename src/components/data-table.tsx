@@ -276,10 +276,10 @@ export function DataTable<
     <div className="w-full">
       {editingRow && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-4 rounded-lg w-96  dark:bg-black dark:border dark:border-gray-600">
+          <div className="bg-white p-4 rounded-lg w-96  dark:bg-[#E5E5E5] dark:border dark:border-gray-600">
             <div className="flex justify-between items-center">
               <h6 className="text-[14px] font-semibold py-2 text-[var(--blue)]" >Edit Item</h6>
-              <Button onClick={() => setEditingRow(null)} className="bg-transparent">X</Button>
+              <Button onClick={() => setEditingRow(null)} className="bg-transparent hover:bg-transparent text-black">X</Button>
             </div>
             <form onSubmit={handleSubmit}>
               <div className="mb-2">
