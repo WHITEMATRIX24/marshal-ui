@@ -24,10 +24,10 @@ export const fetchStandardsApi = async ({
 export const fetchL1ControlsByStandardApi = async ({
   method,
   urlEndpoint,
-  headers
+  headers,
 }: ApiConfigProps): Promise<AxiosResponse | undefined> => {
   return apiConfig({ method, urlEndpoint, headers });
-}
+};
 export const updateControlsApi = async ({
   method,
   urlEndpoint,
@@ -35,7 +35,7 @@ export const updateControlsApi = async ({
   data,
 }: ApiConfigProps): Promise<AxiosResponse | undefined> => {
   return apiConfig({ method, urlEndpoint, headers, data });
-}
+};
 
 export const deleteControlsApi = async ({
   method,
@@ -43,4 +43,12 @@ export const deleteControlsApi = async ({
   headers,
 }: ApiConfigProps): Promise<AxiosResponse | undefined> => {
   return apiConfig({ method, urlEndpoint, headers });
-}
+};
+
+export const fetchActivitesControlsApi = async ({
+  method,
+  urlEndpoint,
+  headers,
+}: ApiConfigProps): Promise<AxiosResponse | undefined> => {
+  return apiConfig({ method, urlEndpoint, headers });
+};
