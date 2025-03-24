@@ -112,22 +112,34 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         {
           title: "View/Edit Activity",
           url: "/home/activites/view-activity",
-          onClick: () => dispatch(setMainBreadcrumb("View / Edit Activity")),
+          onClick: () => {
+            dispatch(setMainBreadcrumb("View / Edit Activity"));
+            dispatch(setSubBredCrum(""));
+          },
         },
         {
           title: "View/Edit Assignment",
           url: "/home/activites/view-assignment",
-          onClick: () => dispatch(setMainBreadcrumb("View / Edit Assignment")),
+          onClick: () => {
+            dispatch(setMainBreadcrumb("View / Edit Assignment"));
+            dispatch(setSubBredCrum(""));
+          },
         },
         {
           title: "My Notification",
           url: "/home/activites/my-notifications",
-          onClick: () => dispatch(setMainBreadcrumb("My Notifications")),
+          onClick: () => {
+            dispatch(setMainBreadcrumb("My Notifications"));
+            dispatch(setSubBredCrum(""));
+          },
         },
         {
           title: "My Reviews",
           url: "/home/activites/my-reviews",
-          onClick: () => dispatch(setMainBreadcrumb("My Reviews")),
+          onClick: () => {
+            dispatch(setMainBreadcrumb("My Reviews"));
+            dispatch(setSubBredCrum(""));
+          },
         },
       ],
     },
