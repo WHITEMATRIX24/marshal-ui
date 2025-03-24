@@ -35,10 +35,13 @@ import { useSidebar } from "@/components/ui/sidebar";
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const dispatch = useDispatch();
   const { open } = useSidebar(); // Get the sidebar state
-  const [standards, setStandards] = useState<Standard[] | null>([]);
+  const [standards, setStandards] = useState<{
+    items: Standard[];
+    total: number;
+  } | null>(null);
   const router = useRouter();
   const govId = Cookies.get("selected_governance");
-  console.log("governveven", govId);
+  const token = Cookies.get("access_token");
   const userData = Cookies.get("user_info");
   const [parsedUserData, setParsedUserData] = useState(null);
   const [role, setRole] = useState<string | null>(null);
@@ -51,7 +54,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     try {
       const response = await fetchStandardsApi({
         method: "GET",
-        urlEndpoint: `/standards/governance/${parsedGovId}`,
+        urlEndpoint: `/standards/by-governance/${parsedGovId}`,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
       setStandards(response.data);
     } catch (error) {
@@ -64,8 +70,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   useEffect(() => {
     if (govId) {
       const parsedGovId = JSON.parse(govId);
-      handleFetchStandards(parsedGovId[0].role_id);
-      setRole(parsedGovId[0].role_name);
+      handleFetchStandards(parsedGovId.role_id);
+      setRole(parsedGovId.role_name);
     }
   }, [govId]);
 
@@ -74,7 +80,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       setParsedUserData(JSON.parse(userData));
       console.log("userData", userData);
     }
-  }, []);
+  }, [userData]);
 
   // Define the navigation menu
   const navMain = [
@@ -89,11 +95,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       title: "Portfolio",
       url: "/home/portfolio",
       icon: BriefcaseBusiness,
-      items: standards?.map((standard) => ({
-        title: standard.std_code,
+      items: standards?.items.map((standard) => ({
+        title: standard.std_short_name,
         url: "/home/portfolio",
         onClick: () => {
-          handleStandardClick(standard.id, standard.std_code);
+          handleStandardClick(standard.id, standard.std_short_name);
           dispatch(setMainBreadcrumb("Portfolio"));
         },
       })),

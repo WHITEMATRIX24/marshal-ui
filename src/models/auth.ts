@@ -4,22 +4,27 @@ export interface Role {
   role_name: string;
 }
 
-interface UserGovernanceStructure {
-  [key: string]: Role[];
+export interface UserGovernanceStructure {
+  governance_id: number;
+  governance_name: string;
+  role_code: string;
+  role_id: number;
+  role_name: string;
 }
 
 export interface UserInfo {
-  email: string;
+  email_address: string;
   is_active: boolean;
-  login_id: string;
-  phone: string;
-  user_id: number;
+  gov_id: string;
+  link_to_role_id: number;
+  is_resetpass: false;
+  id: number;
   username: string;
+  roles: UserGovernanceStructure[];
 }
 
 export interface LoginResponse {
   access_token: string;
   token_type: string;
-  roles_by_governance: UserGovernanceStructure;
-  user_info: UserInfo;
+  user: UserInfo;
 }

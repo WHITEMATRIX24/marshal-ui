@@ -40,14 +40,9 @@ export default function Login() {
     },
     onSuccess: async (responseData) => {
       const { data } = responseData as { data: LoginResponse };
-      console.log(data);
-
       Cookies.set("access_token", data?.access_token);
-      Cookies.set(
-        "roles_by_governance",
-        JSON.stringify(data?.roles_by_governance)
-      );
-      Cookies.set("user_info", JSON.stringify(data?.user_info));
+      Cookies.set("roles", JSON.stringify(data?.user.roles));
+      Cookies.set("user_info", JSON.stringify(data?.user));
       Cookies.set("token_type", data?.token_type);
       Cookies.set("login_popup_initila_render", JSON.stringify(true));
       router.replace("/home/dashboard");
@@ -65,7 +60,7 @@ export default function Login() {
     loginFormData.append("password", password); // Passw0rd3
 
     await loginMutation({
-      urlEndpoint: "/users/login",
+      urlEndpoint: "/auth/login",
       method: "POST",
       data: loginFormData,
       headers: {

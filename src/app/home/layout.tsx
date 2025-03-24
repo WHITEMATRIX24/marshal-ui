@@ -22,7 +22,6 @@ export default async function Layout({
       <main className="w-full ml-[0px] mt-[10px]">
         <Header />
         {children}
-
       </main>
       <Footer />
       <GovernanceSelectPopUp />

@@ -1,14 +1,14 @@
 export interface Standard {
   // std_id: number;
-  id: number;
-  std_name: string;
-  std_code: string;
+  controls_no: string | null;
+  country_id: string;
   gov_id: number;
-  std_levels: number;
-  std_levels_name: string;
-  cntrol_no: number;
+  hierarachy_name: string;
+  id: number;
   is_active: boolean;
-  country_region: string;
+  std_levels: number;
+  std_name: string;
+  std_short_name: string;
 }
 
 export interface StandardsResponse {

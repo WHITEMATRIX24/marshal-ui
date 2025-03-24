@@ -61,12 +61,11 @@
     --hover-bg: #6ab0d8;
     --table-bg-even: #f9fafb;
     --table-bg-odd: #ffffff;
-    --blue: #0890CA;
-    --red: #C20114;
-    --grey: #7C9299;
-    --purple: #531CB3;
+    --blue: #0890ca;
+    --red: #c20114;
+    --grey: #7c9299;
+    --purple: #531cb3;
     --black: #000000;
-
   }
 
   .dark {
@@ -102,14 +101,14 @@
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
-    --table-bg-even: #E5E5E5;
+    --table-bg-even: #e5e5e5;
     --table-bg-odd: #ffffff;
     --hover-bg: #93cbe3;
-    --blue: #6BC1E6;
-    --red: #E18358;
-    --grey: #E5e5e5;
-    --purple: #6E3A99;
-    --black: #FFFFFF;
+    --blue: #6bc1e6;
+    --red: #e18358;
+    --grey: #e5e5e5;
+    --purple: #6e3a99;
+    --black: #ffffff;
   }
 }
 
@@ -123,3 +122,16 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* input[type="radio"] {
+  appearance: none;
+  background-color: white;
+  border: 1px solid black;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  outline: none;
+}
+input[type="radio"]:checked {
+  background-color: #6bc1e6;
+} */

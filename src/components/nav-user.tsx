@@ -52,9 +52,8 @@ export function NavUser({ user, avatar }: { user: UserInfo; avatar: string }) {
   const handleLogout = () => {
     Cookies.remove("access_token");
     Cookies.remove("login_popup_initila_render");
-    Cookies.remove("roles_by_governance");
+    Cookies.remove("roles");
     Cookies.remove("selected_governance");
-    Cookies.remove("selected_governance_key");
     Cookies.remove("token_type");
     Cookies.remove("user_info");
 
@@ -79,8 +78,12 @@ export function NavUser({ user, avatar }: { user: UserInfo; avatar: string }) {
                 <AvatarFallback className="rounded-lg">CN</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold text-[11px] dark:text-[#E18358] text-[#c20114]">{user?.username}</span>
-                <span className="truncate text-[10px] text-white">{user?.email}</span>
+                <span className="truncate font-semibold text-[11px] dark:text-[#E18358] text-[#c20114]">
+                  {user?.username}
+                </span>
+                <span className="truncate text-[10px] text-white">
+                  {user?.email_address}
+                </span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
@@ -106,7 +109,7 @@ export function NavUser({ user, avatar }: { user: UserInfo; avatar: string }) {
                   </span>
                   {parsedSelectedGovernance && (
                     <span className="truncate text-[11px]">
-                      {parsedSelectedGovernance[0]?.role_name}
+                      {parsedSelectedGovernance?.governance_name}
                     </span>
                   )}
                 </div>
@@ -116,14 +119,17 @@ export function NavUser({ user, avatar }: { user: UserInfo; avatar: string }) {
             <DropdownMenuGroup>
               <DropdownMenuItem className="text-[11px]">
                 <Blend />
-                {`Governance: ${selectedGovernanceKey}`}
+                {`Governance: ${parsedSelectedGovernance?.governance_name}`}
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem className="text-[11px]">
                 <Edit2 />
-                <button onClick={handleChangeGovernance} className="text-[11px]">
+                <button
+                  onClick={handleChangeGovernance}
+                  className="text-[11px]"
+                >
                   Change Governance
                 </button>
               </DropdownMenuItem>

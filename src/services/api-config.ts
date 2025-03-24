@@ -30,7 +30,7 @@ const apiConfig = async ({
       if (error.status === 401) {
         Cookies.remove("access_token");
         Cookies.remove("login_popup_initila_render");
-        Cookies.remove("roles_by_governance");
+        Cookies.remove("roles");
         Cookies.remove("selected_governance");
         Cookies.remove("selected_governance_key");
         Cookies.remove("token_type");
