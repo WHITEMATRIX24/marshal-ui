@@ -104,7 +104,29 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         },
       })),
     },
-    { title: "My Activities", url: "#", icon: FileCheck2 },
+    {
+      title: "My Activities",
+      url: "#",
+      icon: FileCheck2,
+      items: [
+        {
+          title: "View/Edit Activity",
+          url: "/home/activites/view-activity",
+        },
+        {
+          title: "View/Edit Assignment",
+          url: "/home/activites/view-assignment",
+        },
+        {
+          title: "My Notification",
+          url: "/home/activites/my-notifications",
+        },
+        {
+          title: "My Reviews",
+          url: "/home/activites/my-reviews",
+        },
+      ],
+    },
     { title: "Configuration", url: "#", icon: Cog },
     { title: "Reports", url: "#", icon: FileChartColumn },
     { title: "Documentation", url: "#", icon: BookMarked },
