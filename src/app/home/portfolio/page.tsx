@@ -1,4 +1,5 @@
-"use client"
+"use client";
+
 import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
@@ -11,8 +12,8 @@ import { RootState } from "@/lib/global-redux/store";
 import { Control } from "@/models/control";
 import BreadCrumbsProvider from "@/components/ui/breadCrumbsProvider";
 
-const fetchControls = async (stdId: string): Promise<Control[]> => {
-  if (!stdId) throw new Error("stdId is required");
+const fetchControls = async (stdId: number, govId: string): Promise<Control[]> => {
+  if (!stdId || !govId) throw new Error("stdId and govId are required");
   const token = Cookies.get("access_token");
 
   const headers = {
@@ -20,7 +21,7 @@ const fetchControls = async (stdId: string): Promise<Control[]> => {
     Authorization: `Bearer ${token}`,
   };
 
-  const urlEndpoint = `/controls/tree/with-tasks/?std_id=${stdId}&gov_id=1`;
+  const urlEndpoint = `/controls/tree/with-tasks/?std_id=${stdId}&gov_id=${govId}`;
   const method = "GET";
   const response = await fetchL1ControlsByStandardApi({ urlEndpoint, method, headers });
 
@@ -28,57 +29,58 @@ const fetchControls = async (stdId: string): Promise<Control[]> => {
     return [];
   }
 
-  // Transform the data to match the expected structure
   const transformData = (items: Control[]): Control[] => {
     return items.map(item => ({
       ...item,
       id: item.id,
       control_full_name: item.control_full_name,
-      applicable_str: item.is_applicable === true ? "Yes" : "No", // Map 'id' to 'id'
-      children: item.children ? transformData(item.children) : undefined, // Map 'children' to 'children'
+      applicable_str: item.is_applicable === true ? "Yes" : "No",
+      children: item.children ? transformData(item.children) : undefined,
     }));
   };
-  console.log("Transformed Data:", transformData(response.data.items));
 
+  console.log("Transformed Data:", transformData(response.data.items));
   return transformData(response.data.items);
 };
 
-// Function to update the DataTable data
-function updateData(data: Control[], updatedRow: Control): Control[] {
-  return data.map((row) =>
-    row.id === updatedRow.id
-      ? updatedRow
-      : row.children
-        ? { ...row, children: updateData(row.children, updatedRow) }
-        : row
-  );
-}
-
-// Main Page Component
 export default function Page() {
-  const stdId = useSelector(
-    (state: RootState) => state.Standerds.selected_std_id
-  );
-
+  const stdId = useSelector((state: RootState) => state.Standerds.selected_std_id);
+  const govIdCookie = Cookies.get("selected_governance");
+  const [govId, setGovId] = useState<string | null>(null);
   const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);
   const [tableData, setTableData] = useState<Control[]>([]);
 
   useEffect(() => {
     setIsMounted(true);
-  }, []);
+    if (govIdCookie) {
+      try {
+        const parsedGovId = JSON.parse(govIdCookie);
+        setGovId(parsedGovId.role_id);
+      } catch (error) {
+        console.error("Error parsing governance ID:", error);
+      }
+    }
+  }, [govIdCookie]);
 
   const { data, error, isLoading } = useQuery<Control[], Error>({
-    queryKey: ["controls", stdId],
-    queryFn: () =>
-      stdId ? fetchControls(JSON.stringify(stdId)) : Promise.resolve([]),
-    enabled: !!stdId,
+    queryKey: ["controls", stdId, govId],
+    queryFn: () => (stdId && govId ? fetchControls(stdId, govId) : Promise.resolve([])),
+    enabled: !!stdId && !!govId,
   });
-
+  function updateData(data: Control[], updatedRow: Control): Control[] {
+    return data.map((row) =>
+      row.id === updatedRow.id
+        ? updatedRow
+        : row.children
+          ? { ...row, children: updateData(row.children, updatedRow) }
+          : row
+    );
+  }
   useEffect(() => {
     if (error) {
       console.error("Error fetching controls:", error);
-      router.push("/"); // Redirect to home if an error occurs
+      router.push("/");
     }
   }, [error, router]);
 
@@ -104,6 +106,7 @@ export default function Page() {
           columns={columns}
           data={Array.isArray(tableData) ? tableData : []}
           onEdit={(updatedRow) => {
+            console.log("Received updated row:", updatedRow);
             setTableData((prev) => updateData(prev, updatedRow));
           }}
         />

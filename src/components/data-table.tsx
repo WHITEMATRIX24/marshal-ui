@@ -115,6 +115,7 @@ export function DataTable<
             <Pencil
               className="h-4 w-4 text-black cursor-pointer"
               onClick={() => {
+                console.log("Editing row ID:", row.original.id); // Add this line
                 setEditingRow(row.original);
                 setApplicableValue((row.original as any).applicable);
                 setJustificationValue((row.original as any).justification);
@@ -150,22 +151,19 @@ export function DataTable<
 
   const updateControl = async (ctrlId: number, updatedData: any) => {
     const token = Cookies.get("access_token");
-    const headers = {
-      Accept: "application/json",
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    };
-
-    const urlEndpoint = `/controls/${ctrlId}`;
-    const method = "PUT";
-
+    console.log("updating")
     try {
       const response = await updateControlsApi({
-        method,
-        urlEndpoint,
-        headers,
-        data: JSON.stringify(updatedData),
+        method: "PUT",
+        urlEndpoint: `/controls/${ctrlId}`,
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        data: updatedData,
       });
+
 
       if (!response?.data) {
         throw new Error("Failed to update control");
@@ -180,6 +178,11 @@ export function DataTable<
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!editingRow?.id) { // Add null check
+      console.error("No row ID found for editing");
+      return;
+    }
+    console.log("Submitting Edit:", editingRow);
     if (editingRow && onEdit) {
       const updatedRow = {
         ...editingRow,
