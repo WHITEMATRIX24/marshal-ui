@@ -52,3 +52,11 @@ export const fetchActivitesControlsApi = async ({
 }: ApiConfigProps): Promise<AxiosResponse | undefined> => {
   return apiConfig({ method, urlEndpoint, headers });
 };
+
+export const fetchUsersDataApi = async ({
+  method,
+  urlEndpoint,
+  headers,
+}: ApiConfigProps): Promise<AxiosResponse | undefined> => {
+  return apiConfig({ method, urlEndpoint, headers });
+};

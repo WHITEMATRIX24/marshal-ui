@@ -9,13 +9,17 @@ import { RootState } from "@/lib/global-redux/store";
 import { Pencil, Trash } from "lucide-react";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import Cookies from "js-cookie";
+import { useQuery } from "@tanstack/react-query";
+import { fetchUsersDataApi } from "@/services/apis";
 
 export interface UserManagement {
-  name: string;
-  email_id: string;
-  governance: string;
-  role: string;
-  status: string;
+  username: string;
+  email_address: string;
+  gov_id: number | null;
+  roles?: string;
+  is_active: boolean;
+  phone_number: string;
 }
 
 const CreateUpdateRole = () => {
@@ -23,26 +27,40 @@ const CreateUpdateRole = () => {
   const isModalVisible = useSelector(
     (state: RootState) => state.ui.addNewUserOnRoleMenuModal.isVisible
   );
+  const token = Cookies.get("access_token");
   const [deleteModal, setDeleteModal] = useState<boolean>(false);
 
   // delete modal close handler
   const handleDeletemodalClose = () => setDeleteModal(false);
 
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["usersdata"],
+    queryFn: async () =>
+      await fetchUsersDataApi({
+        method: "GET",
+        urlEndpoint: "/users",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }),
+  });
+  console.log(data);
+
   const columnData = [
     {
-      accessorKey: "name",
+      accessorKey: "username",
       header: "Name",
-      id: "name",
+      id: "username",
     },
     {
-      accessorKey: "email_id",
+      accessorKey: "email_address",
       header: "Email Id",
-      id: "email_id",
+      id: "email_address",
     },
     {
-      accessorKey: "governance",
+      accessorKey: "gov_id",
       header: "Governance",
-      id: "governance",
+      id: "gov_id",
     },
     {
       accessorKey: "role",
@@ -50,9 +68,9 @@ const CreateUpdateRole = () => {
       id: "role",
     },
     {
-      accessorKey: "status",
+      accessorKey: "is_active",
       header: "Status",
-      id: "status",
+      id: "is_active",
     },
     {
       id: "actions",
@@ -82,36 +100,6 @@ const CreateUpdateRole = () => {
       },
     },
   ];
-  const tableData = [
-    {
-      name: "test",
-      email_id: "test",
-      governance: "test",
-      role: "test",
-      status: "test",
-    },
-    {
-      name: "test",
-      email_id: "test",
-      governance: "test",
-      role: "test",
-      status: "test",
-    },
-    {
-      name: "test",
-      email_id: "test",
-      governance: "test",
-      role: "test",
-      status: "test",
-    },
-    {
-      name: "test",
-      email_id: "test",
-      governance: "test",
-      role: "test",
-      status: "test",
-    },
-  ];
 
   return (
     <>
@@ -122,7 +110,16 @@ const CreateUpdateRole = () => {
           </div>
         </header>
         <div className="py-0 w-full px-4">
-          <UserManagementDataTable columns={columnData} data={tableData} />
+          {isLoading ? (
+            <p>Loading...</p>
+          ) : !isLoading && error ? (
+            <p>Something went wrong ...</p>
+          ) : (
+            !isLoading &&
+            data && (
+              <UserManagementDataTable columns={columnData} data={data?.data} />
+            )
+          )}
         </div>
       </div>
       {isModalVisible && <AddNewUserModal />}
