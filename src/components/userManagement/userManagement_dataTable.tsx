@@ -105,7 +105,7 @@ export function UserManagementDataTable<TData, TValue>({
                     className={`text-white text-[12px] h-7 p-1  ${
                       header.id === "actions" ? "text-center w-20" : ""
                     }
-                    ${header.id === "status" ? "text-center w-20" : ""}
+                    ${header.id === "is_active" ? "text-center w-20" : ""}
                     `}
                   >
                     {header.isPlaceholder
@@ -130,22 +130,32 @@ export function UserManagementDataTable<TData, TValue>({
                       : "bg-[var(--table-bg-odd)] text-[black]"
                   }`}
                 >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell
-                      key={cell.id}
-                      className={`p-1 text-[11px] border-b`}
-                      style={
-                        cell.column.id === "status"
-                          ? { textAlign: "center" }
-                          : {}
-                      }
-                    >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
+                  {row.getVisibleCells().map((cell) => {
+                    return (
+                      <TableCell
+                        key={cell.id}
+                        className={`p-1 text-[11px] border-b`}
+                        style={
+                          cell.column.id === "is_active"
+                            ? { textAlign: "center" }
+                            : {}
+                        }
+                      >
+                        {cell.column.id === "is_active" ? (
+                          cell.getValue() ? (
+                            <span>Active</span>
+                          ) : (
+                            <span>Inactive</span>
+                          )
+                        ) : (
+                          flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext()
+                          )
+                        )}
+                      </TableCell>
+                    );
+                  })}
                 </TableRow>
               ))
             ) : (
