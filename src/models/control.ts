@@ -1,8 +1,8 @@
 // models/control.ts
 export interface ApiControl {
-    ctrl_id: number;
-    ctrl_name: string;
-    applicable: boolean;
+    id: number;
+    control_full_name: string;
+    is_applicable: boolean;
     applicable_str?: string;
     justification?: string;
     parentCID: number;
@@ -13,7 +13,7 @@ export interface ApiControl {
 }
 
 export interface Control extends Omit<ApiControl, 'children'> {
-    subRows?: Control[];
+    children?: Control[];
 }
 
 export interface ApiResponse<T> {

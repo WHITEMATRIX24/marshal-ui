@@ -1,4 +1,4 @@
-"use client";
+"use client"
 import { usePathname, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
@@ -6,10 +6,9 @@ import { useQuery } from "@tanstack/react-query";
 import { DataTable } from "@/components/data-table";
 import { columns } from "@/components/columns";
 import { fetchL1ControlsByStandardApi } from "@/services/apis";
-
 import { useSelector } from "react-redux";
 import { RootState } from "@/lib/global-redux/store";
-import { ApiResponse, Control } from "@/models/control";
+import { Control } from "@/models/control";
 import BreadCrumbsProvider from "@/components/ui/breadCrumbsProvider";
 
 const fetchControls = async (stdId: string): Promise<Control[]> => {
@@ -21,24 +20,36 @@ const fetchControls = async (stdId: string): Promise<Control[]> => {
     Authorization: `Bearer ${token}`,
   };
 
-  console.log(stdId);
-  const urlEndpoint = `/controls/?std_code_id=${stdId}`;
+  const urlEndpoint = `/controls/tree/with-tasks/?std_id=${stdId}&gov_id=1`;
   const method = "GET";
-  const response: ApiResponse<Control[]> | undefined =
-    await fetchL1ControlsByStandardApi({ urlEndpoint, method, headers });
+  const response = await fetchL1ControlsByStandardApi({ urlEndpoint, method, headers });
 
-  return Array.isArray(response?.data) ? response.data : [];
+  if (!response || !response.data?.items) {
+    return [];
+  }
+
+  // Transform the data to match the expected structure
+  const transformData = (items: Control[]): Control[] => {
+    return items.map(item => ({
+      ...item,
+      id: item.id,
+      control_full_name: item.control_full_name,
+      applicable_str: item.is_applicable === true ? "Yes" : "No", // Map 'id' to 'id'
+      children: item.children ? transformData(item.children) : undefined, // Map 'children' to 'children'
+    }));
+  };
+  console.log("Transformed Data:", transformData(response.data.items));
+
+  return transformData(response.data.items);
 };
-
-// Breadcrumb Component
 
 // Function to update the DataTable data
 function updateData(data: Control[], updatedRow: Control): Control[] {
   return data.map((row) =>
-    row.ctrl_id === updatedRow.ctrl_id
+    row.id === updatedRow.id
       ? updatedRow
-      : row.subRows
-        ? { ...row, subRows: updateData(row.subRows, updatedRow) }
+      : row.children
+        ? { ...row, children: updateData(row.children, updatedRow) }
         : row
   );
 }
@@ -73,46 +84,8 @@ export default function Page() {
 
   useEffect(() => {
     if (data) {
-      console.log("Fetched Data:", data);
+      console.log("Fetched Hierarchical Data:", data);
       setTableData(data);
-    }
-  }, [data]);
-
-  useEffect(() => {
-    if (data && Array.isArray(data)) {
-      const controlsMap = new Map<number, Control>();
-      const hierarchicalData: Control[] = [];
-
-      data.forEach((item) => {
-        const control: Control = {
-          ctrl_id: item.ctrl_id,
-          ctrl_name: item.ctrl_name,
-          applicable: item.applicable,
-          applicable_str: item.applicable === true ? "Yes" : "No",
-          justification: item.justification,
-          parentCID: item.parentCID,
-          std_code_id: item.std_code_id,
-          ctrl_LVLID: item.ctrl_LVLID,
-          is_active: item.is_active,
-          subRows: [],
-        };
-        controlsMap.set(item.ctrl_id, control);
-      });
-
-      // Second pass - build hierarchy
-      data.forEach((item) => {
-        const control = controlsMap.get(item.ctrl_id);
-        if (item.parentCID === 0) {
-          hierarchicalData.push(control!);
-        } else {
-          const parent = controlsMap.get(item.parentCID);
-          parent?.subRows?.push(control!);
-        }
-      });
-
-      setTableData(hierarchicalData);
-    } else {
-      setTableData([]);
     }
   }, [data]);
 

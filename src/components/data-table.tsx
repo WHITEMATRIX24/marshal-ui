@@ -40,7 +40,7 @@ interface DataTableProps<TData, TValue> {
 }
 
 export function DataTable<
-  TData extends { ctrl_id: number; subRows?: TData[]; applicable_str?: string },
+  TData extends { id: number; children?: TData[]; applicable_str?: string },
   TValue
 >({ columns, data, onEdit, onDelete }: DataTableProps<TData, TValue>) {
   const [pageSize, setPageSize] = React.useState(10);
@@ -62,15 +62,15 @@ export function DataTable<
       return rows
         .map((row) => ({
           ...row,
-          subRows: row.subRows ? filterNestedData(row.subRows) : [],
+          children: row.children ? filterNestedData(row.children) : [],
         }))
         .filter((row) => {
           const rowMatches = Object.values(row).some((value) =>
             String(value).toLowerCase().includes(searchQuery.toLowerCase())
           );
-          const subRowsMatch = row.subRows?.length > 0;
+          const childrenMatch = row.children?.length > 0;
 
-          return rowMatches || subRowsMatch;
+          return rowMatches || childrenMatch;
         });
     };
 
@@ -80,9 +80,9 @@ export function DataTable<
   // const flattenDataForExport = (data: TData[]): any[] => {
   //   const flatten = (items: TData[]): any[] => {
   //     return items.flatMap((item) => {
-  //       const { subRows, ...rest } = item as any;
+  //       const { children, ...rest } = item as any;
   //       const flattenedItem = { ...rest };
-  //       const subItems = subRows ? flatten(subRows) : [];
+  //       const subItems = children ? flatten(children) : [];
   //       return [flattenedItem, ...subItems];
   //     });
   //   };
@@ -183,13 +183,13 @@ export function DataTable<
     if (editingRow && onEdit) {
       const updatedRow = {
         ...editingRow,
-        applicable: applicableValue === "Yes",
+        is_applicable: applicableValue === "Yes",
         applicable_str: applicableValue,
         justification: justificationValue,
       };
 
       try {
-        const response = await updateControl(editingRow.ctrl_id, updatedRow);
+        const response = await updateControl(editingRow.id, updatedRow);
         console.log("Control updated successfully:", response);
 
         // Call the onEdit callback to update the local state
@@ -205,7 +205,7 @@ export function DataTable<
 
   const openEditModal = (row: TData) => {
     setEditingRow(row);
-    setApplicableValue((row as any).applicable ? "Yes" : "No");
+    setApplicableValue((row as any).is_applicable ? "Yes" : "No");
     setJustificationValue((row as any).justification || "");
   };
 
@@ -218,14 +218,14 @@ export function DataTable<
     // Apply pagination only to top-level rows
     const paginatedRows = level === 0
       ? rows.slice(pageIndex * pageSize, (pageIndex + 1) * pageSize)
-      : rows; // Keep subRows intact
+      : rows; // Keep children intact
 
     return paginatedRows.map((row, index) => (
-      <React.Fragment key={row.ctrl_id}>
+      <React.Fragment key={row.id}>
 
         <TableRow
-          key={row.ctrl_id}
-          className={`transition-colors hover:bg-[var(--hover-bg)] ${expandedRows[row.ctrl_id] ? "bg-[var(--hover-bg)]" : index % 2 === 0 ? 'bg-[var(--table-bg-even)] text-black' : 'bg-[var(--table-bg-odd)] text-black'
+          key={row.id}
+          className={`transition-colors hover:bg-[var(--hover-bg)] ${expandedRows[row.id] ? "bg-[var(--hover-bg)]" : index % 2 === 0 ? 'bg-[var(--table-bg-even)] text-black' : 'bg-[var(--table-bg-odd)] text-black'
             }`}
         >
 
@@ -234,9 +234,9 @@ export function DataTable<
               }`} >
               {colIndex === 0 ? (
                 <div className="flex items-center space-x-2" style={{ paddingLeft: `${level * 20}px` }}>
-                  {row.subRows && row.subRows.length > 0 && row.applicable_str === "Yes" && (
-                    <button onClick={() => toggleRow(row.ctrl_id)} className="flex items-center">
-                      {expandedRows[row.ctrl_id] ? (
+                  {row.children && row.children.length > 0 && row.applicable_str === "Yes" && (
+                    <button onClick={() => toggleRow(row.id)} className="flex items-center">
+                      {expandedRows[row.id] ? (
                         <ChevronUp className="h-4 w-4" />
                       ) : (
                         <ChevronDown className="h-4 w-4" />
@@ -258,15 +258,15 @@ export function DataTable<
                 onClick={() => openEditModal(row)}
               />
               <Trash className="h-3 w-3 text-[var(--red)] cursor-pointer"
-                onClick={() => setDeletingCtrlId(row.ctrl_id)} />
+                onClick={() => setDeletingCtrlId(row.id)} />
             </div>
           </TableCell>
 
         </TableRow>
-        {expandedRows[row.ctrl_id] &&
-          row.subRows &&
-          row.subRows.length > 0 &&
-          renderRows(row.subRows, level + 1)}
+        {expandedRows[row.id] &&
+          row.children &&
+          row.children.length > 0 &&
+          renderRows(row.children, level + 1)}
       </React.Fragment>
     ));
   };
@@ -334,7 +334,7 @@ export function DataTable<
         isOpen={deletingCtrlId !== null}
         onClose={() => setDeletingCtrlId(null)}
         onDeleteSuccess={(deletedCtrlId: any) => {
-          setFilteredData(prev => prev.filter(item => item.ctrl_id !== deletedCtrlId));
+          setFilteredData(prev => prev.filter(item => item.id !== deletedCtrlId));
           if (onDelete) {
             onDelete(deletedCtrlId);
           }
