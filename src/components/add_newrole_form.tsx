@@ -1,4 +1,4 @@
-import { RoleManagement } from "@/app/home/role-user-management/create-update-roles/page";
+import { Role } from "@/app/home/role-user-management/create-update-roles/page";
 import { hideNewRoleAddForm } from "@/lib/global-redux/features/uiSlice";
 import { RootState } from "@/lib/global-redux/store";
 import React, { useState } from "react";
@@ -9,14 +9,15 @@ const AddNewRoleModal = () => {
   const roleEditData = useSelector(
     (state: RootState) => state.ui.addNewRoleOnRoleMenuModal.data
   );
-  const [formData, setFormData] = useState<RoleManagement>(
-    roleEditData
-      ? roleEditData
-      : {
-        role_name: "",
-        role_id: "",
-      }
+  const [formData, setFormData] = useState<Role>(
+    roleEditData || {
+      id: 0,
+      role_name: "",
+      is_active: true,
+    }
   );
+
+
 
   const handleModalClose = () => dispatch(hideNewRoleAddForm());
 
@@ -31,14 +32,15 @@ const AddNewRoleModal = () => {
         </div>
         <form className="flex flex-col gap-2">
           <input
-            type="text"
+            type="number"
             className="px-2 py-1 border outline-none rounded-md text-[11px] border-gray-300 dark:border-gray-600 bg-[var(--table-bg-even)] dark:text-black"
             placeholder="Role Id"
-            value={formData.role_id}
+            value={formData.id}
             onChange={(e) =>
-              setFormData({ ...formData, role_id: e.target.value })
+              setFormData({ ...formData, id: Number(e.target.value) }) // Convert string to number
             }
           />
+
           <input
             type="text"
             className="px-2 py-1 border outline-none rounded-md text-[11px] border-gray-300 dark:border-gray-600 bg-[var(--table-bg-even)] dark:text-black"

@@ -3,28 +3,46 @@ import BreadCrumbsProvider from "@/components/ui/breadCrumbsProvider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
+import Cookies from "js-cookie";
+import { fetchRolesApi } from "@/services/apis";
+import { useQuery } from "@tanstack/react-query";
 
-const roles = [
-    { id: 1, name: "Client Admin" },
-    { id: 2, name: "Performer" },
-    { id: 3, name: "Auditor" },
-];
+export interface Role {
+    role_name: string;
+    id: number;
+    is_active: boolean;
+}
 
 export default function HomePage() {
     const [search, setSearch] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [pageSize, setPageSize] = useState(5);
+    const token = Cookies.get("access_token");
 
-
-    const itemsPerPage = pageSize;
+    const { data, isLoading, error } = useQuery({
+        queryKey: ["usersdata"],
+        queryFn: async () =>
+            await fetchRolesApi({
+                method: "GET",
+                urlEndpoint: "/role/roles",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }),
+    });
+    console.log("API Response:", data?.data?.items);
 
     // Filter roles based on search input
-    const filteredRoles = roles.filter((role) =>
-        role.name.toLowerCase().includes(search.toLowerCase())
-    );
+    const filteredRoles = Array.isArray(data?.data?.items)
+        ? data.data.items.filter((role: Role) =>
+            role.role_name.toLowerCase().includes(search.toLowerCase())
+        )
+        : [];
+
 
     // Pagination logic
+    const itemsPerPage = pageSize;
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     const currentRoles = filteredRoles.slice(indexOfFirstItem, indexOfLastItem);
@@ -32,9 +50,12 @@ export default function HomePage() {
 
     const handlePageSizeChange = (size: number) => {
         setPageSize(size);
-        ;
+        setCurrentPage(1); // Reset to first page when page size changes
+        setIsDropdownOpen(false);
     };
 
+    if (isLoading) return <div>Loading...</div>;
+    if (error) return <div>Error loading data</div>;
 
     return (
         <div className="py-0 px-4">
@@ -52,17 +73,22 @@ export default function HomePage() {
             <table className="w-full border-collapse">
                 <thead className="sticky top-0 z-100">
                     <tr className="text-white text-[12px] px-1 h-7 bg-[var(--purple)] text-left">
-                        <th >Role ID</th>
-                        <th >Role Name</th>
+                        <th>Role ID</th>
+                        <th>Role Name</th>
                     </tr>
                 </thead>
                 <tbody className="overflow-y-auto">
                     {currentRoles.length > 0 ? (
-                        currentRoles.map((role, index) => (
-                            <tr key={role.id} className={`text-[11px] transition-colors hover:bg-[var(--hover-bg)] ${index % 2 === 0 ? 'bg-[var(--table-bg-even)] text-black' : 'bg-[var(--table-bg-odd)] text-black'
-                                }`}>
+                        currentRoles.map((role: Role, index: number) => (
+                            <tr
+                                key={role.id}
+                                className={`text-[11px] transition-colors hover:bg-[var(--hover-bg)] ${index % 2 === 0
+                                    ? "bg-[var(--table-bg-even)] text-black"
+                                    : "bg-[var(--table-bg-odd)] text-black"
+                                    }`}
+                            >
                                 <td className="border-b p-1">{role.id}</td>
-                                <td className="border-b p-1">{role.name}</td>
+                                <td className="border-b p-1">{role.role_name}</td>
                             </tr>
                         ))
                     ) : (
@@ -91,10 +117,7 @@ export default function HomePage() {
                                 <button
                                     key={size}
                                     className="block w-full px-4 py-2 hover:bg-gray-100 text-left"
-                                    onClick={() => {
-                                        handlePageSizeChange(size);
-                                        setIsDropdownOpen(false); // Close the dropdown after selection
-                                    }}
+                                    onClick={() => handlePageSizeChange(size)}
                                 >
                                     {size}
                                 </button>
@@ -114,13 +137,17 @@ export default function HomePage() {
                         {"<"}
                     </Button>
                     <span>
-                        {indexOfFirstItem + 1} - {Math.min(indexOfLastItem, filteredRoles.length)} of {filteredRoles.length}
+                        {indexOfFirstItem + 1} -{" "}
+                        {Math.min(indexOfLastItem, filteredRoles.length)} of{" "}
+                        {filteredRoles.length}
                     </span>
                     <Button
                         variant="outline"
                         size="sm"
                         className="text-[10px] text-[#0392cb] dark:text-[#69c3df]"
-                        onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                        onClick={() =>
+                            setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                        }
                         disabled={currentPage === totalPages}
                     >
                         {">"}

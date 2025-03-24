@@ -60,3 +60,10 @@ export const fetchUsersDataApi = async ({
 }: ApiConfigProps): Promise<AxiosResponse | undefined> => {
   return apiConfig({ method, urlEndpoint, headers });
 };
+export const fetchRolesApi = async ({
+  method,
+  urlEndpoint,
+  headers,
+}: ApiConfigProps): Promise<AxiosResponse | undefined> => {
+  return apiConfig({ method, urlEndpoint, headers });
+};

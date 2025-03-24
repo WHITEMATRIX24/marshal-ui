@@ -4,7 +4,8 @@ import BreadCrumbsProvider from "@/components/ui/breadCrumbsProvider";
 import { NotificationTable } from "@/components/activites/notification";
 import { ColumnDef } from "@tanstack/react-table";
 
-export type TableData = {
+// Remove 'export' from the type since it's only used locally
+type TableData = {
   notificationId: string;
   notificationDate: string;
   activityAssignment: string;
@@ -12,7 +13,8 @@ export type TableData = {
   notificationType: string;
 };
 
-export const columns: ColumnDef<TableData>[] = [
+// Remove 'export' from the columns array since it's used locally
+const columns: ColumnDef<TableData>[] = [
   {
     accessorKey: "notificationId",
     header: "Notification ID",

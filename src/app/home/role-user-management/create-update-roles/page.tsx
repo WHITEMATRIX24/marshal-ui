@@ -9,27 +9,42 @@ import { RootState } from "@/lib/global-redux/store";
 import { Pencil, Trash } from "lucide-react";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-
-export interface RoleManagement {
-  role_id: string;
+import Cookies from "js-cookie";
+import { fetchRolesApi } from "@/services/apis";
+import { useQuery } from "@tanstack/react-query";
+export interface Role {
   role_name: string;
+  id: number;
+  is_active: boolean;
 }
-
 const CreateUpdateRole = () => {
   const dispatch = useDispatch();
   const isModalVisible = useSelector(
     (state: RootState) => state.ui.addNewRoleOnRoleMenuModal.isVisible
   );
   const [deleteModal, setDeleteModal] = useState<boolean>(false);
-
+  const token = Cookies.get("access_token");
   // delete modal close handler
   const handleDeletemodalClose = () => setDeleteModal(false);
 
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["usersdata"],
+    queryFn: async () =>
+      await fetchRolesApi({
+        method: "GET",
+        urlEndpoint: "/role/roles",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }),
+  });
+  console.log("API Response Role Table:", data?.data?.items);
+
   const columnData = [
     {
-      accessorKey: "role_id",
+      accessorKey: "id",
       header: "Role Id",
-      id: "role_id",
+      id: "id",
     },
     {
       accessorKey: "role_name",
@@ -63,12 +78,6 @@ const CreateUpdateRole = () => {
       },
     },
   ];
-  const tableData = [
-    {
-      role_id: "test",
-      role_name: "test",
-    },
-  ];
 
   return (
     <>
@@ -79,7 +88,16 @@ const CreateUpdateRole = () => {
           </div>
         </header>
         <div className="py-0 w-full px-4">
-          <RolesManagementDataTable columns={columnData} data={tableData} />
+          {isLoading ? (
+            <p>Loading...</p>
+          ) : !isLoading && error ? (
+            <p>Something went wrong ...</p>
+          ) : (
+            !isLoading &&
+            data && (
+              <RolesManagementDataTable columns={columnData} data={data?.data?.items} />
+            )
+          )}
         </div>
       </div>
       {isModalVisible && <AddNewRoleModal />}
