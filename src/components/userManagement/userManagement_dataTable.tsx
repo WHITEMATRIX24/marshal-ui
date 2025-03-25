@@ -43,8 +43,6 @@ export function UserManagementDataTable<TData, TValue>({
   const [pageSize, setPageSize] = React.useState(10);
   const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
 
-  const handelOpenAddNewUserForm = () => dispatch(showNewUserAddForm(null));
-
   const table = useReactTable({
     data,
     columns,
@@ -71,6 +69,10 @@ export function UserManagementDataTable<TData, TValue>({
   const startItem = table.getState().pagination.pageIndex * pageSize + 1;
   const endItem = Math.min(startItem + pageSize - 1, data.length);
   const totalItems = data.length;
+
+
+  const handelOpenAddNewUserForm = () => dispatch(showNewUserAddForm(null));
+
 
   return (
     <div>

@@ -10,17 +10,9 @@ import { Pencil, Trash } from "lucide-react";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Cookies from "js-cookie";
-import { useQuery } from "@tanstack/react-query";
-import { fetchUsersDataApi } from "@/services/apis";
-
-export interface UserManagement {
-  username: string;
-  email_address: string;
-  gov_id: number | null;
-  roles?: string;
-  is_active: boolean;
-  phone_number: string;
-}
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { deleteUserApi, fetchUsersDataApi } from "@/services/apis";
+import { toast } from "sonner";
 
 const CreateUpdateRole = () => {
   const dispatch = useDispatch();
@@ -29,9 +21,7 @@ const CreateUpdateRole = () => {
   );
   const token = Cookies.get("access_token");
   const [deleteModal, setDeleteModal] = useState<boolean>(false);
-
-  // delete modal close handler
-  const handleDeletemodalClose = () => setDeleteModal(false);
+  const [deleteUserId, setDeleteUserId] = useState<number | null>(null);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["usersdata"],
@@ -44,7 +34,6 @@ const CreateUpdateRole = () => {
         },
       }),
   });
-  console.log(data);
 
   const columnData = [
     {
@@ -83,6 +72,7 @@ const CreateUpdateRole = () => {
 
         const handleDeleteOption = () => {
           setDeleteModal(true);
+          setDeleteUserId(row.original.id);
         };
 
         return (
@@ -100,6 +90,32 @@ const CreateUpdateRole = () => {
       },
     },
   ];
+
+  /////////////// delete modal handlers
+  const handleDeletemodalClose = () => setDeleteModal(false);
+
+  const { mutateAsync: deleteUser } = useMutation({
+    mutationFn: deleteUserApi,
+    onSuccess: () => {
+      toast.success("user successfully deleted");
+      handleDeletemodalClose();
+      return;
+    },
+    onError: (error) => {
+      return toast.error("something went wrong");
+    },
+  });
+
+  const deleteHandler = async () => {
+    if (!deleteUserId) return;
+    deleteUser({
+      method: "DELETE",
+      urlEndpoint: `/users/${deleteUserId}`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  };
 
   return (
     <>
@@ -124,7 +140,10 @@ const CreateUpdateRole = () => {
       </div>
       {isModalVisible && <AddNewUserModal />}
       {deleteModal && (
-        <DeleteCnfModal modalCloseHandler={handleDeletemodalClose} />
+        <DeleteCnfModal
+          modalCloseHandler={handleDeletemodalClose}
+          deleteHandler={deleteHandler}
+        />
       )}
     </>
   );
