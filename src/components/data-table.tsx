@@ -151,7 +151,7 @@ export function DataTable<
 
   const updateControl = async (ctrlId: number, updatedData: any) => {
     const token = Cookies.get("access_token");
-    console.log("updating")
+    console.log("updating", updatedData);
     try {
       const response = await updateControlsApi({
         method: "PUT",

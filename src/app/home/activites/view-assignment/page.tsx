@@ -3,7 +3,8 @@ import React from "react";
 import BreadCrumbsProvider from "@/components/ui/breadCrumbsProvider";
 import { ViewAssignmentTable } from "@/components/activites/viewAssignment";
 import { ColumnDef } from "@tanstack/react-table";
-export type TableData = {
+import { Pencil, Trash } from "lucide-react";
+type TableData = {
   complianceProviderId: string;
   standardName: string;
   activityName: string;
@@ -12,7 +13,7 @@ export type TableData = {
   startDate: string;
   endDate: string;
 };
-export const columns: ColumnDef<TableData>[] = [
+const columns: ColumnDef<TableData>[] = [
   {
     accessorKey: "complianceProviderId",
     header: "Compliance Provider ID",
@@ -40,6 +41,27 @@ export const columns: ColumnDef<TableData>[] = [
   {
     accessorKey: "endDate",
     header: "End Date",
+  },
+  {
+    accessorKey: "actions",
+    id: "actions",
+    header: "Actions",
+    cell: ({ row }: any) => {
+      // const handleEditOption = () => {
+      //   dispatch(showEditRoleForm(row.original));
+      // };
+
+      // const handleDeleteOption = () => {
+      //   setDeleteModal(true);
+      // };
+
+      return (
+        <div className="flex w-full justify-center gap-2 ">
+          <Pencil className="h-3 w-3 text-blue-900 cursor-pointer" />
+          <Trash className="h-3 w-3 text-[var(--red)] cursor-pointer" />
+        </div>
+      );
+    },
   },
 ];
 

@@ -23,8 +23,12 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/table";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { showNewRoleAddForm } from "@/lib/global-redux/features/uiSlice";
+import { RootState } from "@/lib/global-redux/store";
+import AddNewRoleModal from "./add_newrole_form";
+
+
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -33,12 +37,15 @@ interface DataTableProps<TData, TValue> {
 
 export function RolesManagementDataTable<TData, TValue>({
   columns,
-  data,
+  data = [],
 }: DataTableProps<TData, TValue>) {
   const dispatch = useDispatch();
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
+  );
+  const isModalVisible = useSelector(
+    (state: RootState) => state.ui.addRoleOnRoleMenuModal.isVisible
   );
   const [pageSize, setPageSize] = React.useState(10);
   const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
@@ -69,8 +76,9 @@ export function RolesManagementDataTable<TData, TValue>({
   };
 
   const startItem = table.getState().pagination.pageIndex * pageSize + 1;
-  const endItem = Math.min(startItem + pageSize - 1, data.length);
-  const totalItems = data.length;
+  const endItem = Math.min(startItem + pageSize - 1, data?.length || 0);
+  const totalItems = data?.length || 0;
+
 
   return (
     <div>
@@ -102,16 +110,15 @@ export function RolesManagementDataTable<TData, TValue>({
                 {headerGroup.headers.map((header) => (
                   <TableHead
                     key={header.id}
-                    className={`text-white text-[12px] h-7 p-1  ${
-                      header.id === "actions" ? "text-center w-20" : ""
-                    }`}
+                    className={`text-white text-[12px] h-7 p-1  ${header.id === "actions" ? "text-center w-20" : ""
+                      }`}
                   >
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
                   </TableHead>
                 ))}
               </TableRow>
@@ -122,11 +129,10 @@ export function RolesManagementDataTable<TData, TValue>({
               table.getRowModel().rows.map((row, index) => (
                 <TableRow
                   key={row.id}
-                  className={`text-[11px] transition-colors hover:bg-[var(--hover-bg)] ${
-                    index % 2 === 0
-                      ? "bg-[var(--table-bg-even)] text-[black]"
-                      : "bg-[var(--table-bg-odd)] text-[black]"
-                  }`}
+                  className={`text-[11px] transition-colors hover:bg-[var(--hover-bg)] ${index % 2 === 0
+                    ? "bg-[var(--table-bg-even)] text-[black]"
+                    : "bg-[var(--table-bg-odd)] text-[black]"
+                    }`}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell
@@ -206,6 +212,7 @@ export function RolesManagementDataTable<TData, TValue>({
           </Button>
         </div>
       </div>
+      {isModalVisible && <AddNewRoleModal />}
     </div>
   );
 }

@@ -24,7 +24,7 @@ import {
     TableRow,
 } from "../ui/table";
 // import { useDispatch } from "react-redux";
-// import { showNewRoleAddForm } from "@/lib/global-redux/features/uiSlice";
+// import { showEditRoleForm } from "@/lib/global-redux/features/uiSlice";
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];
@@ -43,7 +43,7 @@ export function NotificationTable<TData, TValue>({
     const [pageSize, setPageSize] = React.useState(10);
     const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
 
-    // const handelOpenAddNewRoleForm = () => dispatch(showNewRoleAddForm(null));
+    // const handelOpenAddNewRoleForm = () => dispatch(showEditRoleForm(null));
 
     const table = useReactTable({
         data,

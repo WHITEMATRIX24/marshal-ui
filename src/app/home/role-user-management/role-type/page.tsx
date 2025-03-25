@@ -1,132 +1,68 @@
 "use client";
+
 import BreadCrumbsProvider from "@/components/ui/breadCrumbsProvider";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import React from "react";
+import Cookies from "js-cookie";
+import { fetchRolesApi } from "@/services/apis";
+import { useQuery } from "@tanstack/react-query";
+import { RolesTypeDataTable } from "@/components/rolesManagement/roleTypeTable";
 
-const roles = [
-    { id: 1, name: "Client Admin" },
-    { id: 2, name: "Performer" },
-    { id: 3, name: "Auditor" },
-];
+export interface Role {
+    role_name: string;
+    id: number;
+    is_active: boolean;
+}
 
-export default function HomePage() {
-    const [search, setSearch] = useState("");
-    const [currentPage, setCurrentPage] = useState(1);
-    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-    const [pageSize, setPageSize] = useState(5);
+const Role = () => {
+    const token = Cookies.get("access_token");
 
+    const { data, isLoading, error } = useQuery({
+        queryKey: ["usersdata"],
+        queryFn: async () =>
+            await fetchRolesApi({
+                method: "GET",
+                urlEndpoint: "/role/roles",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }),
+    });
 
-    const itemsPerPage = pageSize;
+    const activeRoles = data?.data?.items?.filter((role: Role) => role.is_active) || [];
 
-    // Filter roles based on search input
-    const filteredRoles = roles.filter((role) =>
-        role.name.toLowerCase().includes(search.toLowerCase())
-    );
+    console.log("Filtered Active Roles:", activeRoles);
 
-    // Pagination logic
-    const indexOfLastItem = currentPage * itemsPerPage;
-    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentRoles = filteredRoles.slice(indexOfFirstItem, indexOfLastItem);
-    const totalPages = Math.ceil(filteredRoles.length / itemsPerPage);
-
-    const handlePageSizeChange = (size: number) => {
-        setPageSize(size);
-        ;
-    };
-
+    const columnData = [
+        {
+            accessorKey: "id",
+            header: "Role Id",
+            id: "id",
+        },
+        {
+            accessorKey: "role_name",
+            header: "Role Name",
+            id: "role_name",
+        },
+    ];
 
     return (
-        <div className="py-0 px-4">
-            <BreadCrumbsProvider />
-            <div className="flex items-center justify-end py-2 space-x-1">
-                <Input
-                    placeholder="Search..."
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    className="max-w-sm px-3 h-7 text-[11px] bg-[#f9fafb] dark:bg-[#E5e5e5]"
-                />
-            </div>
-
-            {/* Table */}
-            <table className="w-full border-collapse">
-                <thead className="sticky top-0 z-100">
-                    <tr className="text-white text-[12px] px-1 h-7 bg-[var(--purple)] text-left">
-                        <th >Role ID</th>
-                        <th >Role Name</th>
-                    </tr>
-                </thead>
-                <tbody className="overflow-y-auto">
-                    {currentRoles.length > 0 ? (
-                        currentRoles.map((role, index) => (
-                            <tr key={role.id} className={`text-[11px] transition-colors hover:bg-[var(--hover-bg)] ${index % 2 === 0 ? 'bg-[var(--table-bg-even)] text-black' : 'bg-[var(--table-bg-odd)] text-black'
-                                }`}>
-                                <td className="border-b p-1">{role.id}</td>
-                                <td className="border-b p-1">{role.name}</td>
-                            </tr>
-                        ))
-                    ) : (
-                        <tr>
-                            <td colSpan={2} className="p-2 text-center text-[11px]">
-                                No results found
-                            </td>
-                        </tr>
-                    )}
-                </tbody>
-            </table>
-
-            {/* Pagination */}
-            <div className="fixed bottom-[20px] w-[80%] flex items-center justify-between py-4 mr-4">
-                <div className="flex items-center space-x-2 relative">
-                    <span className="text-[11px]">Items per page</span>
-                    <button
-                        className="border px-2 py-1 rounded flex justify-end text-[10px]"
-                        onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                    >
-                        {pageSize} ▼
-                    </button>
-                    {isDropdownOpen && (
-                        <div className="absolute top-[-60px] left-[60%] mt-1 bg-white border rounded shadow-lg z-10 text-[10px]">
-                            {[5, 10, 25, 50].map((size) => (
-                                <button
-                                    key={size}
-                                    className="block w-full px-4 py-2 hover:bg-gray-100 text-left"
-                                    onClick={() => {
-                                        handlePageSizeChange(size);
-                                        setIsDropdownOpen(false); // Close the dropdown after selection
-                                    }}
-                                >
-                                    {size}
-                                </button>
-                            ))}
-                        </div>
-                    )}
+        <div className="flex flex-col w-full mb-[50px]">
+            <header className="flex flex-col shrink-0 gap-0 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
+                <div className="flex items-center gap-2 px-4">
+                    <BreadCrumbsProvider />
                 </div>
-
-                <div className="flex items-center space-x-4 text-[10px]">
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        className="text-[10px] text-[#0392cb] dark:text-[#69c3df]"
-                        onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                        disabled={currentPage === 1}
-                    >
-                        {"<"}
-                    </Button>
-                    <span>
-                        {indexOfFirstItem + 1} - {Math.min(indexOfLastItem, filteredRoles.length)} of {filteredRoles.length}
-                    </span>
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        className="text-[10px] text-[#0392cb] dark:text-[#69c3df]"
-                        onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-                        disabled={currentPage === totalPages}
-                    >
-                        {">"}
-                    </Button>
-                </div>
+            </header>
+            <div className="py-0 w-full px-4">
+                {isLoading ? (
+                    <p>Loading...</p>
+                ) : error ? (
+                    <p>Something went wrong ...</p>
+                ) : (
+                    <RolesTypeDataTable columns={columnData} data={activeRoles} />
+                )}
             </div>
         </div>
     );
-}
+};
+
+export default Role;

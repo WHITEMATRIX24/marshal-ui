@@ -50,7 +50,7 @@ const ViewActivity = () => {
       header: "Actions",
       cell: ({ row }: any) => {
         // const handleEditOption = () => {
-        //   dispatch(showNewRoleAddForm(row.original));
+        //   dispatch(showEditRoleForm(row.original));
         // };
 
         // const handleDeleteOption = () => {
