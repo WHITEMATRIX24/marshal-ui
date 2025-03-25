@@ -67,3 +67,19 @@ export const fetchRolesApi = async ({
 }: ApiConfigProps): Promise<AxiosResponse | undefined> => {
   return apiConfig({ method, urlEndpoint, headers });
 };
+export const AddRolesApi = async ({
+  method,
+  urlEndpoint,
+  headers,
+  data,
+}: ApiConfigProps): Promise<AxiosResponse | undefined> => {
+  return apiConfig({ method, urlEndpoint, headers, data });
+};
+export const EditRolesApi = async ({
+  method,
+  urlEndpoint,
+  headers,
+  data
+}: ApiConfigProps): Promise<AxiosResponse | undefined> => {
+  return apiConfig({ method, urlEndpoint, headers, data });
+};

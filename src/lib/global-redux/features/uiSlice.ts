@@ -12,7 +12,11 @@ export interface UiStates {
     isVisible: boolean;
     data: UserManagement | null;
   };
-  addNewRoleOnRoleMenuModal: {
+  addRoleOnRoleMenuModal: {
+    isVisible: boolean;
+    data: Role | null;
+  };
+  editRoleOnRoleMenuModal: {
     isVisible: boolean;
     data: Role | null;
   };
@@ -26,7 +30,11 @@ const initialState: UiStates = {
     isVisible: false,
     data: null,
   },
-  addNewRoleOnRoleMenuModal: {
+  editRoleOnRoleMenuModal: {
+    isVisible: false,
+    data: null,
+  },
+  addRoleOnRoleMenuModal: {
     isVisible: false,
     data: null,
   },
@@ -60,12 +68,20 @@ export const UiSlice = createSlice({
       state.addNewUserOnRoleMenuModal.data = null;
     },
     showNewRoleAddForm: (state, action) => {
-      state.addNewRoleOnRoleMenuModal.isVisible = true;
-      state.addNewRoleOnRoleMenuModal.data = action.payload;
+      state.addRoleOnRoleMenuModal.isVisible = true;
+      state.addRoleOnRoleMenuModal.data = action.payload;
     },
     hideNewRoleAddForm: (state) => {
-      state.addNewRoleOnRoleMenuModal.isVisible = false;
-      state.addNewRoleOnRoleMenuModal.data = null;
+      state.addRoleOnRoleMenuModal.isVisible = false;
+      state.addRoleOnRoleMenuModal.data = null;
+    },
+    showEditRoleForm: (state, action) => {
+      state.editRoleOnRoleMenuModal.isVisible = true;
+      state.editRoleOnRoleMenuModal.data = action.payload;
+    },
+    hideEditRoleForm: (state) => {
+      state.editRoleOnRoleMenuModal.isVisible = false;
+      state.editRoleOnRoleMenuModal.data = null;
     },
   },
 });
@@ -80,6 +96,8 @@ export const {
   showNewUserAddForm,
   hideNewRoleAddForm,
   showNewRoleAddForm,
+  hideEditRoleForm,
+  showEditRoleForm,
 } = UiSlice.actions;
 
 export default UiSlice.reducer;

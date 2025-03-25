@@ -23,8 +23,12 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/table";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { showNewRoleAddForm } from "@/lib/global-redux/features/uiSlice";
+import { RootState } from "@/lib/global-redux/store";
+import AddNewRoleModal from "./add_newrole_form";
+
+
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -39,6 +43,9 @@ export function RolesManagementDataTable<TData, TValue>({
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
+  );
+  const isModalVisible = useSelector(
+    (state: RootState) => state.ui.addRoleOnRoleMenuModal.isVisible
   );
   const [pageSize, setPageSize] = React.useState(10);
   const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
@@ -205,6 +212,7 @@ export function RolesManagementDataTable<TData, TValue>({
           </Button>
         </div>
       </div>
+      {isModalVisible && <AddNewRoleModal />}
     </div>
   );
 }

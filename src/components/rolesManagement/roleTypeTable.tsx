@@ -23,19 +23,17 @@ import {
     TableHeader,
     TableRow,
 } from "../ui/table";
-// import { useDispatch } from "react-redux";
-// import { showEditRoleForm } from "@/lib/global-redux/features/uiSlice";
+
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];
     data: TData[];
 }
 
-export function ViewAssignmentTable<TData, TValue>({
+export function RolesTypeDataTable<TData, TValue>({
     columns,
-    data,
+    data = [],
 }: DataTableProps<TData, TValue>) {
-    // const dispatch = useDispatch();
     const [sorting, setSorting] = React.useState<SortingState>([]);
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
         []
@@ -43,7 +41,6 @@ export function ViewAssignmentTable<TData, TValue>({
     const [pageSize, setPageSize] = React.useState(10);
     const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
 
-    // const handelOpenAddNewRoleForm = () => dispatch(showEditRoleForm(null));
 
     const table = useReactTable({
         data,
@@ -69,8 +66,9 @@ export function ViewAssignmentTable<TData, TValue>({
     };
 
     const startItem = table.getState().pagination.pageIndex * pageSize + 1;
-    const endItem = Math.min(startItem + pageSize - 1, data.length);
-    const totalItems = data.length;
+    const endItem = Math.min(startItem + pageSize - 1, data?.length || 0);
+    const totalItems = data?.length || 0;
+
 
     return (
         <div>
@@ -78,21 +76,13 @@ export function ViewAssignmentTable<TData, TValue>({
                 <Input
                     placeholder="Search role names..."
                     value={
-                        (table.getColumn("activityName")?.getFilterValue() as string) ?? ""
+                        (table.getColumn("role_name")?.getFilterValue() as string) ?? ""
                     }
                     onChange={(event) =>
-                        table.getColumn("activityName")?.setFilterValue(event.target.value)
+                        table.getColumn("role_name")?.setFilterValue(event.target.value)
                     }
                     className="max-w-sm px-3 h-7 text-[11px] bg-[#f9fafb] dark:bg-[#e5e5e5]"
                 />
-                {/* <div className="flex gap-5">
-                    <button
-                        className="bg-[#0890CA] text-white text-[11px] px-2 py-1 rounded-[5px] dark:bg-[#6BC1E6] dark:text-[black]"
-                        onClick={handelOpenAddNewRoleForm}
-                    >
-                        Add New Role
-                    </button>
-                </div> */}
             </div>
             <div className="rounded-md border">
                 <Table>
