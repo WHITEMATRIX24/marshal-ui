@@ -30,6 +30,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { updateControlsApi } from "@/services/apis";
 import DeleteModal from "./deleteControlModal";
+import { Task } from "@/models/control";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -40,7 +41,7 @@ interface DataTableProps<TData, TValue> {
 }
 
 export function DataTable<
-  TData extends { id: number; children?: TData[]; applicable_str?: string },
+  TData extends { id: number; children?: TData[]; applicable_str?: string; tasks?: Task[] },
   TValue
 >({ columns, data, onEdit, onDelete }: DataTableProps<TData, TValue>) {
   const [pageSize, setPageSize] = React.useState(10);
@@ -49,6 +50,7 @@ export function DataTable<
   const [expandedRows, setExpandedRows] = React.useState<
     Record<string, boolean>
   >({});
+
   const [searchQuery, setSearchQuery] = React.useState("");
   const [filteredData, setFilteredData] = React.useState(data);
   const [editingRow, setEditingRow] = React.useState<TData | null>(null);
@@ -69,11 +71,9 @@ export function DataTable<
             String(value).toLowerCase().includes(searchQuery.toLowerCase())
           );
           const childrenMatch = row.children?.length > 0;
-
           return rowMatches || childrenMatch;
         });
     };
-
     setFilteredData(filterNestedData(data));
   }, [searchQuery, data]);
 
@@ -121,7 +121,7 @@ export function DataTable<
                 setJustificationValue((row.original as any).justification);
               }}
             />
-            <Trash className="h-4 w-4 text-[var(--red)] cursor-pointer" />
+            {/* <Trash className="h-4 w-4 text-[var(--red)] cursor-pointer" /> */}
           </div>
         ),
       },
@@ -218,62 +218,89 @@ export function DataTable<
 
 
   const renderRows = (rows: TData[], level: number = 0) => {
-    // Apply pagination only to top-level rows
     const paginatedRows = level === 0
       ? rows.slice(pageIndex * pageSize, (pageIndex + 1) * pageSize)
-      : rows; // Keep children intact
+      : rows;
 
-    return paginatedRows.map((row, index) => (
-      <React.Fragment key={row.id}>
-
-        <TableRow
-          key={row.id}
-          className={`transition-colors hover:bg-[var(--hover-bg)] ${expandedRows[row.id] ? "bg-[var(--hover-bg)]" : index % 2 === 0 ? 'bg-[var(--table-bg-even)] text-black' : 'bg-[var(--table-bg-odd)] text-black'
-            }`}
-        >
-
-          {columns.map((column, colIndex) => (
-            <TableCell key={column.id} className={`text-[11px]  px-2 py-1 ${colIndex === 1 ? "w-[50px] text-center" : colIndex === 2 ? "max-w-[350px] break-words" : "flex-1"
-              }`} >
-              {colIndex === 0 ? (
-                <div className="flex items-center space-x-2" style={{ paddingLeft: `${level * 20}px` }}>
-                  {row.children && row.children.length > 0 && row.applicable_str === "Yes" && (
-                    <button onClick={() => toggleRow(row.id)} className="flex items-center">
-                      {expandedRows[row.id] ? (
-                        <ChevronUp className="h-4 w-4" />
-                      ) : (
-                        <ChevronDown className="h-4 w-4" />
-                      )}
-                    </button>
-                  )}
-
-                  <span>{String(row[column.id as keyof TData] ?? "")}</span>
-                </div>
-              ) : (
-                String(row[column.id as keyof TData] ?? "")
-              )}
+    return paginatedRows.map((row, index) => {
+      const isLeafNode = !row.children || row.children.length === 0;
+      return (
+        <React.Fragment key={`row-${row.id}`}>
+          <TableRow
+            key={`row-${row.id}`}
+            className={`transition-colors hover:bg-[var(--hover-bg)] ${expandedRows[row.id] ? "bg-[var(--hover-bg)]" : index % 2 === 0 ? 'bg-[var(--table-bg-even)] text-black' : 'bg-[var(--table-bg-odd)] text-black'}`}
+          >
+            {columns.map((column, colIndex) => (
+              <TableCell key={`cell-${row.id}-${column.id}`} className={`text-[11px] px-2 py-1 ${colIndex === 1 ? "w-[50px] text-center" : colIndex === 2 ? "max-w-[350px] break-words" : "flex-1"}`}>
+                {colIndex === 0 ? (
+                  <div className="flex items-center space-x-2" style={{ paddingLeft: `${level * 20}px` }}>
+                    {(isLeafNode && row.tasks && row.tasks.length > 0) || (row.children && row.children.length > 0) ? (
+                      <button onClick={() => toggleRow(row.id)} className="flex items-center">
+                        {expandedRows[row.id] ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                      </button>
+                    ) : null}
+                    <span>{String(row[column.id as keyof TData] ?? "")}</span>
+                  </div>
+                ) : (
+                  String(row[column.id as keyof TData] ?? "")
+                )}
+              </TableCell>
+            ))}
+            <TableCell className="text-right pr-4 w-[50px]">
+              <div className="flex justify-end space-x-2">
+                <Pencil className="h-3 w-3 text-blue-900 cursor-pointer" onClick={() => openEditModal(row)} />
+                {/* <Trash className="h-3 w-3 text-[var(--red)] cursor-pointer" onClick={() => setDeletingCtrlId(row.id)} /> */}
+              </div>
             </TableCell>
-          ))}
-          <TableCell className="text-right pr-4 w-[50px]">
-            <div className="flex justify-end space-x-2">
-              <Pencil
-                className="h-3 w-3 text-blue-900 cursor-pointer"
-                onClick={() => openEditModal(row)}
-              />
-              <Trash className="h-3 w-3 text-[var(--red)] cursor-pointer"
-                onClick={() => setDeletingCtrlId(row.id)} />
-            </div>
-          </TableCell>
+          </TableRow>
 
-        </TableRow>
-        {expandedRows[row.id] &&
-          row.children &&
-          row.children.length > 0 &&
-          renderRows(row.children, level + 1)}
-      </React.Fragment>
-    ));
+          {/* Independent Task Table - 5 columns */}
+          {isLeafNode && row.tasks && row.tasks.length > 0 && expandedRows[row.id] && (
+            <TableRow key={`task-container-${row.id}`} className="bg-gray-100">
+              <TableCell colSpan={columns.length + 1} className="p-0">
+                <Table className="w-full">
+                  <TableHeader className="bg-gray-200">
+                    <TableRow className="h-6">
+                      <TableHead className="text-[11px] h-6 p-1">Task Title</TableHead>
+                      <TableHead className="text-[11px] h-6 p-1 max-w-[500px]">Task Details</TableHead>
+                      <TableHead className="text-[11px] h-6 p-1">Doer</TableHead>
+                      <TableHead className="text-[11px] h-6 p-1">Review</TableHead>
+                      <TableHead className="text-[11px] h-6 p-1">Frequency</TableHead>
+                      <TableHead className="text-[11px] h-8 p-1 text-center">Assignment</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {row.tasks.map(task => (
+                      <TableRow key={`task-${task.id}`}>
+                        <TableCell className="text-[11px] ">{task.task_title}</TableCell>
+                        <TableCell className="text-[11px] max-w-[500px]">{task.task_details}</TableCell>
+                        <TableCell className="text-[11px]">{task.doer}</TableCell>
+                        <TableCell className="text-[11px]">{task.review}</TableCell>
+                        <TableCell className="text-[11px]">{task.frequency}</TableCell>
+                        <TableCell className="text-right  justify-center align-center px-1 flex ">
+                          {/* <div className="flex justify-end space-x-2">
+                            <Pencil className="h-3 w-3 text-blue-900 cursor-pointer" />
+                            <Trash className="h-3 w-3 text-[var(--red)] cursor-pointer" />
+                          </div> */}
+                          <Button className="bg-[var(--blue)] w-5 h-5 px-0  flex items-center justify-center text-[10px] rounded-full">
+                            +
+                          </Button>
+
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableCell>
+            </TableRow>
+          )}
+
+          {/* Child Rows */}
+          {expandedRows[row.id] && row.children && row.children.length > 0 && renderRows(row.children, level + 1)}
+        </React.Fragment>
+      );
+    });
   };
-
 
   return (
     <div className="w-full">
@@ -350,7 +377,6 @@ export function DataTable<
           onChange={(e) => setSearchQuery(e.target.value)}
           className="max-w-sm px-3 h-7  text-[11px] bg-[#f9fafb] dark:bg-[#E5e5e5]"
         />
-
         {/* <Button
           onClick={handleExportCSV}
           className="bg-blue-500 text-white flex items-center"
@@ -358,7 +384,6 @@ export function DataTable<
           <Download className="mr-2" /> Export
         </Button> */}
       </div>
-
       <div className="max-h-[70vh] overflow-auto relative">
         <Table className="w-full border-collapse">
           <TableHeader className="sticky top-0 z-100">
@@ -380,7 +405,18 @@ export function DataTable<
             ))}
           </TableHeader>
           <TableBody className="overflow-y-auto">
-            {renderRows(filteredData)}
+            {filteredData.length === 0 ? (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length + 1}
+                  className="text-center py-4 text-[11px] text-gray-500"
+                >
+                  No records found
+                </TableCell>
+              </TableRow>
+            ) : (
+              renderRows(filteredData)
+            )}
           </TableBody>
         </Table>
       </div>
@@ -402,7 +438,7 @@ export function DataTable<
                   className="block w-full px-4 py-2 hover:bg-gray-100 text-left"
                   onClick={() => {
                     handlePageSizeChange(size);
-                    setIsDropdownOpen(false); // Close the dropdown after selection
+                    setIsDropdownOpen(false);
                   }}
                 >
                   {size}

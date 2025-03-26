@@ -8,13 +8,15 @@ import { Pencil, Trash } from "lucide-react";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Cookies from "js-cookie";
-import { fetchRolesApi } from "@/services/apis";
+import { fetchClientRolesApi } from "@/services/apis";
 import { useQuery } from "@tanstack/react-query";
 import EditNewRoleModal from "@/components/rolesManagement/edit_role_form";
 import DeleteRoleModal from "@/components/rolesManagement/deleteRoleModal";
 
 export interface Role {
   role_name: string;
+  role_sort_name: string;
+  role_type_id: number;
   id: number;
   is_active: boolean;
 }
@@ -31,9 +33,9 @@ const CreateUpdateRole = () => {
   const { data, isLoading, error } = useQuery({
     queryKey: ["usersdata"],
     queryFn: async () =>
-      await fetchRolesApi({
+      await fetchClientRolesApi({
         method: "GET",
-        urlEndpoint: "/role/roles",
+        urlEndpoint: "/clientrole/client-roles",
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -45,9 +47,9 @@ const CreateUpdateRole = () => {
 
   const columnData = [
     {
-      accessorKey: "id",
-      header: "Role Id",
-      id: "id",
+      accessorKey: "role_sort_name",
+      header: "Role Short Name",
+      id: "role_sort_name",
     },
     {
       accessorKey: "role_name",

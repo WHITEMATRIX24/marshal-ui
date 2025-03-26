@@ -102,7 +102,7 @@ export function RolesManagementDataTable<TData, TValue>({
           </button>
         </div>
       </div>
-      <div className="rounded-md border">
+      <div className="rounded-md border max-h-[70vh] overflow-auto relative">
         <Table>
           <TableHeader className="bg-[var(--purple)]">
             {table.getHeaderGroups().map((headerGroup) => (

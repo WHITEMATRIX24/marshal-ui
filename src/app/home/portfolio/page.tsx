@@ -1,6 +1,6 @@
 "use client";
 
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { useQuery } from "@tanstack/react-query";
@@ -30,13 +30,19 @@ const fetchControls = async (stdId: number, govId: string): Promise<Control[]> =
   }
 
   const transformData = (items: Control[]): Control[] => {
-    return items.map(item => ({
-      ...item,
-      id: item.id,
-      control_full_name: item.control_full_name,
-      applicable_str: item.is_applicable === true ? "Yes" : "No",
-      children: item.children ? transformData(item.children) : undefined,
-    }));
+    return items.map(item => {
+
+      const isLeafNode = !item.children || item.children.length === 0;
+
+      return {
+        ...item,
+        id: item.id,
+        control_full_name: item.control_full_name,
+        applicable_str: item.is_applicable ? "Yes" : "No",
+        tasks: isLeafNode ? item.tasks : [],
+        children: item.children ? transformData(item.children) : undefined,
+      };
+    });
   };
 
   console.log("Transformed Data:", transformData(response.data.items));

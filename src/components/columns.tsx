@@ -20,4 +20,5 @@ export const columns: ColumnDef<Control, unknown>[] = [
     header: "Justification",
     id: "justification",
   },
+
 ];
