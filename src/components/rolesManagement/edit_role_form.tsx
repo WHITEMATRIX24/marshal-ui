@@ -12,8 +12,10 @@ const EditNewRoleModal = () => {
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
   const token = Cookies.get("access_token");
-
-  // Get the selected role data from Redux state
+  interface RoleType {
+    id: number;
+    role_name: string;
+  }
   const roleEditData = useSelector(
     (state: RootState) => state.ui.editRoleOnRoleMenuModal.data
   );
@@ -38,7 +40,6 @@ const EditNewRoleModal = () => {
       }),
   });
 
-  // Set form data when modal opens
   useEffect(() => {
     if (roleEditData) {
       setFormData({
@@ -50,8 +51,6 @@ const EditNewRoleModal = () => {
       });
     }
   }, [roleEditData]);
-
-  // Update role API call
   const editRole = async (role_id: number, updatedData: any) => {
     try {
       const payload = {
@@ -78,8 +77,6 @@ const EditNewRoleModal = () => {
       throw error;
     }
   };
-
-  // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.role_name.trim()) {
@@ -93,7 +90,7 @@ const EditNewRoleModal = () => {
         style: { backgroundColor: "#28a745", color: "white", border: "none" },
       });
 
-      queryClient.invalidateQueries(["allroles"]); // Refresh roles list
+      queryClient.invalidateQueries(); // Refresh roles list
       dispatch(hideEditRoleForm());
     } catch (error: any) {
       toast.error("Error updating role", {
@@ -101,8 +98,6 @@ const EditNewRoleModal = () => {
       });
     }
   };
-
-  // Close modal
   const handleModalClose = () => dispatch(hideEditRoleForm());
 
   return (
@@ -120,8 +115,6 @@ const EditNewRoleModal = () => {
             value={formData.id}
             disabled
           />
-
-          {/* Role Name */}
           <input
             type="text"
             className="px-2 py-1 border outline-none rounded-md text-[11px] border-gray-300 dark:border-gray-600 bg-[var(--table-bg-even)] dark:text-black"
@@ -130,8 +123,6 @@ const EditNewRoleModal = () => {
             onChange={(e) => setFormData({ ...formData, role_name: e.target.value })}
             required
           />
-
-          {/* Role Short Name */}
           <input
             type="text"
             className="px-2 py-1 border outline-none rounded-md text-[11px] border-gray-300 dark:border-gray-600 bg-[var(--table-bg-even)] dark:text-black"
@@ -140,8 +131,6 @@ const EditNewRoleModal = () => {
             onChange={(e) => setFormData({ ...formData, role_sort_name: e.target.value })}
             required
           />
-
-          {/* Role Type Dropdown */}
           <select
             className="px-2 py-1 border outline-none rounded-md text-[11px] border-gray-300 dark:border-gray-600 bg-[var(--table-bg-even)] dark:text-black"
             value={formData.role_type_id}
@@ -153,13 +142,11 @@ const EditNewRoleModal = () => {
             ) : rolesError ? (
               <option disabled>Something went wrong</option>
             ) : (
-              rolesData?.data.items.map((role) => (
+              rolesData?.data.items.map((role: RoleType) => (
                 <option value={role.id} key={role.id}>{role.role_name}</option>
               ))
             )}
           </select>
-
-          {/* Buttons */}
           <div className="flex gap-4 mt-3 justify-end">
             <button
               className="px-4 py-0.5 bg-[var(--red)] text-white text-[12px] rounded-[5px] dark:text-black"

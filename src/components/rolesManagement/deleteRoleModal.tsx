@@ -32,7 +32,7 @@ const DeleteRoleModal: React.FC<DeleteModalProps> = ({
             Authorization: `Bearer ${token}`,
         };
 
-        const urlEndpoint = `/role/roles/${role_id}`;
+        const urlEndpoint = `/clientrole/client-roles/${role_id}`;
         const method = "DELETE";
 
         try {
