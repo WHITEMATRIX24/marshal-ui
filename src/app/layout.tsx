@@ -19,7 +19,10 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("http://Xdooh.com"),
   title: "Marshal",
+  description:
+    "Marshal",
 };
 
 export default function RootLayout({

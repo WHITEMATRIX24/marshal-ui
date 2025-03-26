@@ -34,11 +34,6 @@ const Role = () => {
 
     const columnData = [
         {
-            accessorKey: "id",
-            header: "Role Id",
-            id: "id",
-        },
-        {
             accessorKey: "role_name",
             header: "Role Name",
             id: "role_name",
