@@ -90,6 +90,24 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       icon: LayoutDashboard,
       isActive: true,
       onClick: () => dispatch(setMainBreadcrumb("Dashboard")),
+      items: [
+        {
+          title: "Dashboard 1",
+          url: "/home/dashboard/Dashboard-1",
+          onClick: () => {
+            dispatch(setMainBreadcrumb("Dashboard 1"));
+            dispatch(setSubBredCrum(""));
+          },
+        },
+        {
+          title: "Dashboard 2",
+          url: "/home/dashboard/Dashboard-2",
+          onClick: () => {
+            dispatch(setMainBreadcrumb("Dashboard 2"));
+            dispatch(setSubBredCrum(""));
+          },
+        },
+      ],
     },
     {
       title: "Portfolio",

@@ -52,12 +52,19 @@ export function DataTable<
   >({});
 
   const [searchQuery, setSearchQuery] = React.useState("");
+  const [role, setRole] = React.useState("");
   const [filteredData, setFilteredData] = React.useState(data);
   const [editingRow, setEditingRow] = React.useState<TData | null>(null);
   const [deletingCtrlId, setDeletingCtrlId] = React.useState<number | null>(null);
   const [applicableValue, setApplicableValue] = React.useState("");
   const [justificationValue, setJustificationValue] = React.useState("");
-
+  const govId = Cookies.get("selected_governance");
+  React.useEffect(() => {
+    if (govId) {
+      const parsedGovId = JSON.parse(govId);
+      setRole(parsedGovId.role_name);
+    }
+  }, [govId]);
   // Search
   React.useEffect(() => {
     const filterNestedData = (rows: TData[]): TData[] => {
@@ -266,7 +273,9 @@ export function DataTable<
                       <TableHead className="text-[11px] h-6 p-1">Doer</TableHead>
                       <TableHead className="text-[11px] h-6 p-1">Review</TableHead>
                       <TableHead className="text-[11px] h-6 p-1">Frequency</TableHead>
-                      <TableHead className="text-[11px] h-8 p-1 text-center">Assignment</TableHead>
+                      {role.toLowerCase().includes("admin") && (
+                        <TableHead className="text-[11px] h-8 p-1 text-center">Assignment</TableHead>
+                      )}
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -277,16 +286,18 @@ export function DataTable<
                         <TableCell className="text-[11px]">{task.doer}</TableCell>
                         <TableCell className="text-[11px]">{task.review}</TableCell>
                         <TableCell className="text-[11px]">{task.frequency}</TableCell>
-                        <TableCell className="text-right  justify-center align-center px-1 flex ">
-                          {/* <div className="flex justify-end space-x-2">
+                        {role.toLowerCase().includes("admin") && (
+                          <TableCell className="text-right  justify-center align-center px-1 flex ">
+                            {/* <div className="flex justify-end space-x-2">
                             <Pencil className="h-3 w-3 text-blue-900 cursor-pointer" />
                             <Trash className="h-3 w-3 text-[var(--red)] cursor-pointer" />
                           </div> */}
-                          <Button className="bg-[var(--blue)] w-5 h-5 px-0  flex items-center justify-center text-[10px] rounded-full">
-                            +
-                          </Button>
+                            <Button className="bg-[var(--blue)] w-5 h-5 px-0  flex items-center justify-center text-[10px] rounded-full">
+                              +
+                            </Button>
 
-                        </TableCell>
+                          </TableCell>
+                        )}
                       </TableRow>
                     ))}
                   </TableBody>

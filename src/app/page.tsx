@@ -45,7 +45,7 @@ export default function Login() {
       Cookies.set("user_info", JSON.stringify(data?.user));
       Cookies.set("token_type", data?.token_type);
       Cookies.set("login_popup_initila_render", JSON.stringify(true));
-      router.replace("/home/dashboard");
+      router.replace("/home/dashboard/Dashboard-1");
     },
   });
 
