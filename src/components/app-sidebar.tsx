@@ -143,7 +143,21 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         },
       ],
     },
-    { title: "Configuration", url: "#", icon: Cog },
+    {
+      title: "Configuration",
+      url: "#",
+      icon: Cog,
+      items: [
+        {
+          title: "Add Assignment",
+          url: "/home/configuration/add-assignment",
+          onClick: () => {
+            dispatch(setMainBreadcrumb("Add Assignment"));
+            dispatch(setSubBredCrum(""));
+          },
+        },
+      ],
+    },
     { title: "Reports", url: "#", icon: FileChartColumn },
     { title: "Documentation", url: "#", icon: BookMarked },
   ];
