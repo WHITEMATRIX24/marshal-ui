@@ -13,6 +13,7 @@ import Cookies from "js-cookie";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { deleteUserApi, fetchUsersDataApi } from "@/services/apis";
 import { toast } from "sonner";
+import govAndRoles from "@/utils/gov_and_roles";
 
 const CreateUpdateRole = () => {
   const dispatch = useDispatch();
@@ -35,6 +36,9 @@ const CreateUpdateRole = () => {
       }),
   });
 
+  // roles and governacne to redux
+  govAndRoles();
+
   const columnData = [
     {
       accessorKey: "username",
@@ -52,9 +56,9 @@ const CreateUpdateRole = () => {
       id: "gov_id",
     },
     {
-      accessorKey: "role",
+      accessorKey: "link_to_role_id",
       header: "Role",
-      id: "role",
+      id: "link_to_role_id",
     },
     {
       accessorKey: "is_active",

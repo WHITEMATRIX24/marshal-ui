@@ -88,7 +88,6 @@ const AddNewUserModal = () => {
 
   const handleCreate = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(formData);
 
     const {
       email_address,

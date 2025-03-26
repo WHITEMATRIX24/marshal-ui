@@ -1,7 +1,7 @@
 "use client";
 
 import { Role } from "@/app/home/role-user-management/create-update-roles/page";
-import { UserManagement } from "@/app/home/role-user-management/create-update-users/page";
+import { CreateUserModel } from "@/models/users";
 import { createSlice } from "@reduxjs/toolkit";
 
 export interface UiStates {
@@ -10,7 +10,7 @@ export interface UiStates {
   mainBreadcrumb: string;
   addNewUserOnRoleMenuModal: {
     isVisible: boolean;
-    data: UserManagement | null;
+    data: CreateUserModel | null;
   };
   addRoleOnRoleMenuModal: {
     isVisible: boolean;

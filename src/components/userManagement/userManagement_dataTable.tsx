@@ -25,6 +25,7 @@ import {
 } from "../ui/table";
 import { useDispatch } from "react-redux";
 import { showNewUserAddForm } from "@/lib/global-redux/features/uiSlice";
+import formatRolesAndGov from "@/utils/format_roles_and_gov";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -70,9 +71,7 @@ export function UserManagementDataTable<TData, TValue>({
   const endItem = Math.min(startItem + pageSize - 1, data.length);
   const totalItems = data.length;
 
-
   const handelOpenAddNewUserForm = () => dispatch(showNewUserAddForm(null));
-
 
   return (
     <div>
@@ -149,6 +148,10 @@ export function UserManagementDataTable<TData, TValue>({
                           ) : (
                             <span>Inactive</span>
                           )
+                        ) : cell.column.id === "gov_id" ? (
+                          formatRolesAndGov({ govId: cell.getValue() })
+                        ) : cell.column.id === "link_to_role_id" ? (
+                          formatRolesAndGov({ roleId: cell.getValue() })
                         ) : (
                           flexRender(
                             cell.column.columnDef.cell,

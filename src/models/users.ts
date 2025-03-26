@@ -1,4 +1,5 @@
 export interface CreateUserModel {
+  id?: number;
   username: string;
   email_address: string;
   gov_id: number | null;

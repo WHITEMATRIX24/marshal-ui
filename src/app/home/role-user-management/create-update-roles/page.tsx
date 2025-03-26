@@ -31,7 +31,7 @@ const CreateUpdateRole = () => {
   const token = Cookies.get("access_token");
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ["usersdata"],
+    queryKey: ["clientroles"],
     queryFn: async () =>
       await fetchClientRolesApi({
         method: "GET",
@@ -43,7 +43,8 @@ const CreateUpdateRole = () => {
   });
 
   console.log("API Response Role Table:", data?.data?.items);
-  const activeRoles = data?.data?.items?.filter((role: Role) => role.is_active) || [];
+  const activeRoles =
+    data?.data?.items?.filter((role: Role) => role.is_active) || [];
 
   const columnData = [
     {
@@ -99,7 +100,12 @@ const CreateUpdateRole = () => {
           ) : error ? (
             <p>Something went wrong ...</p>
           ) : (
-            data && <RolesManagementDataTable columns={columnData} data={activeRoles} />
+            data && (
+              <RolesManagementDataTable
+                columns={columnData}
+                data={activeRoles}
+              />
+            )
           )}
         </div>
       </div>

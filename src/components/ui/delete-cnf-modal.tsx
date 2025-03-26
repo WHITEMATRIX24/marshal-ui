@@ -7,13 +7,16 @@ const DeleteCnfModal = ({
   deleteHandler,
 }: {
   modalCloseHandler: VoidFunction;
-  deleteHandler: VoidFunction;
+  deleteHandler?: VoidFunction;
 }) => {
   // handle click No
   const handleCancelClick = () => modalCloseHandler();
 
   // handle delete
-  const handleDelete = () => deleteHandler();
+  const handleDelete = () => {
+    if (!deleteHandler) return;
+    deleteHandler();
+  };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
