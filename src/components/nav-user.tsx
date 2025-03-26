@@ -34,6 +34,7 @@ import { useDispatch } from "react-redux";
 import { Role, UserInfo } from "@/models/auth";
 import Cookies from "js-cookie";
 import { redirect } from "next/navigation";
+import { formatName } from "@/utils/formater";
 
 export function NavUser({ user, avatar }: { user: UserInfo; avatar: string }) {
   if (!user) return;
@@ -79,7 +80,7 @@ export function NavUser({ user, avatar }: { user: UserInfo; avatar: string }) {
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-semibold text-[11px] dark:text-[#E18358] text-[#c20114]">
-                  {user?.username}
+                  {formatName(user?.username)}
                 </span>
                 <span className="truncate text-[10px] text-white">
                   {user?.email_address}
@@ -99,13 +100,13 @@ export function NavUser({ user, avatar }: { user: UserInfo; avatar: string }) {
                 <Avatar className="h-6 w-6 rounded-lg">
                   <AvatarImage
                     src="/user.svg"
-                    alt={user?.username}
+                    alt={formatName(user?.username)}
                     className="w-[25px] h-[25px] p-0 bg-white rounded-[5px]"
                   />
                 </Avatar>
                 <div className="grid flex-1 text-left text-[11px] leading-tight">
                   <span className="truncate font-semibold text-[13px]">
-                    {user?.username}
+                    {formatName(user?.username)}
                   </span>
                   {parsedSelectedGovernance && (
                     <span className="truncate text-[11px]">

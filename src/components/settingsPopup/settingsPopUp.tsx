@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import DeleteCnfModal from "../ui/delete-cnf-modal";
 import Image from "next/image";
 import Cookies from "js-cookie";
+import { formatName } from "@/utils/formater";
 
 interface SettingsPopUpProps {
   onClose: () => void;
@@ -53,7 +54,7 @@ export const SettingsPopUp: React.FC<SettingsPopUpProps> = ({ onClose }) => {
             <div className="flex items-center justify-end gap-3">
               <div className="flex flex-col items-end">
                 <h6 className="font-semibold">
-                  {parsedUserData?.username || "user"}
+                  {formatName(parsedUserData?.username) || "user"}
                 </h6>
                 <label
                   htmlFor="chnage-profilePic"
