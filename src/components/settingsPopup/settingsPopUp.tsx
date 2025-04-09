@@ -6,6 +6,8 @@ import DeleteCnfModal from "../ui/delete-cnf-modal";
 import Image from "next/image";
 import Cookies from "js-cookie";
 import { formatName } from "@/utils/formater";
+import { useQuery } from "@tanstack/react-query";
+import { fetchProfilePhotoApi } from "@/services/apis";
 
 interface SettingsPopUpProps {
   onClose: () => void;
@@ -15,13 +17,26 @@ export const SettingsPopUp: React.FC<SettingsPopUpProps> = ({ onClose }) => {
   const [deleteCnfModalShow, setDeleteCnfModalShow] = useState<boolean>(false);
   const userData = Cookies.get("user_info");
   const parsedUserData = userData ? JSON.parse(userData) : {};
+  const token = Cookies.get("access_token");
 
-  // delete btn handler
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["profilePicture"],
+    queryFn: async () => {
+      const response = await fetchProfilePhotoApi({
+        method: "GET",
+        urlEndpoint: "/profile-photos/profile-photo/",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response?.data || "";s
+    },
+  });
+
   const handleDeleteBtn = () => {
     setDeleteCnfModalShow(true);
   };
 
-  // handle cnf modal close
   const handleCnfModalClose = () => {
     setDeleteCnfModalShow(false);
   };
@@ -32,7 +47,6 @@ export const SettingsPopUp: React.FC<SettingsPopUpProps> = ({ onClose }) => {
         onClose();
       }
     };
-
     document.addEventListener("mousedown", handleOutsideClick);
     return () => document.removeEventListener("mousedown", handleOutsideClick);
   }, [onClose]);
@@ -54,7 +68,7 @@ export const SettingsPopUp: React.FC<SettingsPopUpProps> = ({ onClose }) => {
             <div className="flex items-center justify-end gap-3">
               <div className="flex flex-col items-end">
                 <h6 className="font-semibold">
-                  {formatName(parsedUserData?.username) || "user"}
+                  {formatName(parsedUserData?.username) || "User"}
                 </h6>
                 <label
                   htmlFor="chnage-profilePic"
@@ -65,25 +79,30 @@ export const SettingsPopUp: React.FC<SettingsPopUpProps> = ({ onClose }) => {
                 <input type="file" id="chnage-profilePic" className="hidden" />
               </div>
               <div className="h-16 w-16 bg-greycomponentbg rounded-[5px] relative flex justify-center items-center">
-                <Image
-                  src="/user.svg"
-                  alt="user"
-                  fill
-                  className="object-contain"
-                />
+                {isLoading ? (
+                  <p>Loading...</p>
+                ) : error ? (
+                  <Image
+                    src="/user.svg"
+                    alt="user"
+                    fill
+                    className="object-contain"
+                  />
+                ) : (
+                  <Image
+                    src={data?.photo_url || "/user.svg"}
+                    alt="Profile Picture"
+                    fill
+                    className="object-cover rounded-[5px]"
+                  />
+                )}
               </div>
             </div>
             <div className="flex flex-col gap-1 bg-greycomponentbg h-full px-3 py-2 rounded-md">
-              <Link
-                href="/home/dashboard/changepassword"
-                className="w-fit text-[11px]"
-              >
+              <Link href="/home/dashboard/changepassword" className="w-fit text-[11px]">
                 Change password
               </Link>
-              <Link
-                href="/home/dashboard/subscriptionplan"
-                className="w-fit text-[11px]"
-              >
+              <Link href="/home/dashboard/subscriptionplan" className="w-fit text-[11px]">
                 View subscription option
               </Link>
               <button onClick={handleDeleteBtn} className="w-fit text-[11px]">
@@ -93,9 +112,7 @@ export const SettingsPopUp: React.FC<SettingsPopUpProps> = ({ onClose }) => {
           </div>
         </div>
       </div>
-      {deleteCnfModalShow && (
-        <DeleteCnfModal modalCloseHandler={handleCnfModalClose} />
-      )}
+      {deleteCnfModalShow && <DeleteCnfModal modalCloseHandler={handleCnfModalClose} />}
     </>
   );
 };

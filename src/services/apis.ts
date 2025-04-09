@@ -133,3 +133,10 @@ export const EditRolesApi = async ({
 }: ApiConfigProps): Promise<AxiosResponse | undefined> => {
   return apiConfig({ method, urlEndpoint, headers, data });
 };
+export const fetchProfilePhotoApi = async ({
+  method,
+  urlEndpoint,
+  headers,
+}: ApiConfigProps): Promise<AxiosResponse | undefined> => {
+  return apiConfig({ method, urlEndpoint, headers });
+};

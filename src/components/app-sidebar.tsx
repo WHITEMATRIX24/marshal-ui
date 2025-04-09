@@ -177,7 +177,21 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       ],
     },
     { title: "Reports", url: "#", icon: FileChartColumn },
-    { title: "Documentation", url: "#", icon: BookMarked },
+    {
+      title: "Documentation",
+      url: "#",
+      icon: BookMarked,
+      items: [
+        {
+          title: "Documentation",
+          url: "/home/documentation/documentation",
+          onClick: () => {
+            dispatch(setMainBreadcrumb("Documentation"));
+            dispatch(setSubBredCrum(""));
+          },
+        },
+      ],
+    },
   ];
   if (role?.toLowerCase().includes("admin")) {
     navMain.splice(2, 0, {
