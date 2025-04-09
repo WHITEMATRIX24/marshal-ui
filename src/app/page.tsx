@@ -10,6 +10,7 @@ import { LoginResponse } from "../models/auth";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { toast } from "sonner";
+import Link from "next/link";
 
 interface loginCred {
   email: string;
@@ -34,12 +35,13 @@ export default function Login() {
   const { mutateAsync: loginMutation } = useMutation({
     mutationFn: loginApiHandler,
     onError: (error) => {
-      return toast.error(error.message, {
+      toast.error(error.message, {
         style: { backgroundColor: "#ff5555", color: "white", border: "none" },
       });
     },
     onSuccess: async (responseData) => {
       const { data } = responseData as { data: LoginResponse };
+
       Cookies.set("access_token", data?.access_token);
       Cookies.set("roles", JSON.stringify(data?.user.roles));
       Cookies.set("user_info", JSON.stringify(data?.user));
@@ -56,17 +58,21 @@ export default function Login() {
 
     const loginFormData = new URLSearchParams();
     loginFormData.append("grand_type", "password");
-    loginFormData.append("username", email); //Jacob
-    loginFormData.append("password", password); // Passw0rd3
+    loginFormData.append("username", email);
+    loginFormData.append("password", password);
 
-    await loginMutation({
-      urlEndpoint: "/auth/login",
-      method: "POST",
-      data: loginFormData,
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-    });
+    try {
+      await loginMutation({
+        urlEndpoint: "/auth/login",
+        method: "POST",
+        data: loginFormData,
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      });
+    } catch (error) {
+      console.log(error);
+    }
 
     // setOpenModal({ ...openModal, modalState: true });
   };
@@ -127,8 +133,8 @@ export default function Login() {
                 />
               </button>
             </div>
-            <div className="flex justify-between items-center">
-              <div className="flex items-center gap-3">
+            <div className="flex justify-end items-center">
+              {/* <div className="flex items-center gap-3">
                 <div className="relative inline-block w-11 h-5">
                   <input
                     value={checkvalue}
@@ -142,23 +148,25 @@ export default function Login() {
                   ></label>
                 </div>
                 <p>Remember me</p>
-              </div>
-              <button className="outline-none border-none text-textcolorblue">
+              </div> */}
+              <Link
+                href="/forget-password"
+                className="outline-none border-none text-textcolorblue"
+              >
                 Forget password?
-              </button>
+              </Link>
             </div>
-
             <button
               type="submit"
               className="bg-colorblue rounded-md py-2 font-semibold text-white mt-4"
             >
               Sign in
             </button>
-            <div className="w-full border mt-3 dark:border-gray-600"></div>
+            {/* <div className="w-full border mt-3 dark:border-gray-600"></div>
             <p className="m-0 text-center">
               Dont have an account?{" "}
               <span className="ms-2 text-textcolorblue">Sign up now</span>
-            </p>
+            </p> */}
           </form>
         </div>
       </div>

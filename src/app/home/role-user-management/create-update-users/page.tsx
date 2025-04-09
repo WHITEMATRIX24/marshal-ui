@@ -13,9 +13,10 @@ import Cookies from "js-cookie";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { deleteUserApi, fetchUsersDataApi } from "@/services/apis";
 import { toast } from "sonner";
-import govAndRoles from "@/utils/gov_and_roles";
+import useGovAndRoles from "@/utils/gov_and_roles";
 
-const CreateUpdateRole = () => {
+const CreateUpdateUser = () => {
+  useGovAndRoles();
   const dispatch = useDispatch();
   const isModalVisible = useSelector(
     (state: RootState) => state.ui.addNewUserOnRoleMenuModal.isVisible
@@ -35,9 +36,6 @@ const CreateUpdateRole = () => {
         },
       }),
   });
-
-  // roles and governacne to redux
-  govAndRoles();
 
   const columnData = [
     {
@@ -132,12 +130,14 @@ const CreateUpdateRole = () => {
         <div className="py-0 w-full px-4">
           {isLoading ? (
             <p>Loading...</p>
-          ) : !isLoading && error ? (
+          ) : error ? (
             <p>Something went wrong ...</p>
           ) : (
-            !isLoading &&
             data && (
-              <UserManagementDataTable columns={columnData} data={data?.data} />
+              <UserManagementDataTable
+                columns={columnData}
+                data={data.data.items}
+              />
             )
           )}
         </div>
@@ -153,4 +153,4 @@ const CreateUpdateRole = () => {
   );
 };
 
-export default CreateUpdateRole;
+export default CreateUpdateUser;

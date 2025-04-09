@@ -129,7 +129,7 @@ export const EditRolesApi = async ({
   method,
   urlEndpoint,
   headers,
-  data
+  data,
 }: ApiConfigProps): Promise<AxiosResponse | undefined> => {
   return apiConfig({ method, urlEndpoint, headers, data });
 };
@@ -139,4 +139,22 @@ export const fetchProfilePhotoApi = async ({
   headers,
 }: ApiConfigProps): Promise<AxiosResponse | undefined> => {
   return apiConfig({ method, urlEndpoint, headers });
+};
+
+export const getAllClientRolesApi = async ({
+  method,
+  urlEndpoint,
+  headers,
+  data,
+}: ApiConfigProps): Promise<AxiosResponse | undefined> => {
+  return apiConfig({ method, urlEndpoint, headers, data });
+};
+
+export const createUserWithFileApi = async ({
+  method,
+  urlEndpoint,
+  headers,
+  data,
+}: ApiConfigProps): Promise<AxiosResponse | undefined> => {
+  return apiConfig({ method, urlEndpoint, headers, data });
 };

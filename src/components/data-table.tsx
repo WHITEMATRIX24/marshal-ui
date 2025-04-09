@@ -1,11 +1,6 @@
 "use client";
 import * as React from "react";
-import {
-  Pencil,
-  Trash,
-  ChevronDown,
-  ChevronUp,
-} from "lucide-react";
+import { Pencil, Trash, ChevronDown, ChevronUp } from "lucide-react";
 import { saveAs } from "file-saver";
 import Papa from "papaparse";
 import {
@@ -31,6 +26,7 @@ import { Button } from "@/components/ui/button";
 import { updateControlsApi } from "@/services/apis";
 import DeleteModal from "./deleteControlModal";
 import { Task } from "@/models/control";
+import Link from "next/link";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -41,7 +37,12 @@ interface DataTableProps<TData, TValue> {
 }
 
 export function DataTable<
-  TData extends { id: number; children?: TData[]; applicable_str?: string; tasks?: Task[] },
+  TData extends {
+    id: number;
+    children?: TData[];
+    applicable_str?: string;
+    tasks?: Task[];
+  },
   TValue
 >({ columns, data, onEdit, onDelete }: DataTableProps<TData, TValue>) {
   const [pageSize, setPageSize] = React.useState(10);
@@ -55,7 +56,9 @@ export function DataTable<
   const [role, setRole] = React.useState("");
   const [filteredData, setFilteredData] = React.useState(data);
   const [editingRow, setEditingRow] = React.useState<TData | null>(null);
-  const [deletingCtrlId, setDeletingCtrlId] = React.useState<number | null>(null);
+  const [deletingCtrlId, setDeletingCtrlId] = React.useState<number | null>(
+    null
+  );
   const [applicableValue, setApplicableValue] = React.useState("");
   const [justificationValue, setJustificationValue] = React.useState("");
   const govId = Cookies.get("selected_governance");
@@ -116,7 +119,9 @@ export function DataTable<
       ...columns,
       {
         id: "actions",
-        header: () => <span className="text-right w-full block px-4">Actions</span>,
+        header: () => (
+          <span className="text-right w-full block px-4">Actions</span>
+        ),
         cell: ({ row }) => (
           <div className="flex space-x-2 justify-end">
             <Pencil
@@ -171,7 +176,6 @@ export function DataTable<
         data: updatedData,
       });
 
-
       if (!response?.data) {
         throw new Error("Failed to update control");
       }
@@ -185,7 +189,8 @@ export function DataTable<
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!editingRow?.id) { // Add null check
+    if (!editingRow?.id) {
+      // Add null check
       console.error("No row ID found for editing");
       return;
     }
@@ -223,11 +228,11 @@ export function DataTable<
   const startItem = pageIndex * pageSize + 1;
   const endItem = Math.min(startItem + pageSize - 1, totalItems);
 
-
   const renderRows = (rows: TData[], level: number = 0) => {
-    const paginatedRows = level === 0
-      ? rows.slice(pageIndex * pageSize, (pageIndex + 1) * pageSize)
-      : rows;
+    const paginatedRows =
+      level === 0
+        ? rows.slice(pageIndex * pageSize, (pageIndex + 1) * pageSize)
+        : rows;
 
     return paginatedRows.map((row, index) => {
       const isLeafNode = !row.children || row.children.length === 0;
@@ -235,15 +240,41 @@ export function DataTable<
         <React.Fragment key={`row-${row.id}`}>
           <TableRow
             key={`row-${row.id}`}
-            className={`transition-colors hover:bg-[var(--hover-bg)] ${expandedRows[row.id] ? "bg-[var(--hover-bg)]" : index % 2 === 0 ? 'bg-[var(--table-bg-even)] text-black' : 'bg-[var(--table-bg-odd)] text-black'}`}
+            className={`transition-colors hover:bg-[var(--hover-bg)] ${
+              expandedRows[row.id]
+                ? "bg-[var(--hover-bg)]"
+                : index % 2 === 0
+                ? "bg-[var(--table-bg-even)] text-black"
+                : "bg-[var(--table-bg-odd)] text-black"
+            }`}
           >
             {columns.map((column, colIndex) => (
-              <TableCell key={`cell-${row.id}-${column.id}`} className={`text-[11px] px-2 py-1 ${colIndex === 1 ? "w-[50px] text-center" : colIndex === 2 ? "max-w-[350px] break-words" : "flex-1"}`}>
+              <TableCell
+                key={`cell-${row.id}-${column.id}`}
+                className={`text-[11px] px-2 py-1 ${
+                  colIndex === 1
+                    ? "w-[50px] text-center"
+                    : colIndex === 2
+                    ? "max-w-[350px] break-words"
+                    : "flex-1"
+                }`}
+              >
                 {colIndex === 0 ? (
-                  <div className="flex items-center space-x-2" style={{ paddingLeft: `${level * 20}px` }}>
-                    {(isLeafNode && row.tasks && row.tasks.length > 0) || (row.children && row.children.length > 0) ? (
-                      <button onClick={() => toggleRow(row.id)} className="flex items-center">
-                        {expandedRows[row.id] ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                  <div
+                    className="flex items-center space-x-2"
+                    style={{ paddingLeft: `${level * 20}px` }}
+                  >
+                    {(isLeafNode && row.tasks && row.tasks.length > 0) ||
+                    (row.children && row.children.length > 0) ? (
+                      <button
+                        onClick={() => toggleRow(row.id)}
+                        className="flex items-center"
+                      >
+                        {expandedRows[row.id] ? (
+                          <ChevronUp className="h-4 w-4" />
+                        ) : (
+                          <ChevronDown className="h-4 w-4" />
+                        )}
                       </button>
                     ) : null}
                     <span>{String(row[column.id as keyof TData] ?? "")}</span>
@@ -255,59 +286,99 @@ export function DataTable<
             ))}
             <TableCell className="text-right pr-4 w-[50px]">
               <div className="flex justify-end space-x-2">
-                <Pencil className="h-3 w-3 text-blue-900 cursor-pointer" onClick={() => openEditModal(row)} />
+                <Pencil
+                  className="h-3 w-3 text-blue-900 cursor-pointer"
+                  onClick={() => openEditModal(row)}
+                />
                 {/* <Trash className="h-3 w-3 text-[var(--red)] cursor-pointer" onClick={() => setDeletingCtrlId(row.id)} /> */}
               </div>
             </TableCell>
           </TableRow>
 
           {/* Independent Task Table - 5 columns */}
-          {isLeafNode && row.tasks && row.tasks.length > 0 && expandedRows[row.id] && (
-            <TableRow key={`task-container-${row.id}`} className="bg-gray-100">
-              <TableCell colSpan={columns.length + 1} className="p-0">
-                <Table className="w-full">
-                  <TableHeader className="bg-gray-200">
-                    <TableRow className="h-6">
-                      <TableHead className="text-[11px] h-6 p-1">Task Title</TableHead>
-                      <TableHead className="text-[11px] h-6 p-1 max-w-[500px]">Task Details</TableHead>
-                      <TableHead className="text-[11px] h-6 p-1">Doer</TableHead>
-                      <TableHead className="text-[11px] h-6 p-1">Review</TableHead>
-                      <TableHead className="text-[11px] h-6 p-1">Frequency</TableHead>
-                      {role.toLowerCase().includes("admin") && (
-                        <TableHead className="text-[11px] h-8 p-1 text-center">Assignment</TableHead>
-                      )}
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {row.tasks.map(task => (
-                      <TableRow key={`task-${task.id}`}>
-                        <TableCell className="text-[11px] ">{task.task_title}</TableCell>
-                        <TableCell className="text-[11px] max-w-[500px]">{task.task_details}</TableCell>
-                        <TableCell className="text-[11px]">{task.doer}</TableCell>
-                        <TableCell className="text-[11px]">{task.review}</TableCell>
-                        <TableCell className="text-[11px]">{task.frequency}</TableCell>
+          {isLeafNode &&
+            row.tasks &&
+            row.tasks.length > 0 &&
+            expandedRows[row.id] && (
+              <TableRow
+                key={`task-container-${row.id}`}
+                className="bg-gray-100"
+              >
+                <TableCell colSpan={columns.length + 1} className="p-0">
+                  <Table className="w-full">
+                    <TableHeader className="bg-gray-200">
+                      <TableRow className="h-6">
+                        <TableHead className="text-[11px] h-6 p-1">
+                          Task Title
+                        </TableHead>
+                        <TableHead className="text-[11px] h-6 p-1 max-w-[500px]">
+                          Task Details
+                        </TableHead>
+                        <TableHead className="text-[11px] h-6 p-1">
+                          Doer
+                        </TableHead>
+                        <TableHead className="text-[11px] h-6 p-1">
+                          Review
+                        </TableHead>
+                        <TableHead className="text-[11px] h-6 p-1">
+                          Frequency
+                        </TableHead>
                         {role.toLowerCase().includes("admin") && (
-                          <TableCell className="text-right  justify-center align-center px-1 flex ">
-                            {/* <div className="flex justify-end space-x-2">
+                          <TableHead className="text-[11px] h-8 p-1 text-center">
+                            Assignment
+                          </TableHead>
+                        )}
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {row.tasks.map((task) => (
+                        <TableRow key={`task-${task.id}`}>
+                          <TableCell className="text-[11px] ">
+                            {task.task_title}
+                          </TableCell>
+                          <TableCell className="text-[11px] max-w-[500px]">
+                            {task.task_details}
+                          </TableCell>
+                          <TableCell className="text-[11px]">
+                            {task.doer}
+                          </TableCell>
+                          <TableCell className="text-[11px]">
+                            {task.review}
+                          </TableCell>
+                          <TableCell className="text-[11px]">
+                            {task.frequency}
+                          </TableCell>
+                          {role.toLowerCase().includes("admin") && (
+                            <TableCell className="text-right  justify-center align-center px-1 flex ">
+                              {/* <div className="flex justify-end space-x-2">
                             <Pencil className="h-3 w-3 text-blue-900 cursor-pointer" />
                             <Trash className="h-3 w-3 text-[var(--red)] cursor-pointer" />
                           </div> */}
-                            <Button className="bg-[var(--blue)] w-5 h-5 px-0  flex items-center justify-center text-[10px] rounded-full">
-                              +
-                            </Button>
-
-                          </TableCell>
-                        )}
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableCell>
-            </TableRow>
-          )}
+                              <Link
+                                href={{
+                                  pathname:
+                                    "/home/configuration/add-assignment",
+                                  query: { task: JSON.stringify(task) },
+                                }}
+                                className="bg-[var(--blue)] w-5 h-5 px-0  flex items-center justify-center text-[10px] rounded-full"
+                              >
+                                +
+                              </Link>
+                            </TableCell>
+                          )}
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableCell>
+              </TableRow>
+            )}
 
           {/* Child Rows */}
-          {expandedRows[row.id] && row.children && row.children.length > 0 && renderRows(row.children, level + 1)}
+          {expandedRows[row.id] &&
+            row.children &&
+            row.children.length > 0 &&
+            renderRows(row.children, level + 1)}
         </React.Fragment>
       );
     });
@@ -319,8 +390,15 @@ export function DataTable<
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-4 rounded-lg w-96  dark:bg-[#E5E5E5] dark:border dark:border-gray-600">
             <div className="flex justify-between items-center">
-              <h6 className="text-[14px] font-semibold py-2 text-[var(--blue)]" >Edit Item</h6>
-              <Button onClick={() => setEditingRow(null)} className="bg-transparent hover:bg-transparent text-black">X</Button>
+              <h6 className="text-[14px] font-semibold py-2 text-[var(--blue)]">
+                Edit Item
+              </h6>
+              <Button
+                onClick={() => setEditingRow(null)}
+                className="bg-transparent hover:bg-transparent text-black"
+              >
+                X
+              </Button>
             </div>
             <form onSubmit={handleSubmit}>
               <div className="mb-2">
@@ -375,7 +453,9 @@ export function DataTable<
         isOpen={deletingCtrlId !== null}
         onClose={() => setDeletingCtrlId(null)}
         onDeleteSuccess={(deletedCtrlId: any) => {
-          setFilteredData(prev => prev.filter(item => item.id !== deletedCtrlId));
+          setFilteredData((prev) =>
+            prev.filter((item) => item.id !== deletedCtrlId)
+          );
           if (onDelete) {
             onDelete(deletedCtrlId);
           }
@@ -403,13 +483,14 @@ export function DataTable<
                 {headerGroup.headers.map((header) => (
                   <TableHead
                     key={header.id}
-                    className="text-white text-[12px] px-1 h-7 bg-[var(--purple)] shadow-md">
+                    className="text-white text-[12px] px-1 h-7 bg-[var(--purple)] shadow-md"
+                  >
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                   </TableHead>
                 ))}
               </TableRow>
@@ -442,7 +523,7 @@ export function DataTable<
             {pageSize} ▼
           </button>
           {isDropdownOpen && (
-            <div className="absolute top-[-60px] left-[60%] mt-1 bg-white border rounded shadow-lg z-10 text-[10px]" >
+            <div className="absolute top-[-60px] left-[60%] mt-1 bg-white border rounded shadow-lg z-10 text-[10px]">
               {[10, 25, 50].map((size) => (
                 <button
                   key={size}
@@ -460,7 +541,6 @@ export function DataTable<
         </div>
 
         <div className="flex items-center space-x-4 text-[10px]">
-
           <Button
             variant="outline"
             size="sm"

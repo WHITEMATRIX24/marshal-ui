@@ -6,5 +6,5 @@ export interface CreateUserModel {
   link_to_role_id: number | null;
   is_active?: boolean;
   phone_number: string;
-  password: string;
+  password?: string;
 }

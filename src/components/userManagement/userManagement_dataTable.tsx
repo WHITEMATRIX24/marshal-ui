@@ -23,9 +23,13 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/table";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { showNewUserAddForm } from "@/lib/global-redux/features/uiSlice";
 import formatRolesAndGov from "@/utils/format_roles_and_gov";
+import { RootState } from "@/lib/global-redux/store";
+import Cookies from "js-cookie";
+import { saveAs } from "file-saver";
+import axios from "axios";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -37,6 +41,14 @@ export function UserManagementDataTable<TData, TValue>({
   data,
 }: DataTableProps<TData, TValue>) {
   const dispatch = useDispatch();
+  const token = Cookies.get("access_token");
+  const governanceData = useSelector(
+    (state: RootState) => state.RolesAndGovernance.allGovernance
+  );
+
+  const rolesData = useSelector(
+    (state: RootState) => state.RolesAndGovernance.allRoles
+  );
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -73,6 +85,30 @@ export function UserManagementDataTable<TData, TValue>({
 
   const handelOpenAddNewUserForm = () => dispatch(showNewUserAddForm(null));
 
+  // export handler
+  const handleExport = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_BASE_SERVER_URL}/api/v1/users/export/excel`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          responseType: "arraybuffer",
+        }
+      );
+
+      if (response.status === 200) {
+        const file = new Blob([response?.data], {
+          type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        });
+        saveAs(file, `user_data.xlsx`);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div>
       <div className="flex justify-end gap-3 py-4">
@@ -86,12 +122,18 @@ export function UserManagementDataTable<TData, TValue>({
           }
           className="max-w-sm px-3 h-7 text-[11px] bg-[#f9fafb] dark:bg-[#e5e5e5]"
         />
-        <div className="flex gap-5">
+        <div className="flex gap-3">
           <button
             className="bg-[var(--blue)] text-white text-[11px] px-2 py-1 rounded-[5px] ] dark:text-[black]"
             onClick={handelOpenAddNewUserForm}
           >
             Add New User
+          </button>
+          <button
+            className="bg-[var(--blue)] text-white text-[11px] px-2 py-1 rounded-[5px] ] dark:text-[black]"
+            onClick={handleExport}
+          >
+            Export users data
           </button>
         </div>
       </div>
@@ -149,9 +191,15 @@ export function UserManagementDataTable<TData, TValue>({
                             <span>Inactive</span>
                           )
                         ) : cell.column.id === "gov_id" ? (
-                          formatRolesAndGov({ govId: cell.getValue() })
+                          formatRolesAndGov({
+                            govId: cell.getValue(),
+                            governanceData: governanceData,
+                          })
                         ) : cell.column.id === "link_to_role_id" ? (
-                          formatRolesAndGov({ roleId: cell.getValue() })
+                          formatRolesAndGov({
+                            roleId: cell.getValue(),
+                            rolesData: rolesData,
+                          })
                         ) : (
                           flexRender(
                             cell.column.columnDef.cell,
