@@ -1,13 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import DeleteCnfModal from "../ui/delete-cnf-modal";
 import Image from "next/image";
 import Cookies from "js-cookie";
 import { formatName } from "@/utils/formater";
-import { useQuery } from "@tanstack/react-query";
-import { fetchProfilePhotoApi } from "@/services/apis";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { fetchProfilePhotoApi, UploadProfilePhotoApi } from "@/services/apis";
+import { toast } from "sonner";
+import { RootState } from "@/lib/global-redux/store";
+import { useDispatch, useSelector } from "react-redux";
+import { showChangePasswordForm } from "@/lib/global-redux/features/uiSlice";
+import ChangePasswordModal from "../changePasswordPopup/changePasswordPopup";
 
 interface SettingsPopUpProps {
   onClose: () => void;
@@ -18,8 +23,13 @@ export const SettingsPopUp: React.FC<SettingsPopUpProps> = ({ onClose }) => {
   const userData = Cookies.get("user_info");
   const parsedUserData = userData ? JSON.parse(userData) : {};
   const token = Cookies.get("access_token");
-
-  const { data, isLoading, error } = useQuery({
+  const dispatch = useDispatch();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const isChangePasswordModalVisible = useSelector(
+    (state: RootState) => state.ui.changePasswordModal.isVisible
+  );
+  const handelOpenChangePasswordModal = () => dispatch(showChangePasswordForm());
+  const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["profilePicture"],
     queryFn: async () => {
       const response = await fetchProfilePhotoApi({
@@ -29,9 +39,47 @@ export const SettingsPopUp: React.FC<SettingsPopUpProps> = ({ onClose }) => {
           Authorization: `Bearer ${token}`,
         },
       });
-      return response?.data || "";s
+      return response?.data || "";
     },
   });
+
+  const mutation = useMutation({
+    mutationFn: async (file: File) => {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const response = await UploadProfilePhotoApi({
+        method: "POST",
+        urlEndpoint: "/profile-photos/upload-profile-photo/",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        data: formData,
+      });
+
+      if (!response?.data) {
+        throw new Error("Failed to upload profile photo");
+      }
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success("Profile photo updated successfully!", {
+        style: { backgroundColor: "#28a745", color: "white", border: "none" },
+      });
+      refetch(); // refetch profile picture
+    },
+    onError: (error) => {
+      console.error("Error uploading profile photo:", error);
+      toast.error("Error uploading profile photo");
+    },
+  });
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0];
+    if (selectedFile) {
+      mutation.mutate(selectedFile);
+    }
+  };
 
   const handleDeleteBtn = () => {
     setDeleteCnfModalShow(true);
@@ -57,26 +105,36 @@ export const SettingsPopUp: React.FC<SettingsPopUpProps> = ({ onClose }) => {
         id="settings-popup-overlay"
         className="fixed inset-0 bg-black/50 flex justify-center items-center z-20"
       >
-        <div className="flex flex-col gap-6 w-full md:w-[30rem] h-auto bg-white dark:bg-black px-5 py-4 rounded-md dark:border">
+        <div className="flex flex-col gap-6 w-full md:w-[30rem] h-auto bg-white dark:bg-[#E5E5E5] px-5 py-4 rounded-md ">
           <div className="flex justify-between items-center">
-            <h6 className="text-sm font-semibold ">Settings</h6>
-            <button onClick={onClose} className="text-lg font-bold">
+            <h6 className="text-sm font-semibold text-[var(--blue)]">Settings</h6>
+            <button onClick={onClose} className="text-lg font-bold dark:text-black">
               ✖
             </button>
           </div>
           <div className="h-62 flex flex-col gap-5">
             <div className="flex items-center justify-end gap-3">
               <div className="flex flex-col items-end">
-                <h6 className="font-semibold">
+                <h6 className="font-semibold text-[var(--blue)]">
                   {formatName(parsedUserData?.username) || "User"}
                 </h6>
+
                 <label
-                  htmlFor="chnage-profilePic"
-                  className="text-[11px] text-textcolorblue cursor-pointer"
+                  htmlFor="change-profilePic"
+                  className="text-[11px] text-textcolorblue text-black cursor-pointer"
                 >
                   Change Profile Picture
                 </label>
-                <input type="file" id="chnage-profilePic" className="hidden" />
+
+
+                <input
+                  type="file"
+                  id="change-profilePic"
+                  ref={fileInputRef}
+                  className="hidden"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                />
               </div>
               <div className="h-16 w-16 bg-greycomponentbg rounded-[5px] relative flex justify-center items-center">
                 {isLoading ? (
@@ -99,20 +157,31 @@ export const SettingsPopUp: React.FC<SettingsPopUpProps> = ({ onClose }) => {
               </div>
             </div>
             <div className="flex flex-col gap-1 bg-greycomponentbg h-full px-3 py-2 rounded-md">
-              <Link href="/home/dashboard/changepassword" className="w-fit text-[11px]">
+              <button
+                onClick={handelOpenChangePasswordModal}
+                className="w-fit text-[11px] dark:text-black"
+              >
                 Change password
-              </Link>
-              <Link href="/home/dashboard/subscriptionplan" className="w-fit text-[11px]">
+              </button>
+
+              <Link
+                href="/home/dashboard/subscriptionplan"
+                className="w-fit text-[11px] dark:text-black"
+              >
                 View subscription option
               </Link>
-              <button onClick={handleDeleteBtn} className="w-fit text-[11px]">
+              <button onClick={handleDeleteBtn} className="w-fit text-[11px] text-[var(--red)]">
                 Delete Account
               </button>
             </div>
           </div>
         </div>
       </div>
-      {deleteCnfModalShow && <DeleteCnfModal modalCloseHandler={handleCnfModalClose} />}
+      {deleteCnfModalShow && (
+        <DeleteCnfModal modalCloseHandler={handleCnfModalClose} />
+      )}
+      {isChangePasswordModalVisible && <ChangePasswordModal />}
+
     </>
   );
 };

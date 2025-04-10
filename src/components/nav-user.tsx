@@ -1,15 +1,10 @@
 "use client";
 
 import {
-  BadgeCheck,
-  Bell,
   Blend,
   ChevronsUpDown,
-  CreditCard,
   Edit2,
   LogOut,
-  Sparkles,
-  User2,
   UserRoundPen,
 } from "lucide-react";
 
@@ -31,17 +26,20 @@ import {
 } from "@/components/ui/sidebar";
 import { showGovernanveModal } from "@/lib/global-redux/features/uiSlice";
 import { useDispatch } from "react-redux";
-import { Role, UserInfo } from "@/models/auth";
+import { UserInfo } from "@/models/auth";
 import Cookies from "js-cookie";
 import { redirect } from "next/navigation";
 import { formatName } from "@/utils/formater";
+import { fetchProfilePhotoApi } from "@/services/apis";
+import { useQuery } from "@tanstack/react-query";
 
-export function NavUser({ user, avatar }: { user: UserInfo; avatar: string }) {
+export function NavUser({ user }: { user: UserInfo; avatar: string }) {
   if (!user) return;
   const { isMobile } = useSidebar();
   const dispatch = useDispatch();
   const selectedGovernance = Cookies.get("selected_governance");
   const selectedGovernanceKey = Cookies.get("selected_governance_key");
+  const token = Cookies.get("access_token");
   const parsedSelectedGovernance = selectedGovernance
     ? JSON.parse(selectedGovernance)
     : [];
@@ -49,7 +47,19 @@ export function NavUser({ user, avatar }: { user: UserInfo; avatar: string }) {
   const handleChangeGovernance = () => {
     dispatch(showGovernanveModal());
   };
-
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["profilePicture"],
+    queryFn: async () => {
+      const response = await fetchProfilePhotoApi({
+        method: "GET",
+        urlEndpoint: "/profile-photos/profile-photo/",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response?.data || "";
+    },
+  });
   const handleLogout = () => {
     Cookies.remove("access_token");
     Cookies.remove("login_popup_initila_render");
@@ -71,15 +81,26 @@ export function NavUser({ user, avatar }: { user: UserInfo; avatar: string }) {
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage
-                  src="/user.svg"
-                  alt={user?.username}
-                  className="w-[30px] h-[30px] p-0.5 bg-white rounded-[5px]"
-                />
+                {isLoading ? (
+                  <p className="text-[6px]">Loading..</p>
+                ) : error ? (
+                  <AvatarImage
+                    src="/user.svg"
+                    alt={user?.username}
+                    className="w-[30px] h-[30px] p-0.5 bg-white rounded-[5px]"
+                  />
+                ) : (
+                  <AvatarImage
+                    src={data?.photo_url || "/user.svg"}
+                    alt={user?.username}
+                    className="w-[30px] h-[30px] p-0.5 bg-white rounded-[5px]"
+                  />
+                )}
+
                 <AvatarFallback className="rounded-lg">CN</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold text-[11px] dark:text-[#E18358] text-[#c20114]">
+                <span className="truncate font-semibold text-[11px] ]">
                   {formatName(user?.username)}
                 </span>
                 <span className="truncate text-[10px] text-white">
@@ -97,12 +118,24 @@ export function NavUser({ user, avatar }: { user: UserInfo; avatar: string }) {
           >
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                <Avatar className="h-6 w-6 rounded-lg">
-                  <AvatarImage
-                    src="/user.svg"
-                    alt={formatName(user?.username)}
-                    className="w-[25px] h-[25px] p-0 bg-white rounded-[5px]"
-                  />
+                <Avatar className="h-8 w-8 rounded-lg">
+                  {isLoading ? (
+                    <p className="text-[6px]">Loading..</p>
+                  ) : error ? (
+                    <AvatarImage
+                      src="/user.svg"
+                      alt={user?.username}
+                      className="w-[30px] h-[30px] p-0.5 bg-white rounded-[5px]"
+                    />
+                  ) : (
+                    <AvatarImage
+                      src={data?.photo_url || "/user.svg"}
+                      alt={user?.username}
+                      className="w-[30px] h-[30px] p-0.5 bg-white rounded-[5px]"
+                    />
+                  )}
+
+                  <AvatarFallback className="rounded-lg">CN</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-[11px] leading-tight">
                   <span className="truncate font-semibold text-[13px]">

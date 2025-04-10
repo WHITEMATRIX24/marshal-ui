@@ -27,9 +27,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { showNewRoleAddForm } from "@/lib/global-redux/features/uiSlice";
 import { RootState } from "@/lib/global-redux/store";
 import AddNewRoleModal from "./add_newrole_form";
-
-
-
+import Cookies from "js-cookie";
+import { useMutation } from "@tanstack/react-query";
+import { exportClientRolesApi } from "@/services/apis";
+import { saveAs } from "file-saver";
+import { AxiosResponse } from "axios";
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
@@ -69,6 +71,24 @@ export function RolesManagementDataTable<TData, TValue>({
       pagination: { pageSize: pageSize },
     },
   });
+  const token = Cookies.get("access_token");
+  const exportMutation = useMutation<AxiosResponse, Error, void>({
+    mutationFn: () =>
+      exportClientRolesApi({
+        method: "GET",
+        urlEndpoint: "/clientrole/client-roles/export/excel",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        responseType: "blob",
+      }),
+    onSuccess: (response) => {
+      const blob = new Blob([response.data], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      saveAs(blob, "client_roles.xlsx");
+    },
+  });
 
   const handlePageSizeChange = (size: number) => {
     setPageSize(size);
@@ -101,6 +121,18 @@ export function RolesManagementDataTable<TData, TValue>({
             Add New Role
           </button>
         </div>
+        <div className="flex gap-5">
+          <button
+            className="bg-[#0890CA] text-white text-[11px] px-2 py-1 rounded-[5px] dark:bg-[#6BC1E6] dark:text-[black]"
+            onClick={() => exportMutation.mutate()}
+            disabled={exportMutation.isPending}
+          >
+            {exportMutation.isPending ? "Exporting..." : "Export Role Data"}
+          </button>
+
+
+        </div>
+
       </div>
       <div className="rounded-md border max-h-[70vh] overflow-auto relative">
         <Table>

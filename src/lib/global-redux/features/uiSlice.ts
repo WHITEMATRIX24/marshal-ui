@@ -20,6 +20,9 @@ export interface UiStates {
     isVisible: boolean;
     data: Role | null;
   };
+  changePasswordModal: {
+    isVisible: boolean;
+  };
 }
 
 const initialState: UiStates = {
@@ -37,6 +40,9 @@ const initialState: UiStates = {
   addRoleOnRoleMenuModal: {
     isVisible: false,
     data: null,
+  },
+  changePasswordModal: {
+    isVisible: false,
   },
 };
 
@@ -83,6 +89,12 @@ export const UiSlice = createSlice({
       state.editRoleOnRoleMenuModal.isVisible = false;
       state.editRoleOnRoleMenuModal.data = null;
     },
+    showChangePasswordForm: (state) => {
+      state.changePasswordModal.isVisible = true;
+    },
+    hideChangePasswordForm: (state) => {
+      state.changePasswordModal.isVisible = false;
+    },
   },
 });
 
@@ -98,6 +110,8 @@ export const {
   showNewRoleAddForm,
   hideEditRoleForm,
   showEditRoleForm,
+  hideChangePasswordForm,
+  showChangePasswordForm,
 } = UiSlice.actions;
 
 export default UiSlice.reducer;

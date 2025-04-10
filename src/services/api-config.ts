@@ -6,6 +6,7 @@ export interface ApiConfigProps {
   data?: any;
   method: string;
   headers?: {};
+  responseType?: "blob" | "json" | "text";
 }
 
 const apiConfig = async ({
@@ -13,6 +14,7 @@ const apiConfig = async ({
   data,
   method,
   headers,
+  responseType,
 }: ApiConfigProps): Promise<AxiosResponse> => {
   try {
     const response = await axios({
@@ -21,6 +23,7 @@ const apiConfig = async ({
       data,
       method,
       headers,
+      responseType,
     });
     return response;
   } catch (error) {

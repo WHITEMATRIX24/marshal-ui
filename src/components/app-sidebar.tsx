@@ -174,6 +174,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             dispatch(setSubBredCrum(""));
           },
         },
+        {
+          title: "Add / View Compliance",
+          url: "/home/configuration/add-view-compliance",
+          onClick: () => {
+            dispatch(setMainBreadcrumb("Add / View Compliance"));
+            dispatch(setSubBredCrum(""));
+          },
+        },
       ],
     },
     { title: "Reports", url: "#", icon: FileChartColumn },

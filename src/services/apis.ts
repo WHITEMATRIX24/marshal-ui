@@ -158,3 +158,51 @@ export const createUserWithFileApi = async ({
 }: ApiConfigProps): Promise<AxiosResponse | undefined> => {
   return apiConfig({ method, urlEndpoint, headers, data });
 };
+export const UploadProfilePhotoApi = async ({
+  method,
+  urlEndpoint,
+  headers,
+  data
+}: ApiConfigProps): Promise<AxiosResponse | undefined> => {
+  return apiConfig({ method, urlEndpoint, headers, data });
+};
+export const changePasswordApi = async ({
+  method,
+  urlEndpoint,
+  headers,
+  data
+}: ApiConfigProps): Promise<AxiosResponse | undefined> => {
+  return apiConfig({ method, urlEndpoint, headers, data });
+};
+export const exportClientRolesApi = async ({
+  method,
+  urlEndpoint,
+  headers,
+  responseType,
+}: ApiConfigProps): Promise<AxiosResponse> => {
+  return await apiConfig({ method, urlEndpoint, headers, responseType });
+};
+export const createRoleWithFileApi = async ({
+  method,
+  urlEndpoint,
+  headers,
+  data,
+}: ApiConfigProps): Promise<AxiosResponse | undefined> => {
+  return apiConfig({ method, urlEndpoint, headers, data });
+};
+export const downloadClientRoleExcelTemplateApi = async ({
+  method,
+  urlEndpoint,
+  headers,
+  responseType,
+}: ApiConfigProps): Promise<AxiosResponse> => {
+  return await apiConfig({ method, urlEndpoint, headers, responseType });
+};
+export const getAllComplianceApi = async ({
+  method,
+  urlEndpoint,
+  headers,
+  data,
+}: ApiConfigProps): Promise<AxiosResponse | undefined> => {
+  return apiConfig({ method, urlEndpoint, headers, data });
+};
