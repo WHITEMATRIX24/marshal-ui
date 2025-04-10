@@ -21,6 +21,7 @@ const CreateUpdateUser = () => {
   const isModalVisible = useSelector(
     (state: RootState) => state.ui.addNewUserOnRoleMenuModal.isVisible
   );
+
   const token = Cookies.get("access_token");
   const [deleteModal, setDeleteModal] = useState<boolean>(false);
   const [deleteUserId, setDeleteUserId] = useState<number | null>(null);

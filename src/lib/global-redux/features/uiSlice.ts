@@ -23,6 +23,10 @@ export interface UiStates {
   changePasswordModal: {
     isVisible: boolean;
   };
+  addEditComapilanecModal: {
+    isVisible: boolean;
+    data: null;
+  };
 }
 
 const initialState: UiStates = {
@@ -43,6 +47,10 @@ const initialState: UiStates = {
   },
   changePasswordModal: {
     isVisible: false,
+  },
+  addEditComapilanecModal: {
+    isVisible: false,
+    data: null,
   },
 };
 
@@ -95,6 +103,14 @@ export const UiSlice = createSlice({
     hideChangePasswordForm: (state) => {
       state.changePasswordModal.isVisible = false;
     },
+    showAddEditComapilanceModal: (state, action) => {
+      state.addEditComapilanecModal.isVisible = true;
+      state.addEditComapilanecModal.data = action.payload;
+    },
+    hideAddEditComapilanceModal: (state) => {
+      state.addEditComapilanecModal.isVisible = false;
+      state.addEditComapilanecModal.data = null;
+    },
   },
 });
 
@@ -112,6 +128,8 @@ export const {
   showEditRoleForm,
   hideChangePasswordForm,
   showChangePasswordForm,
+  showAddEditComapilanceModal,
+  hideAddEditComapilanceModal,
 } = UiSlice.actions;
 
 export default UiSlice.reducer;

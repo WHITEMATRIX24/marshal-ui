@@ -215,7 +215,8 @@ const AddNewUserModal = () => {
               }
             />
           )}
-          <select
+          {/* governance select */}
+          {/* <select
             value={JSON.stringify(formData.gov_id)}
             onChange={(e) =>
               setFormData({ ...formData, gov_id: JSON.parse(e.target.value) })
@@ -238,7 +239,7 @@ const AddNewUserModal = () => {
                 </option>
               ))
             )}
-          </select>
+          </select> */}
           <select
             value={
               formData.link_to_role_id === null
