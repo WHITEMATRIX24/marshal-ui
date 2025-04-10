@@ -4,12 +4,14 @@ import BreadCrumbsProvider from "@/components/ui/breadCrumbsProvider";
 import Cookies from "js-cookie";
 import { Pencil, Trash } from "lucide-react";
 import { ViewComplianceTable } from "@/components/configuration/viewCompliance";
-import { getAllComplianceApi } from "@/services/apis";
-import { useQuery } from "@tanstack/react-query";
+import { deleteComplinceApi, getAllComplianceApi } from "@/services/apis";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { formatDate } from "@/utils/formater";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/lib/global-redux/store";
 import AddEditCompilanceModal from "@/components/add_eddit_compilance";
+import { showAddEditComapilanceModal } from "@/lib/global-redux/features/uiSlice";
+import { toast } from "sonner";
 
 export interface Compliance {
   id: number;
@@ -23,6 +25,7 @@ export interface Compliance {
 }
 
 const ViewCompliance = () => {
+  const dispatch = useDispatch();
   const token = Cookies.get("access_token");
   const complilaceFormState = useSelector(
     (state: RootState) => state.ui.addEditComapilanecModal.isVisible
@@ -39,6 +42,23 @@ const ViewCompliance = () => {
         },
       }),
   });
+
+  // delete complience
+  const { mutateAsync: deleteComplienceHandler } = useMutation({
+    mutationFn: deleteComplinceApi,
+    onError: () => toast.error("somethng went wrong"),
+    onSuccess: () => {
+      toast.success("compilance deleted successfully");
+    },
+  });
+
+  const handleDeleteComplience = (compleanceId: string) => {
+    if (!compleanceId) return toast.warning("error in compliance");
+    deleteComplienceHandler({
+      method: "DELETE",
+      urlEndpoint: `/compliance/compliance-periods/${compleanceId}`,
+    });
+  };
 
   const compliance: Compliance[] = data?.data?.items || [];
   const columnsData = [
@@ -72,12 +92,26 @@ const ViewCompliance = () => {
       accessorKey: "actions",
       id: "actions",
       header: "Actions",
-      cell: ({ row }: any) => (
-        <div className="flex w-full justify-center gap-2">
-          <Pencil className="h-4 w-4 text-blue-900 cursor-pointer" />
-          <Trash className="h-4 w-4 text-[var(--red)] cursor-pointer" />
-        </div>
-      ),
+      cell: ({ row }: any) => {
+        const handleOpenEdit = () =>
+          dispatch(showAddEditComapilanceModal(row.original));
+
+        const handleDeleteHandler = () =>
+          handleDeleteComplience(row.original.id);
+
+        return (
+          <div className="flex w-full justify-center gap-2">
+            <Pencil
+              onClick={handleOpenEdit}
+              className="h-4 w-4 text-blue-900 cursor-pointer"
+            />
+            <Trash
+              onClick={handleDeleteHandler}
+              className="h-4 w-4 text-[var(--red)] cursor-pointer"
+            />
+          </div>
+        );
+      },
     },
   ];
   return (

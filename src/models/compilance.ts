@@ -1,4 +1,5 @@
-export interface CompilanceAddModel {
+export interface ComplianceAddModel {
+  id?: number;
   compliance_title: string;
   gov_id: number | null;
   std_id: number | null;

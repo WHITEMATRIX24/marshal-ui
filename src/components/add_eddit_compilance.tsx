@@ -1,13 +1,18 @@
 "use client";
 import { hideAddEditComapilanceModal } from "@/lib/global-redux/features/uiSlice";
 import { Standard, StandardsResponse } from "@/models/standards";
-import { createComplinecApi, fetchStandardsApi } from "@/services/apis";
+import {
+  createComplinecApi,
+  editComplinceApi,
+  fetchStandardsApi,
+} from "@/services/apis";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Cookies from "js-cookie";
-import { CompilanceAddModel } from "@/models/compilance";
 import { toast } from "sonner";
+import { RootState } from "@/lib/global-redux/store";
+import { ComplianceAddModel } from "@/models/compilance";
 
 const AddEditCompilanceModal = () => {
   const dispatch = useDispatch();
@@ -15,13 +20,24 @@ const AddEditCompilanceModal = () => {
     Cookies.get("selected_governance") || "null"
   );
   const token = Cookies.get("access_token");
-  const [formData, setFormData] = useState<CompilanceAddModel>({
-    compliance_title: "",
+  const complianceEditdata = useSelector(
+    (state: RootState) => state.ui.addEditComapilanecModal.data
+  );
+  const [formData, setFormData] = useState<ComplianceAddModel>({
+    compliance_title: complianceEditdata
+      ? complianceEditdata.compliance_title
+      : "",
     gov_id: selectedGovernace.governance_id || null,
-    std_id: null,
-    compliance_enddate: "",
-    compliance_startdate: "",
-    compliance_year: "",
+    std_id: complianceEditdata ? complianceEditdata.std_id : null,
+    compliance_enddate: complianceEditdata
+      ? complianceEditdata.compliance_enddate
+      : "",
+    compliance_startdate: complianceEditdata
+      ? complianceEditdata.compliance_startdate
+      : "",
+    compliance_year: complianceEditdata
+      ? complianceEditdata.compliance_year
+      : "",
   });
 
   const {
@@ -43,9 +59,16 @@ const AddEditCompilanceModal = () => {
   const handleModalClose = () => dispatch(hideAddEditComapilanceModal());
 
   const { mutateAsync: createComplince } = useMutation({
-    mutationFn: createComplinecApi,
+    mutationFn: complianceEditdata ? editComplinceApi : createComplinecApi,
     onError: () => toast.error("somethng went wrong"),
-    onSuccess: () => toast.success("compilance creation success"),
+    onSuccess: () => {
+      toast.success(
+        complianceEditdata
+          ? "compilance updation success"
+          : "compilance creation success"
+      );
+      handleModalClose();
+    },
   });
 
   const handleCreateComplience = async (
@@ -72,8 +95,10 @@ const AddEditCompilanceModal = () => {
       return toast.warning("fill form");
 
     createComplince({
-      method: "POST",
-      urlEndpoint: "/compliance/compliance-periods",
+      method: complianceEditdata ? "PUT" : "POST",
+      urlEndpoint: complianceEditdata
+        ? `/compliance/compliance-periods/${complianceEditdata.id}`
+        : "/compliance/compliance-periods",
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -109,7 +134,7 @@ const AddEditCompilanceModal = () => {
               setFormData({ ...formData, compliance_startdate: e.target.value })
             }
             className="px-2 py-1 border outline-none rounded-md text-[11px] border-gray-300 dark:border-gray-600 bg-[var(--table-bg-even)] dark:text-black"
-            placeholder="Start Date"
+            placeholder="Start Date (YYYY-MM-DD)"
           />
           <input
             type="text"
@@ -118,7 +143,7 @@ const AddEditCompilanceModal = () => {
               setFormData({ ...formData, compliance_enddate: e.target.value })
             }
             className="px-2 py-1 border outline-none rounded-md text-[11px] border-gray-300 dark:border-gray-600 bg-[var(--table-bg-even)] dark:text-black"
-            placeholder="End Date"
+            placeholder="End Date (YYYY-MM-DD)"
           />
           <input
             type="text"
