@@ -6,7 +6,7 @@ import {
   editComplinceApi,
   fetchStandardsApi,
 } from "@/services/apis";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Cookies from "js-cookie";
@@ -16,6 +16,7 @@ import { ComplianceAddModel } from "@/models/compilance";
 
 const AddEditCompilanceModal = () => {
   const dispatch = useDispatch();
+  const queryClient = useQueryClient();
   const selectedGovernace = JSON.parse(
     Cookies.get("selected_governance") || "null"
   );
@@ -60,12 +61,13 @@ const AddEditCompilanceModal = () => {
 
   const { mutateAsync: createComplince } = useMutation({
     mutationFn: complianceEditdata ? editComplinceApi : createComplinecApi,
-    onError: () => toast.error("somethng went wrong"),
+    onError: () => toast.error("Something went wrong"),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["compliance"] });
       toast.success(
         complianceEditdata
-          ? "compilance updation success"
-          : "compilance creation success"
+          ? "compilance updated successfully"
+          : "compilance created successfully", { style: { backgroundColor: "#28a745", color: "white", border: "none" } }
       );
       handleModalClose();
     },
@@ -192,7 +194,7 @@ const AddEditCompilanceModal = () => {
               className="px-4 py-0.5 bg-[var(--blue)] text-white text-[12px] rounded-[5px] dark:text-black"
               type="submit"
             >
-              Create
+              Submit
             </button>
           </div>
         </form>

@@ -198,6 +198,15 @@ export const downloadClientRoleExcelTemplateApi = async ({
 }: ApiConfigProps): Promise<AxiosResponse> => {
   return await apiConfig({ method, urlEndpoint, headers, responseType });
 };
+export const downloadUserExcelTemplateApi = async ({
+  method,
+  urlEndpoint,
+  headers,
+  responseType,
+}: ApiConfigProps): Promise<AxiosResponse> => {
+  return await apiConfig({ method, urlEndpoint, headers, responseType });
+};
+
 export const getAllComplianceApi = async ({
   method,
   urlEndpoint,

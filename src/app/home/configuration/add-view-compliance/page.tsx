@@ -1,23 +1,26 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import BreadCrumbsProvider from "@/components/ui/breadCrumbsProvider";
 import Cookies from "js-cookie";
 import { Pencil, Trash } from "lucide-react";
 import { ViewComplianceTable } from "@/components/configuration/viewCompliance";
-import { deleteComplinceApi, getAllComplianceApi } from "@/services/apis";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { getAllComplianceApi } from "@/services/apis";
+import { useQuery } from "@tanstack/react-query";
 import { formatDate } from "@/utils/formater";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/lib/global-redux/store";
 import AddEditCompilanceModal from "@/components/add_eddit_compilance";
 import { showAddEditComapilanceModal } from "@/lib/global-redux/features/uiSlice";
 import { toast } from "sonner";
+import DeletecomplianceModal from "@/components/configuration/deleteComplianceModal";
 
 export interface Compliance {
   id: number;
   compliance_title: string;
   gov_id: number;
   std_id: number;
+  gov_name: string;
+  std_name: string;
   compliance_startdate: string;
   compliance_enddate: string;
   compliance_year: string;
@@ -30,9 +33,11 @@ const ViewCompliance = () => {
   const complilaceFormState = useSelector(
     (state: RootState) => state.ui.addEditComapilanecModal.isVisible
   );
+  const [deleteModal, setDeleteModal] = useState(false);
+  const [deletingComplianceId, setDeletingComplianceId] = useState<number | null>(null);
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ["clientroles"],
+    queryKey: ["compliance"],
     queryFn: async () =>
       await getAllComplianceApi({
         method: "GET",
@@ -43,36 +48,20 @@ const ViewCompliance = () => {
       }),
   });
 
-  // delete complience
-  const { mutateAsync: deleteComplienceHandler } = useMutation({
-    mutationFn: deleteComplinceApi,
-    onError: () => toast.error("somethng went wrong"),
-    onSuccess: () => {
-      toast.success("compilance deleted successfully");
-    },
-  });
-
-  const handleDeleteComplience = (compleanceId: string) => {
-    if (!compleanceId) return toast.warning("error in compliance");
-    deleteComplienceHandler({
-      method: "DELETE",
-      urlEndpoint: `/compliance/compliance-periods/${compleanceId}`,
-    });
-  };
-
   const compliance: Compliance[] = data?.data?.items || [];
+
   const columnsData = [
     {
       accessorKey: "compliance_title",
       header: "Title",
     },
     {
-      accessorKey: "gov_id",
-      header: "Gov ID",
+      accessorKey: "gov_name",
+      header: "Governance",
     },
     {
-      accessorKey: "std_id",
-      header: "Standard ID",
+      accessorKey: "std_name",
+      header: "Standard",
     },
     {
       accessorKey: "compliance_startdate",
@@ -93,11 +82,23 @@ const ViewCompliance = () => {
       id: "actions",
       header: "Actions",
       cell: ({ row }: any) => {
-        const handleOpenEdit = () =>
-          dispatch(showAddEditComapilanceModal(row.original));
+        const handleOpenEdit = () => {
+          const { compliance_startdate, compliance_enddate, ...rest } = row.original;
 
-        const handleDeleteHandler = () =>
-          handleDeleteComplience(row.original.id);
+          // Format to 'YYYY-MM-DD'
+          const formattedStartDate = compliance_startdate?.split("T")[0];
+          const formattedEndDate = compliance_enddate?.split("T")[0];
+
+          dispatch(showAddEditComapilanceModal({
+            ...rest,
+            compliance_startdate: formattedStartDate,
+            compliance_enddate: formattedEndDate,
+          }));
+        };
+        const handleDeleteOption = () => {
+          setDeletingComplianceId(row.original.id);
+          setDeleteModal(true);
+        };
 
         return (
           <div className="flex w-full justify-center gap-2">
@@ -106,7 +107,7 @@ const ViewCompliance = () => {
               className="h-4 w-4 text-blue-900 cursor-pointer"
             />
             <Trash
-              onClick={handleDeleteHandler}
+              onClick={handleDeleteOption}
               className="h-4 w-4 text-[var(--red)] cursor-pointer"
             />
           </div>
@@ -114,6 +115,7 @@ const ViewCompliance = () => {
       },
     },
   ];
+
   return (
     <>
       <div className="flex flex-col w-full mb-[50px]">
@@ -132,7 +134,20 @@ const ViewCompliance = () => {
           )}
         </div>
       </div>
+
       {complilaceFormState && <AddEditCompilanceModal />}
+
+      {deleteModal && (
+        <DeletecomplianceModal
+          compliance_id={deletingComplianceId}
+          isOpen={deleteModal}
+          onClose={() => setDeleteModal(false)}
+          onDeleteSuccess={() => {
+            setDeletingComplianceId(null);
+            setDeleteModal(false);
+          }}
+        />
+      )}
     </>
   );
 };

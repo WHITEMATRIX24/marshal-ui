@@ -10,7 +10,7 @@ import { Pencil, Trash } from "lucide-react";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Cookies from "js-cookie";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { deleteUserApi, fetchUsersDataApi } from "@/services/apis";
 import { toast } from "sonner";
 import useGovAndRoles from "@/utils/gov_and_roles";
@@ -25,7 +25,7 @@ const CreateUpdateUser = () => {
   const token = Cookies.get("access_token");
   const [deleteModal, setDeleteModal] = useState<boolean>(false);
   const [deleteUserId, setDeleteUserId] = useState<number | null>(null);
-
+  const queryClient = useQueryClient();
   const { data, isLoading, error } = useQuery({
     queryKey: ["usersdata"],
     queryFn: async () =>
@@ -100,8 +100,11 @@ const CreateUpdateUser = () => {
   const { mutateAsync: deleteUser } = useMutation({
     mutationFn: deleteUserApi,
     onSuccess: () => {
-      toast.success("user successfully deleted");
       handleDeletemodalClose();
+      queryClient.invalidateQueries({ queryKey: ["usersdata"] });
+      toast.success("User deleted successfully!", {
+        style: { backgroundColor: "#28a745", color: "white", border: "none" },
+      });
       return;
     },
     onError: (error) => {
@@ -137,7 +140,7 @@ const CreateUpdateUser = () => {
             data && (
               <UserManagementDataTable
                 columns={columnData}
-                data={data.data.items}
+                data={data.data.items.filter((user: any) => user.is_active === true)}
               />
             )
           )}
