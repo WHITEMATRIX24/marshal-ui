@@ -1,6 +1,6 @@
 "use client";
 
-import { Role } from "@/app/home/role-user-management/create-update-roles/page";
+import { Role } from "@/app/home/role-user-management/create-or-update-roles/page";
 import { ComplianceAddModel } from "@/models/compilance";
 import { CreateUserModel } from "@/models/users";
 import { createSlice } from "@reduxjs/toolkit";

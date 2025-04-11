@@ -4,12 +4,48 @@ import BreadCrumbsProvider from "@/components/ui/breadCrumbsProvider";
 import { fetchActivitesControlsApi } from "@/services/apis";
 import { useQuery } from "@tanstack/react-query";
 import { Pencil, Trash } from "lucide-react";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { formatDate } from "@/utils/formater";
 
 const ViewActivity = () => {
   const token = Cookies.get("access_token");
+  const userData = Cookies.get("user_info");
+  const govId = Cookies.get("selected_governance");
+
+  const [userName, setUserName] = useState<string | null>(null);
+  const [roleName, setRoleName] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (userData) {
+      const parsed = JSON.parse(userData);
+      setUserName(parsed.username);
+    }
+  }, [userData]);
+
+  useEffect(() => {
+    if (govId) {
+      const parsedGovId = JSON.parse(govId);
+      setRoleName(parsedGovId.role_type_name);
+    }
+  }, [govId]);
+
+  const getEndpointUrl = () => {
+    if (!userName || !roleName) return "/taskdetail/details"; // Fallback
+
+    const role = roleName.toLowerCase();
+    if (role.includes("doer")) {
+      return `/taskdetail/details?doer=${userName}`;
+    } else if (role.includes("reviewer")) {
+      return `/taskdetail/details?reviewer=${userName}`;
+    } else if (role.includes("approver")) {
+      return `/taskdetail/details?approver=${userName}`;
+    }
+    else {
+      return "/taskdetail/details";
+    }
+  };
+
   const columnData = [
     {
       accessorKey: "task_name",
@@ -68,38 +104,31 @@ const ViewActivity = () => {
       id: "actions",
       header: "Actions",
       cell: ({ row }: any) => {
+        const isAdmin = roleName?.toLowerCase().includes("admin");
+
         return (
           <div className="flex w-full justify-center gap-2">
             <Pencil className="h-3 w-3 text-blue-900 cursor-pointer" />
-            <Trash className="h-3 w-3 text-[var(--red)] cursor-pointer" />
+            {isAdmin && (
+              <Trash className="h-3 w-3 text-[var(--red)] cursor-pointer" />
+            )}
           </div>
         );
       },
-    },
-  ];
-
-  const tableData = [
-    {
-      activity_title: "test",
-      activity_description: "test",
-      doer_role: "test",
-      frequency: "test",
-      duration: "test",
-      approve_role: "test",
-      status: "test",
-    },
+    }
   ];
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ["activites"],
+    queryKey: ["activites", userName, roleName],
     queryFn: async () =>
       await fetchActivitesControlsApi({
         method: "GET",
-        urlEndpoint: "/taskdetail/details",
+        urlEndpoint: getEndpointUrl(),
         headers: {
           Authorization: `Bearer ${token}`,
         },
       }),
+    enabled: !!userName && !!roleName, // Only fetch when both are set
   });
 
   return (
@@ -112,13 +141,10 @@ const ViewActivity = () => {
       <div className="py-0 w-full px-4">
         {isLoading ? (
           <p>Loading...</p>
-        ) : !isLoading && error ? (
+        ) : error ? (
           <p>Something went wrong ...</p>
         ) : (
-          !isLoading &&
-          data && (
-            <ViewActivityTable columns={columnData} data={data.data.items} />
-          )
+          data && <ViewActivityTable columns={columnData} data={data.data.items} />
         )}
       </div>
     </div>

@@ -102,7 +102,7 @@ const AddAssignment = () => {
                 className="px-2 py-1 border outline-none rounded-md text-[11px] w-full"
               >
                 <option value="default" disabled>
-                  select the deour
+                  Select Doer
                 </option>
                 {doerUsers?.map((doer) => (
                   <option key={doer.id} value={doer.role_sort_name}>
@@ -118,7 +118,7 @@ const AddAssignment = () => {
                 className="px-2 py-1 border outline-none rounded-md text-[11px] w-full"
               >
                 <option value="default" disabled>
-                  select the reviewer
+                  Select Reviewer
                 </option>
                 {reviewers?.map((doer) => (
                   <option key={doer.id} value={doer.role_sort_name}>
@@ -134,7 +134,7 @@ const AddAssignment = () => {
                 className="px-2 py-1 border outline-none rounded-md text-[11px] w-full"
               >
                 <option value="default" disabled>
-                  select the auditor
+                  Select Auditor
                 </option>
                 {auditors?.map((doer) => (
                   <option key={doer.id} value={doer.role_sort_name}>

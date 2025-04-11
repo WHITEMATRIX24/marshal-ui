@@ -168,7 +168,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       items: [
         {
           title: "Create Assignment",
-          url: "/home/configuration/add-assignment",
+          url: "/home/configuration/create-assignment",
           onClick: () => {
             dispatch(setMainBreadcrumb("Add Assignment"));
             dispatch(setSubBredCrum(""));
@@ -176,7 +176,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         },
         {
           title: "Create/View Compliance",
-          url: "/home/configuration/add-view-compliance",
+          url: "/home/configuration/create-or-view-compliance",
           onClick: () => {
             dispatch(setMainBreadcrumb("Add / View Compliance"));
             dispatch(setSubBredCrum(""));
@@ -217,7 +217,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         },
         {
           title: "Create or Update Users",
-          url: "/home/role-user-management/create-update-users",
+          url: "/home/role-user-management/create-or-update-users",
           onClick: () => {
             dispatch(setMainBreadcrumb("Role / User Management"));
             dispatch(setSubBredCrum(""));
@@ -225,7 +225,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         },
         {
           title: "Create or Update Roles",
-          url: "/home/role-user-management/create-update-roles",
+          url: "/home/role-user-management/create-or-update-roles",
           onClick: () => {
             dispatch(setMainBreadcrumb("Role / User Management"));
             dispatch(setSubBredCrum(""));

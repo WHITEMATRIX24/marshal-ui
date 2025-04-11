@@ -32,6 +32,8 @@ import { useMutation } from "@tanstack/react-query";
 import { exportClientRolesApi } from "@/services/apis";
 import { saveAs } from "file-saver";
 import { AxiosResponse } from "axios";
+import { UserPlus, FileSpreadsheet } from "lucide-react";
+
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
@@ -102,7 +104,7 @@ export function RolesManagementDataTable<TData, TValue>({
 
   return (
     <div>
-      <div className="flex justify-end gap-3 py-4">
+      <div className="flex justify-end gap-3 py-1">
         <Input
           placeholder="Search role names..."
           value={
@@ -113,25 +115,24 @@ export function RolesManagementDataTable<TData, TValue>({
           }
           className="max-w-sm px-3 h-7 text-[11px] bg-[#f9fafb] dark:bg-[#e5e5e5]"
         />
-        <div className="flex gap-5">
+        <div className="flex gap-3">
           <button
-            className="bg-[#0890CA] text-white text-[11px] px-2 py-1 rounded-[5px] dark:bg-[#6BC1E6] dark:text-[black]"
+            className="bg-[#0890CA] text-white text-[11px] px-3 py-1 rounded-[5px] dark:bg-[#6BC1E6] dark:text-[black] flex items-center gap-1"
             onClick={handelOpenAddNewRoleForm}
           >
-            Add New Role
+            <UserPlus size={14} /> New Role
           </button>
-        </div>
-        <div className="flex gap-5">
+
           <button
-            className="bg-[#0890CA] text-white text-[11px] px-2 py-1 rounded-[5px] dark:bg-[#6BC1E6] dark:text-[black]"
+            className="bg-[#0890CA] text-white text-[11px] px-3 py-1 rounded-[5px] dark:bg-[#6BC1E6] dark:text-[black] flex items-center gap-1"
             onClick={() => exportMutation.mutate()}
             disabled={exportMutation.isPending}
           >
-            {exportMutation.isPending ? "Exporting..." : "Export Role Data"}
+            <FileSpreadsheet size={14} />
+            {exportMutation.isPending ? "Exporting..." : "Export"}
           </button>
-
-
         </div>
+
 
       </div>
       <div className="rounded-md border max-h-[70vh] overflow-auto relative">

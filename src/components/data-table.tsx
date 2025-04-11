@@ -240,24 +240,22 @@ export function DataTable<
         <React.Fragment key={`row-${row.id}`}>
           <TableRow
             key={`row-${row.id}`}
-            className={`transition-colors hover:bg-[var(--hover-bg)] ${
-              expandedRows[row.id]
-                ? "bg-[var(--hover-bg)]"
-                : index % 2 === 0
+            className={`transition-colors hover:bg-[var(--hover-bg)] ${expandedRows[row.id]
+              ? "bg-[var(--hover-bg)]"
+              : index % 2 === 0
                 ? "bg-[var(--table-bg-even)] text-black"
                 : "bg-[var(--table-bg-odd)] text-black"
-            }`}
+              }`}
           >
             {columns.map((column, colIndex) => (
               <TableCell
                 key={`cell-${row.id}-${column.id}`}
-                className={`text-[11px] px-2 py-1 ${
-                  colIndex === 1
-                    ? "w-[50px] text-center"
-                    : colIndex === 2
+                className={`text-[11px] px-2 py-1 ${colIndex === 1
+                  ? "w-[50px] text-center"
+                  : colIndex === 2
                     ? "max-w-[350px] break-words"
                     : "flex-1"
-                }`}
+                  }`}
               >
                 {colIndex === 0 ? (
                   <div
@@ -265,7 +263,7 @@ export function DataTable<
                     style={{ paddingLeft: `${level * 20}px` }}
                   >
                     {(isLeafNode && row.tasks && row.tasks.length > 0) ||
-                    (row.children && row.children.length > 0) ? (
+                      (row.children && row.children.length > 0) ? (
                       <button
                         onClick={() => toggleRow(row.id)}
                         className="flex items-center"
@@ -357,7 +355,7 @@ export function DataTable<
                               <Link
                                 href={{
                                   pathname:
-                                    "/home/configuration/add-assignment",
+                                    "/home/configuration/create-assignment",
                                   query: { task: JSON.stringify(task) },
                                 }}
                                 className="bg-[var(--blue)] w-5 h-5 px-0  flex items-center justify-center text-[10px] rounded-full"
@@ -488,9 +486,9 @@ export function DataTable<
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
                   </TableHead>
                 ))}
               </TableRow>

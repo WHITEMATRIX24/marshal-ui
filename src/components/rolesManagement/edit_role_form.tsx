@@ -1,4 +1,4 @@
-import { Role } from "@/app/home/role-user-management/create-update-roles/page";
+import { Role } from "@/app/home/role-user-management/create-or-update-roles/page";
 import { hideEditRoleForm } from "@/lib/global-redux/features/uiSlice";
 import { RootState } from "@/lib/global-redux/store";
 import React, { useState, useEffect } from "react";

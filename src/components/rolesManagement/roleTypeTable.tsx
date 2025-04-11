@@ -72,7 +72,7 @@ export function RolesTypeDataTable<TData, TValue>({
 
     return (
         <div>
-            <div className="flex justify-end gap-3 py-4">
+            <div className="flex justify-end gap-3 py-1">
                 <Input
                     placeholder="Search role names..."
                     value={

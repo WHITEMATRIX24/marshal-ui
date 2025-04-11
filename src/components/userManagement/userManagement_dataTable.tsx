@@ -31,6 +31,7 @@ import Cookies from "js-cookie";
 import { saveAs } from "file-saver";
 import axios from "axios";
 import { formatName } from "@/utils/formater";
+import { FileSpreadsheet, UserPlus } from "lucide-react";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -112,7 +113,7 @@ export function UserManagementDataTable<TData, TValue>({
 
   return (
     <div>
-      <div className="flex justify-end gap-3 py-4">
+      <div className="flex justify-end gap-3 py-1">
         <Input
           placeholder="Search Names..."
           value={
@@ -125,15 +126,18 @@ export function UserManagementDataTable<TData, TValue>({
         />
         <div className="flex gap-3">
           <button
-            className="bg-[var(--blue)] text-white text-[11px] px-2 py-1 rounded-[5px] ] dark:text-[black]"
+
             onClick={handelOpenAddNewUserForm}
+            className="bg-[#0890CA] text-white text-[11px] px-3 py-1 rounded-[5px] dark:bg-[#6BC1E6] dark:text-[black] flex items-center gap-1"
           >
+            <UserPlus size={14} />
             New User
           </button>
           <button
-            className="bg-[var(--blue)] text-white text-[11px] px-2 py-1 rounded-[5px] ] dark:text-[black]"
             onClick={handleExport}
+            className="bg-[#0890CA] text-white text-[11px] px-3 py-1 rounded-[5px] dark:bg-[#6BC1E6] dark:text-[black] flex items-center gap-1"
           >
+            <FileSpreadsheet size={14} />
             Export
           </button>
         </div>
@@ -146,18 +150,17 @@ export function UserManagementDataTable<TData, TValue>({
                 {headerGroup.headers.map((header) => (
                   <TableHead
                     key={header.id}
-                    className={`text-white text-[12px] h-7 p-1  ${
-                      header.id === "actions" ? "text-center w-20" : ""
-                    }
+                    className={`text-white text-[12px] h-7 p-1  ${header.id === "actions" ? "text-center w-20" : ""
+                      }
                     ${header.id === "is_active" ? "text-center w-20" : ""}
                     `}
                   >
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
                   </TableHead>
                 ))}
               </TableRow>
@@ -168,11 +171,10 @@ export function UserManagementDataTable<TData, TValue>({
               table.getRowModel().rows.map((row, index) => (
                 <TableRow
                   key={row.id}
-                  className={`text-[11px] transition-colors hover:bg-[var(--hover-bg)] ${
-                    index % 2 === 0
-                      ? "bg-[var(--table-bg-even)] text-[black]"
-                      : "bg-[var(--table-bg-odd)] text-[black]"
-                  }`}
+                  className={`text-[11px] transition-colors hover:bg-[var(--hover-bg)] ${index % 2 === 0
+                    ? "bg-[var(--table-bg-even)] text-[black]"
+                    : "bg-[var(--table-bg-odd)] text-[black]"
+                    }`}
                 >
                   {row.getVisibleCells().map((cell) => {
                     return (

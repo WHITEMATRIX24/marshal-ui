@@ -81,7 +81,7 @@ export function ViewActivityTable<TData, TValue>({
           className="max-w-sm px-3 h-7 text-[11px] bg-[#f9fafb] dark:bg-[#e5e5e5]"
         />
       </div>
-      <div className="rounded-md border h-[30rem]">
+      <div className="rounded-md  h-[30rem]">
         <Table>
           <TableHeader className="bg-[var(--purple)]">
             {table.getHeaderGroups().map((headerGroup) => (
@@ -92,7 +92,7 @@ export function ViewActivityTable<TData, TValue>({
                     className={`text-white text-[12px] h-7 p-1  ${header.id === "actions" ? "text-center w-20" : ""
                       }
                     ${header.id === "status" ? "text-center w-20" : ""}
-                    ${header.id === "task_details" ? "text-center w-80" : ""}
+                    ${header.id === "task_details" ? "w-80" : ""}
                     ${header.id === "task_title" ? "w-60" : ""}
                     `}
                   >
@@ -113,8 +113,8 @@ export function ViewActivityTable<TData, TValue>({
                 <TableRow
                   key={row.id}
                   className={`text-[11px] transition-colors hover:bg-[var(--hover-bg)] ${index % 2 === 0
-                      ? "bg-[var(--table-bg-even)] text-[black]"
-                      : "bg-[var(--table-bg-odd)] text-[black]"
+                    ? "bg-[var(--table-bg-even)] text-[black]"
+                    : "bg-[var(--table-bg-odd)] text-[black]"
                     }`}
                 >
                   {row.getVisibleCells().map((cell) => (

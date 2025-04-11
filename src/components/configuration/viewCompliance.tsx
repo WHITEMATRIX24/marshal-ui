@@ -25,6 +25,8 @@ import {
 } from "../ui/table";
 import { showAddEditComapilanceModal } from "@/lib/global-redux/features/uiSlice";
 import { useDispatch } from "react-redux";
+import { Cog } from "lucide-react";
+
 // import { useDispatch } from "react-redux";
 // import { showEditRoleForm } from "@/lib/global-redux/features/uiSlice";
 
@@ -76,7 +78,7 @@ export function ViewComplianceTable<TData, TValue>({
 
   return (
     <div>
-      <div className="flex justify-end gap-3 py-4">
+      <div className="flex justify-end gap-3 py-1">
         <Input
           placeholder="Search compliance..."
           value={
@@ -93,9 +95,9 @@ export function ViewComplianceTable<TData, TValue>({
         <div className="flex gap-5">
           <button
             onClick={() => dispatch(showAddEditComapilanceModal(null))}
-            className="bg-[#0890CA] text-white text-[11px] px-2 py-1 rounded-[5px] dark:bg-[#6BC1E6] dark:text-[black]"
+            className="bg-[#0890CA] text-white text-[11px] px-3 py-1 rounded-[5px] dark:bg-[#6BC1E6] dark:text-[black] flex items-center gap-1"
           >
-            Add New Compliance
+            <Cog size={14} /> New Compliance
           </button>
         </div>
       </div>
@@ -107,16 +109,15 @@ export function ViewComplianceTable<TData, TValue>({
                 {headerGroup.headers.map((header) => (
                   <TableHead
                     key={header.id}
-                    className={`text-white text-[12px] h-7 p-1  ${
-                      header.id === "actions" ? "text-center w-20" : ""
-                    }`}
+                    className={`text-white text-[12px] h-7 p-1  ${header.id === "actions" ? "text-center w-20" : ""
+                      }`}
                   >
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
                   </TableHead>
                 ))}
               </TableRow>
@@ -127,11 +128,10 @@ export function ViewComplianceTable<TData, TValue>({
               table.getRowModel().rows.map((row, index) => (
                 <TableRow
                   key={row.id}
-                  className={`text-[11px] transition-colors hover:bg-[var(--hover-bg)] ${
-                    index % 2 === 0
-                      ? "bg-[var(--table-bg-even)] text-[black]"
-                      : "bg-[var(--table-bg-odd)] text-[black]"
-                  }`}
+                  className={`text-[11px] transition-colors hover:bg-[var(--hover-bg)] ${index % 2 === 0
+                    ? "bg-[var(--table-bg-even)] text-[black]"
+                    : "bg-[var(--table-bg-odd)] text-[black]"
+                    }`}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell
