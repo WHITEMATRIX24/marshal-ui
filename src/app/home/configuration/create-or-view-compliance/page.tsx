@@ -13,6 +13,7 @@ import AddEditCompilanceModal from "@/components/add_eddit_compilance";
 import { showAddEditComapilanceModal } from "@/lib/global-redux/features/uiSlice";
 import { toast } from "sonner";
 import DeletecomplianceModal from "@/components/configuration/deleteComplianceModal";
+import Loader from "@/components/loader";
 
 export interface Compliance {
   id: number;
@@ -34,7 +35,9 @@ const ViewCompliance = () => {
     (state: RootState) => state.ui.addEditComapilanecModal.isVisible
   );
   const [deleteModal, setDeleteModal] = useState(false);
-  const [deletingComplianceId, setDeletingComplianceId] = useState<number | null>(null);
+  const [deletingComplianceId, setDeletingComplianceId] = useState<
+    number | null
+  >(null);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["compliance"],
@@ -83,17 +86,20 @@ const ViewCompliance = () => {
       header: "Actions",
       cell: ({ row }: any) => {
         const handleOpenEdit = () => {
-          const { compliance_startdate, compliance_enddate, ...rest } = row.original;
+          const { compliance_startdate, compliance_enddate, ...rest } =
+            row.original;
 
           // Format to 'YYYY-MM-DD'
           const formattedStartDate = compliance_startdate?.split("T")[0];
           const formattedEndDate = compliance_enddate?.split("T")[0];
 
-          dispatch(showAddEditComapilanceModal({
-            ...rest,
-            compliance_startdate: formattedStartDate,
-            compliance_enddate: formattedEndDate,
-          }));
+          dispatch(
+            showAddEditComapilanceModal({
+              ...rest,
+              compliance_startdate: formattedStartDate,
+              compliance_enddate: formattedEndDate,
+            })
+          );
         };
         const handleDeleteOption = () => {
           setDeletingComplianceId(row.original.id);
@@ -126,7 +132,7 @@ const ViewCompliance = () => {
         </header>
         <div className="py-0 w-full px-4">
           {isLoading ? (
-            <p>Loading...</p>
+            <Loader />
           ) : error ? (
             <p>Something went wrong ...</p>
           ) : (

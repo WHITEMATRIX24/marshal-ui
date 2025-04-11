@@ -12,6 +12,7 @@ import { fetchClientRolesApi } from "@/services/apis";
 import { useQuery } from "@tanstack/react-query";
 import EditNewRoleModal from "@/components/rolesManagement/edit_role_form";
 import DeleteRoleModal from "@/components/rolesManagement/deleteRoleModal";
+import Loader from "@/components/loader";
 
 export interface Role {
   role_name: string;
@@ -96,7 +97,7 @@ const CreateUpdateRole = () => {
         </header>
         <div className="py-0 w-full px-4">
           {isLoading ? (
-            <p>Loading...</p>
+            <Loader />
           ) : error ? (
             <p>Something went wrong ...</p>
           ) : (

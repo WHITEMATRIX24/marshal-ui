@@ -7,6 +7,7 @@ import { Pencil, Trash } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { formatDate } from "@/utils/formater";
+import Loader from "@/components/loader";
 
 const ViewActivity = () => {
   const token = Cookies.get("access_token");
@@ -40,8 +41,7 @@ const ViewActivity = () => {
       return `/taskdetail/details?reviewer=${userName}`;
     } else if (role.includes("approver")) {
       return `/taskdetail/details?approver=${userName}`;
-    }
-    else {
+    } else {
       return "/taskdetail/details";
     }
   };
@@ -115,7 +115,7 @@ const ViewActivity = () => {
           </div>
         );
       },
-    }
+    },
   ];
 
   const { data, isLoading, error } = useQuery({
@@ -140,11 +140,13 @@ const ViewActivity = () => {
       </header>
       <div className="py-0 w-full px-4">
         {isLoading ? (
-          <p>Loading...</p>
+          <Loader />
         ) : error ? (
           <p>Something went wrong ...</p>
         ) : (
-          data && <ViewActivityTable columns={columnData} data={data.data.items} />
+          data && (
+            <ViewActivityTable columns={columnData} data={data.data.items} />
+          )
         )}
       </div>
     </div>

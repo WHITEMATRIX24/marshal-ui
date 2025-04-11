@@ -11,8 +11,12 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/lib/global-redux/store";
 import { Control } from "@/models/control";
 import BreadCrumbsProvider from "@/components/ui/breadCrumbsProvider";
+import Loader from "@/components/loader";
 
-const fetchControls = async (stdId: number, govId: string): Promise<Control[]> => {
+const fetchControls = async (
+  stdId: number,
+  govId: string
+): Promise<Control[]> => {
   if (!stdId || !govId) throw new Error("stdId and govId are required");
   const token = Cookies.get("access_token");
 
@@ -23,15 +27,18 @@ const fetchControls = async (stdId: number, govId: string): Promise<Control[]> =
 
   const urlEndpoint = `/controls/tree/with-tasks/?std_id=${stdId}&gov_id=${govId}`;
   const method = "GET";
-  const response = await fetchL1ControlsByStandardApi({ urlEndpoint, method, headers });
+  const response = await fetchL1ControlsByStandardApi({
+    urlEndpoint,
+    method,
+    headers,
+  });
 
   if (!response || !response.data?.items) {
     return [];
   }
 
   const transformData = (items: Control[]): Control[] => {
-    return items.map(item => {
-
+    return items.map((item) => {
       const isLeafNode = !item.children || item.children.length === 0;
 
       return {
@@ -50,7 +57,9 @@ const fetchControls = async (stdId: number, govId: string): Promise<Control[]> =
 };
 
 export default function Page() {
-  const stdId = useSelector((state: RootState) => state.Standerds.selected_std_id);
+  const stdId = useSelector(
+    (state: RootState) => state.Standerds.selected_std_id
+  );
   const govIdCookie = Cookies.get("selected_governance");
   const [govId, setGovId] = useState<string | null>(null);
   const router = useRouter();
@@ -71,7 +80,8 @@ export default function Page() {
 
   const { data, error, isLoading } = useQuery<Control[], Error>({
     queryKey: ["controls", stdId, govId],
-    queryFn: () => (stdId && govId ? fetchControls(stdId, govId) : Promise.resolve([])),
+    queryFn: () =>
+      stdId && govId ? fetchControls(stdId, govId) : Promise.resolve([]),
     enabled: !!stdId && !!govId,
   });
   function updateData(data: Control[], updatedRow: Control): Control[] {
@@ -79,8 +89,8 @@ export default function Page() {
       row.id === updatedRow.id
         ? updatedRow
         : row.children
-          ? { ...row, children: updateData(row.children, updatedRow) }
-          : row
+        ? { ...row, children: updateData(row.children, updatedRow) }
+        : row
     );
   }
   useEffect(() => {
@@ -98,7 +108,7 @@ export default function Page() {
   }, [data]);
 
   if (!isMounted) return null;
-  if (isLoading) return <p>Loading...</p>;
+  if (isLoading) return <Loader />;
 
   return (
     <div className="flex flex-col w-full mb-[50px]">
