@@ -6,14 +6,15 @@ import { useQuery } from "@tanstack/react-query";
 import { Pencil, Trash } from "lucide-react";
 import React from "react";
 import Cookies from "js-cookie";
+import { formatDate } from "@/utils/formater";
 
 const ViewActivity = () => {
   const token = Cookies.get("access_token");
   const columnData = [
     {
-      accessorKey: "task_title",
-      header: "Task Title",
-      id: "task_title",
+      accessorKey: "task_name",
+      header: "Task Name",
+      id: "task_name",
     },
     {
       accessorKey: "task_details",
@@ -21,24 +22,37 @@ const ViewActivity = () => {
       id: "task_details",
     },
     {
-      accessorKey: "doer_role",
-      header: "Doer Role",
-      id: "doer_role",
+      accessorKey: "doer",
+      header: "Doer",
+      id: "doer",
     },
     {
-      accessorKey: "frequency",
-      header: "Frequency",
-      id: "frequency",
+      accessorKey: "reviewer",
+      header: "Reviewer",
+      id: "reviewer",
     },
     {
-      accessorKey: "duration",
-      header: "Duration",
-      id: "duration",
+      accessorKey: "approver",
+      header: "Approver",
+      id: "approver",
     },
     {
-      accessorKey: "approve_role",
-      header: "Approve Role",
-      id: "approve_role",
+      accessorKey: "plan_startdate",
+      header: "Planned Start Date",
+      id: "plan_startdate",
+      cell: ({ row }: any) => formatDate(row.original.plan_startdate),
+    },
+    {
+      accessorKey: "actual_startdate",
+      header: "Actual Start Date",
+      id: "actual_startdate",
+      cell: ({ row }: any) => formatDate(row.original.actual_startdate),
+    },
+    {
+      accessorKey: "end_date",
+      header: "End Date",
+      id: "end_date",
+      cell: ({ row }: any) => formatDate(row.original.end_date),
     },
     {
       accessorKey: "status",
@@ -46,19 +60,16 @@ const ViewActivity = () => {
       id: "status",
     },
     {
+      accessorKey: "action",
+      header: "Action",
+      id: "action",
+    },
+    {
       id: "actions",
       header: "Actions",
       cell: ({ row }: any) => {
-        // const handleEditOption = () => {
-        //   dispatch(showEditRoleForm(row.original));
-        // };
-
-        // const handleDeleteOption = () => {
-        //   setDeleteModal(true);
-        // };
-
         return (
-          <div className="flex w-full justify-center gap-2 ">
+          <div className="flex w-full justify-center gap-2">
             <Pencil className="h-3 w-3 text-blue-900 cursor-pointer" />
             <Trash className="h-3 w-3 text-[var(--red)] cursor-pointer" />
           </div>
@@ -66,6 +77,7 @@ const ViewActivity = () => {
       },
     },
   ];
+
   const tableData = [
     {
       activity_title: "test",
@@ -83,7 +95,7 @@ const ViewActivity = () => {
     queryFn: async () =>
       await fetchActivitesControlsApi({
         method: "GET",
-        urlEndpoint: "/tasks",
+        urlEndpoint: "/taskdetail/details",
         headers: {
           Authorization: `Bearer ${token}`,
         },

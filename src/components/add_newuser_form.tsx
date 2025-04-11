@@ -18,6 +18,7 @@ import { CreateUserModel } from "@/models/users";
 import { toast } from "sonner";
 import { AxiosResponse } from "axios";
 import { saveAs } from "file-saver";
+import { Eye, EyeOff } from "lucide-react";
 const AddNewUserModal = () => {
   const dispatch = useDispatch();
   const token = Cookies.get("access_token");
@@ -28,7 +29,7 @@ const AddNewUserModal = () => {
   const userEditData = useSelector(
     (state: RootState) => state.ui.addNewUserOnRoleMenuModal.data
   );
-
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState<CreateUserModel>(
     userEditData
       ? {
@@ -225,7 +226,7 @@ const AddNewUserModal = () => {
           <input
             type="text"
             className="px-2 py-1 border outline-none rounded-md text-[11px] border-gray-300 dark:border-gray-600 bg-[var(--table-bg-even)] dark:text-black"
-            placeholder="Email Id"
+            placeholder="Email Address"
             value={formData.email_address}
             onChange={(e) =>
               setFormData({ ...formData, email_address: e.target.value })
@@ -234,22 +235,31 @@ const AddNewUserModal = () => {
           <input
             type="text"
             className="px-2 py-1 border outline-none rounded-md text-[11px] border-gray-300 dark:border-gray-600 bg-[var(--table-bg-even)] dark:text-black"
-            placeholder="phone No"
+            placeholder="Phone Number"
             value={formData.phone_number}
             onChange={(e) =>
               setFormData({ ...formData, phone_number: e.target.value })
             }
           />
           {!userEditData && (
-            <input
-              type="text"
-              className="px-2 py-1 border outline-none rounded-md text-[11px] border-gray-300 dark:border-gray-600 bg-[var(--table-bg-even)] dark:text-black"
-              placeholder="password"
-              value={formData.password}
-              onChange={(e) =>
-                setFormData({ ...formData, password: e.target.value })
-              }
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                className="w-full px-2 py-1 pr-10 border outline-none rounded-md text-[11px] border-gray-300 dark:border-gray-600 bg-[var(--table-bg-even)] dark:text-black"
+                placeholder="Password"
+                value={formData.password}
+                onChange={(e) =>
+                  setFormData({ ...formData, password: e.target.value })
+                }
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(prev => !prev)}
+                className="absolute right-2 top-[30%] text-gray-600"
+              >
+                {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
+              </button>
+            </div>
           )}
           {/* governance select */}
           {/* <select
@@ -291,7 +301,7 @@ const AddNewUserModal = () => {
             className="px-2 py-1 border outline-none rounded-md text-[11px] border-gray-300 dark:border-gray-600 bg-[var(--table-bg-even)] dark:text-black"
           >
             <option value="default" disabled>
-              Select role
+              Select Role
             </option>
             {rolesLoading ? (
               <option disabled>loading...</option>

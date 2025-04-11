@@ -73,10 +73,10 @@ export function ViewActivityTable<TData, TValue>({
         <Input
           placeholder="Search names..."
           value={
-            (table.getColumn("task_title")?.getFilterValue() as string) ?? ""
+            (table.getColumn("task_name")?.getFilterValue() as string) ?? ""
           }
           onChange={(event) =>
-            table.getColumn("task_title")?.setFilterValue(event.target.value)
+            table.getColumn("task_name")?.setFilterValue(event.target.value)
           }
           className="max-w-sm px-3 h-7 text-[11px] bg-[#f9fafb] dark:bg-[#e5e5e5]"
         />
@@ -89,9 +89,8 @@ export function ViewActivityTable<TData, TValue>({
                 {headerGroup.headers.map((header) => (
                   <TableHead
                     key={header.id}
-                    className={`text-white text-[12px] h-7 p-1  ${
-                      header.id === "actions" ? "text-center w-20" : ""
-                    }
+                    className={`text-white text-[12px] h-7 p-1  ${header.id === "actions" ? "text-center w-20" : ""
+                      }
                     ${header.id === "status" ? "text-center w-20" : ""}
                     ${header.id === "task_details" ? "text-center w-80" : ""}
                     ${header.id === "task_title" ? "w-60" : ""}
@@ -100,9 +99,9 @@ export function ViewActivityTable<TData, TValue>({
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
                   </TableHead>
                 ))}
               </TableRow>
@@ -113,11 +112,10 @@ export function ViewActivityTable<TData, TValue>({
               table.getRowModel().rows.map((row, index) => (
                 <TableRow
                   key={row.id}
-                  className={`text-[11px] transition-colors hover:bg-[var(--hover-bg)] ${
-                    index % 2 === 0
+                  className={`text-[11px] transition-colors hover:bg-[var(--hover-bg)] ${index % 2 === 0
                       ? "bg-[var(--table-bg-even)] text-[black]"
                       : "bg-[var(--table-bg-odd)] text-[black]"
-                  }`}
+                    }`}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell

@@ -20,12 +20,12 @@ const Header = () => {
 
   return (
     <header >
-      <div className="flex items-center justify-between w-full px-4 pt-4">
-        <h1 className="roboto-text text-[22px] font-[700] capitalize text-[var(--blue)]">
+      <div className="flex items-center justify-between w-full px-4 pt-1 h-[10px]">
+        <h1 className="font-mont-text text-[18px] font-[600] capitalize text-[var(--purple)]">
           {mainBreadcrumb}
         </h1>
-        <div className="flex items-center gap-2 mr-4">
-          <FontAwesomeIcon className="w-[18px] cursor-pointer text-[var(--grey)]" icon={faBell} />
+        <div className="flex items-center gap-2 mr-0">
+          <FontAwesomeIcon className="w-[18px] cursor-pointer text-yellow-600" icon={faBell} />
           <ChangeThemeButton />
           <FontAwesomeIcon icon={faGear} className="w-[18px] cursor-pointer text-[var(--grey)]" onClick={() => setShowSettings(true)} />
           <MoreVertical className="w-[18px] cursor-pointer text-[var(--grey)]" />

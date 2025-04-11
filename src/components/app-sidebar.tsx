@@ -118,17 +118,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         url: "/home/portfolio",
         onClick: () => {
           handleStandardClick(standard.id, standard.std_short_name);
-          dispatch(setMainBreadcrumb("Portfolio"));
+          dispatch(setMainBreadcrumb("PORTFOLIO"));
         },
       })),
     },
     {
-      title: "My Activities",
+      title: "My Tasks",
       url: "#",
       icon: FileCheck2,
       items: [
         {
-          title: "View/Edit Activity",
+          title: "View/Edit Tasks",
           url: "/home/activites/view-activity",
           onClick: () => {
             dispatch(setMainBreadcrumb("View / Edit Activity"));
@@ -167,7 +167,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       icon: Cog,
       items: [
         {
-          title: "Add Assignment",
+          title: "Create Assignment",
           url: "/home/configuration/add-assignment",
           onClick: () => {
             dispatch(setMainBreadcrumb("Add Assignment"));
@@ -175,7 +175,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           },
         },
         {
-          title: "Add / View Compliance",
+          title: "Create/View Compliance",
           url: "/home/configuration/add-view-compliance",
           onClick: () => {
             dispatch(setMainBreadcrumb("Add / View Compliance"));
@@ -203,7 +203,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   ];
   if (role?.toLowerCase().includes("admin")) {
     navMain.splice(2, 0, {
-      title: "Role/ User Management",
+      title: "Role/User Management",
       url: "#",
       icon: UserCog,
       items: [
@@ -216,7 +216,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           },
         },
         {
-          title: "Create-Update Users",
+          title: "Create or Update Users",
           url: "/home/role-user-management/create-update-users",
           onClick: () => {
             dispatch(setMainBreadcrumb("Role / User Management"));
@@ -224,7 +224,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           },
         },
         {
-          title: "Create-Update Roles",
+          title: "Create or Update Roles",
           url: "/home/role-user-management/create-update-roles",
           onClick: () => {
             dispatch(setMainBreadcrumb("Role / User Management"));

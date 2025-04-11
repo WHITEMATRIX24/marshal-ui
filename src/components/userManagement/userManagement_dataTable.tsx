@@ -113,7 +113,7 @@ export function UserManagementDataTable<TData, TValue>({
     <div>
       <div className="flex justify-end gap-3 py-4">
         <Input
-          placeholder="Search names..."
+          placeholder="Search Names..."
           value={
             (table.getColumn("username")?.getFilterValue() as string) ?? ""
           }
@@ -127,13 +127,13 @@ export function UserManagementDataTable<TData, TValue>({
             className="bg-[var(--blue)] text-white text-[11px] px-2 py-1 rounded-[5px] ] dark:text-[black]"
             onClick={handelOpenAddNewUserForm}
           >
-            Add New User
+            New User
           </button>
           <button
             className="bg-[var(--blue)] text-white text-[11px] px-2 py-1 rounded-[5px] ] dark:text-[black]"
             onClick={handleExport}
           >
-            Export users data
+            Export
           </button>
         </div>
       </div>
@@ -145,18 +145,17 @@ export function UserManagementDataTable<TData, TValue>({
                 {headerGroup.headers.map((header) => (
                   <TableHead
                     key={header.id}
-                    className={`text-white text-[12px] h-7 p-1  ${
-                      header.id === "actions" ? "text-center w-20" : ""
-                    }
+                    className={`text-white text-[12px] h-7 p-1  ${header.id === "actions" ? "text-center w-20" : ""
+                      }
                     ${header.id === "is_active" ? "text-center w-20" : ""}
                     `}
                   >
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
                   </TableHead>
                 ))}
               </TableRow>
@@ -167,11 +166,10 @@ export function UserManagementDataTable<TData, TValue>({
               table.getRowModel().rows.map((row, index) => (
                 <TableRow
                   key={row.id}
-                  className={`text-[11px] transition-colors hover:bg-[var(--hover-bg)] ${
-                    index % 2 === 0
-                      ? "bg-[var(--table-bg-even)] text-[black]"
-                      : "bg-[var(--table-bg-odd)] text-[black]"
-                  }`}
+                  className={`text-[11px] transition-colors hover:bg-[var(--hover-bg)] ${index % 2 === 0
+                    ? "bg-[var(--table-bg-even)] text-[black]"
+                    : "bg-[var(--table-bg-odd)] text-[black]"
+                    }`}
                 >
                   {row.getVisibleCells().map((cell) => {
                     return (

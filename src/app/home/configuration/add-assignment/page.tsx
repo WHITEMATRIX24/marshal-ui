@@ -78,21 +78,21 @@ const AddAssignment = () => {
           <BreadCrumbsProvider />
         </div>
       </header>
-      <div className="py-16 w-full px-4 pe-20">
+      <div className="py-4 w-full px-4 pe-20">
         <form className="flex flex-col gap-2">
           <input
             type="text"
             value={taskQuery?.task_title || ""}
             placeholder="Task select from portfolio"
             readOnly
-            className="px-3 py-1 border border-darkThemegrey rounded-md text-sm"
+            className="px-3 py-1 text-[11px] border border-darkThemegrey rounded-md "
           />
           <input
             type="text"
             placeholder="Task description"
             value={taskQuery?.task_details || ""}
             readOnly
-            className="px-3 py-1 border border-darkThemegrey rounded-md text-sm"
+            className="px-3 py-1 text-[11px] border border-darkThemegrey rounded-md"
           />
           <div className="grid grid-cols-3 gap-8">
             <div className="w-full">
@@ -144,11 +144,11 @@ const AddAssignment = () => {
               </select>
             </div>
           </div>
-          <div className="pt-20 flex justify-end gap-5">
-            <button className="px-2 py-1 bg-[var(--red)] w-fit rounded-md">
+          <div className="pt-4 flex justify-end gap-5">
+            <button className="px-2 py-1 bg-[var(--red)] w-fit text-white text-[11px] rounded-md">
               Cancel
             </button>
-            <button className="px-2 py-1 bg-[var(--blue)] w-fit rounded-md">
+            <button className="px-2 py-1 bg-[var(--blue)] w-fit text-white text-[11px] rounded-md">
               Assign
             </button>
           </div>

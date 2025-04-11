@@ -168,7 +168,7 @@ const AddEditCompilanceModal = () => {
             className="px-2 py-1 border outline-none rounded-md text-[11px] border-gray-300 dark:border-gray-600 bg-[var(--table-bg-even)] dark:text-black"
           >
             <option value="default" disabled>
-              select standard
+              Select Standard
             </option>
             {standerdsLoading ? (
               <option disabled>loading</option>

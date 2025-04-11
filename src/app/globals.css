@@ -4,6 +4,7 @@
 @import url("https://geist-fonts.vercel.app/css/stylesheet.css");
 
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 
 * {
   font-display: swap;
@@ -12,6 +13,11 @@
 
 .roboto-text {
   font-family: "Roboto", sans-serif;
+  font-display: swap;
+}
+
+.mont-text {
+  font-family: "Montserrat", sans-serif;
   font-display: swap;
 }
 

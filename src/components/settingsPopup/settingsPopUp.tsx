@@ -164,12 +164,12 @@ export const SettingsPopUp: React.FC<SettingsPopUpProps> = ({ onClose }) => {
                 Change password
               </button>
 
-              <Link
+              {/* <Link
                 href="/home/dashboard/subscriptionplan"
                 className="w-fit text-[11px] dark:text-black"
               >
                 View subscription option
-              </Link>
+              </Link> */}
               <button onClick={handleDeleteBtn} className="w-fit text-[11px] text-[var(--red)]">
                 Delete Account
               </button>
