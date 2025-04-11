@@ -30,6 +30,7 @@ import { RootState } from "@/lib/global-redux/store";
 import Cookies from "js-cookie";
 import { saveAs } from "file-saver";
 import axios from "axios";
+import { formatName } from "@/utils/formater";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -145,17 +146,18 @@ export function UserManagementDataTable<TData, TValue>({
                 {headerGroup.headers.map((header) => (
                   <TableHead
                     key={header.id}
-                    className={`text-white text-[12px] h-7 p-1  ${header.id === "actions" ? "text-center w-20" : ""
-                      }
+                    className={`text-white text-[12px] h-7 p-1  ${
+                      header.id === "actions" ? "text-center w-20" : ""
+                    }
                     ${header.id === "is_active" ? "text-center w-20" : ""}
                     `}
                   >
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                   </TableHead>
                 ))}
               </TableRow>
@@ -166,10 +168,11 @@ export function UserManagementDataTable<TData, TValue>({
               table.getRowModel().rows.map((row, index) => (
                 <TableRow
                   key={row.id}
-                  className={`text-[11px] transition-colors hover:bg-[var(--hover-bg)] ${index % 2 === 0
-                    ? "bg-[var(--table-bg-even)] text-[black]"
-                    : "bg-[var(--table-bg-odd)] text-[black]"
-                    }`}
+                  className={`text-[11px] transition-colors hover:bg-[var(--hover-bg)] ${
+                    index % 2 === 0
+                      ? "bg-[var(--table-bg-even)] text-[black]"
+                      : "bg-[var(--table-bg-odd)] text-[black]"
+                  }`}
                 >
                   {row.getVisibleCells().map((cell) => {
                     return (
@@ -198,6 +201,8 @@ export function UserManagementDataTable<TData, TValue>({
                             roleId: cell.getValue(),
                             rolesData: rolesData,
                           })
+                        ) : cell.column.id === "username" ? (
+                          formatName(cell.getValue())
                         ) : (
                           flexRender(
                             cell.column.columnDef.cell,

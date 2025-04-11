@@ -33,22 +33,24 @@ const AddNewUserModal = () => {
   const [formData, setFormData] = useState<CreateUserModel>(
     userEditData
       ? {
-        username: userEditData.username,
-        email_address: userEditData.email_address,
-        gov_id: userEditData.gov_id,
-        phone_number: userEditData.phone_number,
-        link_to_role_id: userEditData.link_to_role_id,
-        is_active: userEditData.is_active,
-      }
+          username: userEditData.username,
+          email_address: userEditData.email_address,
+          gov_id: userEditData.gov_id,
+          phone_number: userEditData.phone_number,
+          link_to_role_id: userEditData.link_to_role_id,
+          is_active: userEditData.is_active,
+          reporting_manager_email: userEditData.reporting_manager_email,
+        }
       : {
-        username: "",
-        email_address: "",
-        gov_id: selectedGovernance.governance_id || null,
-        phone_number: "",
-        link_to_role_id: null,
-        password: "",
-        is_active: true,
-      }
+          username: "",
+          email_address: "",
+          gov_id: selectedGovernance.governance_id || null,
+          phone_number: "",
+          link_to_role_id: null,
+          password: "",
+          is_active: true,
+          reporting_manager_email: "",
+        }
   );
   const [userExcellFile, setUserExcellFile] = useState<File | null>(null);
   const [selectedFileName, setSelectedFileName] = useState<string | null>(null);
@@ -93,7 +95,9 @@ const AddNewUserModal = () => {
     {
       mutationFn: userEditData ? updateUserApi : createUserApi,
       onError: (error) => {
-        return toast.error(error.message || "something went wrong", {
+        const parsedError = JSON.parse(error.message);
+
+        return toast.error(parsedError[0].msg || "something went wrong", {
           style: { backgroundColor: "#ff5555", color: "white", border: "none" },
         });
       },
@@ -116,6 +120,7 @@ const AddNewUserModal = () => {
       password,
       phone_number,
       username,
+      reporting_manager_email,
     } = formData;
     if (
       !username ||
@@ -123,6 +128,7 @@ const AddNewUserModal = () => {
       !gov_id ||
       !link_to_role_id ||
       !phone_number ||
+      !reporting_manager_email ||
       (!userEditData && !password)
     ) {
       return toast.warning("fill the form");
@@ -145,7 +151,9 @@ const AddNewUserModal = () => {
   } = useMutation({
     mutationFn: createUserWithFileApi,
     onError: (error) => {
-      return toast.error(error.message || "something went wrong", {
+      const parsedError = JSON.parse(error.message);
+
+      return toast.error(parsedError[0].msg || "something went wrong", {
         style: { backgroundColor: "#ff5555", color: "white", border: "none" },
       });
     },
@@ -214,55 +222,60 @@ const AddNewUserModal = () => {
           className="flex flex-col gap-2"
           onSubmit={userExcellFile ? handleCreateWithFile : handleCreate}
         >
-          <input
-            type="text"
-            className="px-2 py-1 border outline-none rounded-md text-[11px] border-gray-300 dark:border-gray-600 bg-[var(--table-bg-even)] dark:text-black"
-            placeholder="Name"
-            value={formData.username}
-            onChange={(e) =>
-              setFormData({ ...formData, username: e.target.value })
-            }
-          />
-          <input
-            type="text"
-            className="px-2 py-1 border outline-none rounded-md text-[11px] border-gray-300 dark:border-gray-600 bg-[var(--table-bg-even)] dark:text-black"
-            placeholder="Email Address"
-            value={formData.email_address}
-            onChange={(e) =>
-              setFormData({ ...formData, email_address: e.target.value })
-            }
-          />
-          <input
-            type="text"
-            className="px-2 py-1 border outline-none rounded-md text-[11px] border-gray-300 dark:border-gray-600 bg-[var(--table-bg-even)] dark:text-black"
-            placeholder="Phone Number"
-            value={formData.phone_number}
-            onChange={(e) =>
-              setFormData({ ...formData, phone_number: e.target.value })
-            }
-          />
-          {!userEditData && (
-            <div className="relative">
-              <input
-                type={showPassword ? "text" : "password"}
-                className="w-full px-2 py-1 pr-10 border outline-none rounded-md text-[11px] border-gray-300 dark:border-gray-600 bg-[var(--table-bg-even)] dark:text-black"
-                placeholder="Password"
-                value={formData.password}
-                onChange={(e) =>
-                  setFormData({ ...formData, password: e.target.value })
-                }
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(prev => !prev)}
-                className="absolute right-2 top-[30%] text-gray-600"
-              >
-                {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
-              </button>
-            </div>
-          )}
-          {/* governance select */}
-          {/* <select
+          <div className="grid grid-cols-2 gap-2">
+            <input
+              type="text"
+              className="px-2 py-1 border outline-none rounded-md text-[11px] border-gray-300 dark:border-gray-600 bg-[var(--table-bg-even)] dark:text-black"
+              placeholder="Name"
+              value={formData.username}
+              onChange={(e) =>
+                setFormData({ ...formData, username: e.target.value })
+              }
+            />
+            {!userEditData && (
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  className="w-full px-2 py-1 pr-10 border outline-none rounded-md text-[11px] border-gray-300 dark:border-gray-600 bg-[var(--table-bg-even)] dark:text-black"
+                  placeholder="Password"
+                  value={formData.password}
+                  onChange={(e) =>
+                    setFormData({ ...formData, password: e.target.value })
+                  }
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  className="absolute right-2 top-[30%] text-gray-600"
+                >
+                  {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
+                </button>
+              </div>
+            )}
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            <input
+              type="text"
+              className="px-2 py-1 border outline-none rounded-md text-[11px] border-gray-300 dark:border-gray-600 bg-[var(--table-bg-even)] dark:text-black"
+              placeholder="Phone Number"
+              value={formData.phone_number}
+              onChange={(e) =>
+                setFormData({ ...formData, phone_number: e.target.value })
+              }
+            />
+            <input
+              type="text"
+              className="px-2 py-1 border outline-none rounded-md text-[11px] border-gray-300 dark:border-gray-600 bg-[var(--table-bg-even)] dark:text-black"
+              placeholder="Email Address"
+              value={formData.email_address}
+              onChange={(e) =>
+                setFormData({ ...formData, email_address: e.target.value })
+              }
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            {/* governance select */}
+            {/* <select
             value={JSON.stringify(formData.gov_id)}
             onChange={(e) =>
               setFormData({ ...formData, gov_id: JSON.parse(e.target.value) })
@@ -286,36 +299,49 @@ const AddNewUserModal = () => {
               ))
             )}
           </select> */}
-          <select
-            value={
-              formData.link_to_role_id === null
-                ? "default"
-                : JSON.stringify(formData.link_to_role_id)
-            }
-            onChange={(e) =>
-              setFormData({
-                ...formData,
-                link_to_role_id: JSON.parse(e.target.value),
-              })
-            }
-            className="px-2 py-1 border outline-none rounded-md text-[11px] border-gray-300 dark:border-gray-600 bg-[var(--table-bg-even)] dark:text-black"
-          >
-            <option value="default" disabled>
-              Select Role
-            </option>
-            {rolesLoading ? (
-              <option disabled>loading...</option>
-            ) : !rolesLoading && rolesError ? (
-              <option disabled>something went wrong</option>
-            ) : (
-              !rolesLoading &&
-              rolesData?.data.items.map((role: roleModel) => (
-                <option value={role.id} key={role.id}>
-                  {role.role_name}
-                </option>
-              ))
-            )}
-          </select>
+            <select
+              value={
+                formData.link_to_role_id === null
+                  ? "default"
+                  : JSON.stringify(formData.link_to_role_id)
+              }
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  link_to_role_id: JSON.parse(e.target.value),
+                })
+              }
+              className="px-2 py-1 border outline-none rounded-md text-[11px] border-gray-300 dark:border-gray-600 bg-[var(--table-bg-even)] dark:text-black"
+            >
+              <option value="default" disabled>
+                Select Role
+              </option>
+              {rolesLoading ? (
+                <option disabled>loading...</option>
+              ) : !rolesLoading && rolesError ? (
+                <option disabled>something went wrong</option>
+              ) : (
+                !rolesLoading &&
+                rolesData?.data.items.map((role: roleModel) => (
+                  <option value={role.id} key={role.id}>
+                    {role.role_name}
+                  </option>
+                ))
+              )}
+            </select>
+            <input
+              type="email"
+              className="px-2 py-1 border outline-none rounded-md text-[11px] border-gray-300 dark:border-gray-600 bg-[var(--table-bg-even)] dark:text-black"
+              placeholder="Reporting Manager Email"
+              value={formData.reporting_manager_email}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  reporting_manager_email: e.target.value,
+                })
+              }
+            />
+          </div>
           {/* excell file */}
           {!userEditData && (
             <>
@@ -341,7 +367,9 @@ const AddNewUserModal = () => {
                   />
                   <button
                     type="button"
-                    onClick={() => document.getElementById('excel-upload-user')?.click()}
+                    onClick={() =>
+                      document.getElementById("excel-upload-user")?.click()
+                    }
                     className="py-1 px-4 bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-medium rounded-md transition-colors flex items-center gap-2 whitespace-nowrap"
                     disabled={createUserPending || createUserWithFilePending}
                   >

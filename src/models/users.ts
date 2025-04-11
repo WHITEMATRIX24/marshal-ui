@@ -7,4 +7,5 @@ export interface CreateUserModel {
   is_active?: boolean;
   phone_number: string;
   password?: string;
+  reporting_manager_email: string;
 }

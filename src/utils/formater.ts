@@ -1,4 +1,4 @@
-export const formatName = (name?: string) => {
+export const formatName = (name?: string | any) => {
   if (!name) return "";
   return name.charAt(0).toUpperCase() + name.slice(1);
 };

@@ -42,7 +42,7 @@ const apiConfig = async ({
       }
       // other
       if (error.response) {
-        throw new Error(error.response?.data.detail);
+        throw new Error(JSON.stringify(error.response?.data.detail));
       } else {
         throw new Error(error.message);
       }
