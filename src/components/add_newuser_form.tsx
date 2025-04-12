@@ -12,13 +12,12 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Cookies from "js-cookie";
-import { governance } from "@/models/governance";
 import { roleModel } from "@/models/roles";
 import { CreateUserModel } from "@/models/users";
 import { toast } from "sonner";
 import { AxiosResponse } from "axios";
 import { saveAs } from "file-saver";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, X } from "lucide-react";
 const AddNewUserModal = () => {
   const dispatch = useDispatch();
   const token = Cookies.get("access_token");
@@ -33,24 +32,24 @@ const AddNewUserModal = () => {
   const [formData, setFormData] = useState<CreateUserModel>(
     userEditData
       ? {
-          username: userEditData.username,
-          email_address: userEditData.email_address,
-          gov_id: userEditData.gov_id,
-          phone_number: userEditData.phone_number,
-          link_to_role_id: userEditData.link_to_role_id,
-          is_active: userEditData.is_active,
-          reporting_manager_email: userEditData.reporting_manager_email,
-        }
+        username: userEditData.username,
+        email_address: userEditData.email_address,
+        gov_id: userEditData.gov_id,
+        phone_number: userEditData.phone_number,
+        link_to_role_id: userEditData.link_to_role_id,
+        is_active: userEditData.is_active,
+        reporting_manager_email: userEditData.reporting_manager_email,
+      }
       : {
-          username: "",
-          email_address: "",
-          gov_id: selectedGovernance.governance_id || null,
-          phone_number: "",
-          link_to_role_id: null,
-          password: "",
-          is_active: true,
-          reporting_manager_email: "",
-        }
+        username: "",
+        email_address: "",
+        gov_id: selectedGovernance.governance_id || null,
+        phone_number: "",
+        link_to_role_id: null,
+        password: "",
+        is_active: true,
+        reporting_manager_email: "",
+      }
   );
   const [userExcellFile, setUserExcellFile] = useState<File | null>(null);
   const [selectedFileName, setSelectedFileName] = useState<string | null>(null);
@@ -58,9 +57,9 @@ const AddNewUserModal = () => {
 
   // initial governance data
   const {
-    data: governaceData,
-    isLoading: governanceLoading,
-    isError: governanceError,
+    // data: governaceData,
+    // isLoading: governanceLoading,
+    // isError: governanceError,
   } = useQuery({
     queryKey: ["allgovernances"],
     queryFn: async () =>
@@ -215,7 +214,7 @@ const AddNewUserModal = () => {
             {userEditData ? "Edit User" : "Add New User"}
           </h6>
           <button onClick={handleModalClose} className="dark:text-black">
-            X
+            <X size={18} />
           </button>
         </div>
         <form

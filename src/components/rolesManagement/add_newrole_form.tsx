@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { AxiosResponse } from "axios";
 import { saveAs } from "file-saver";
+import { X } from "lucide-react";
 const AddNewRoleModal = () => {
     const dispatch = useDispatch();
     const [roleName, setRoleName] = useState("");
@@ -52,9 +53,18 @@ const AddNewRoleModal = () => {
             });
         },
         onError: (error) => {
-            console.error("Error adding role:", error);
-            toast.error("Failed to add role");
+            const parsedError = JSON.parse(error.message);
+            console.log("role table error", parsedError);
+            if (parsedError) {
+                return toast.error(parsedError, {
+                    style: { backgroundColor: "#ff5555", color: "white", border: "none" },
+                });
+            }
+            return toast.error("Something went wrong", {
+                style: { backgroundColor: "#ff5555", color: "white", border: "none" },
+            });
         }
+
     });
 
     const handleModalClose = () => dispatch(hideNewRoleAddForm());
@@ -151,7 +161,7 @@ const AddNewRoleModal = () => {
             <div className="flex flex-col gap-2 w-full md:w-[25rem] h-auto bg-white dark:bg-[#E5E5E5] px-5 py-4 rounded-md dark:border dark:border-gray-600">
                 <div className="flex justify-between items-center">
                     <h6 className="text-[14px] font-semibold text-[var(--blue)]">Add New Role</h6>
-                    <button onClick={handleModalClose} className="dark:text-black">X</button>
+                    <button onClick={handleModalClose} className="dark:text-black"><X size={18} /></button>
                 </div>
                 <form className="flex flex-col gap-2" onSubmit={roleExcelFile ? handleCreateWithFile : handleSubmit}>
                     <input

@@ -7,9 +7,9 @@ const Loader = () => {
       <div className="w-24 h-24">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
           <circle
-            fill="#FF156D"
-            stroke="#FF156D"
-            strokeWidth={15}
+            fill="#000000"
+            stroke="#000000"
+            strokeWidth={5}
             r={15}
             cx={40}
             cy={100}
@@ -25,9 +25,9 @@ const Loader = () => {
             />
           </circle>
           <circle
-            fill="#FF156D"
-            stroke="#FF156D"
-            strokeWidth={15}
+            fill="#000000"
+            stroke="#000000"
+            strokeWidth={5}
             r={15}
             cx={100}
             cy={100}
@@ -43,9 +43,9 @@ const Loader = () => {
             />
           </circle>
           <circle
-            fill="#FF156D"
-            stroke="#FF156D"
-            strokeWidth={15}
+            fill="#000000"
+            stroke="#000000"
+            strokeWidth={5}
             r={15}
             cx={160}
             cy={100}

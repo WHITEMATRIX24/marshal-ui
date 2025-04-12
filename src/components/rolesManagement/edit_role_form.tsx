@@ -7,6 +7,7 @@ import Cookies from "js-cookie";
 import { EditRolesApi, fetchAllRolesDataApi } from "@/services/apis";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { X } from "lucide-react";
 
 const EditNewRoleModal = () => {
   const dispatch = useDispatch();
@@ -105,7 +106,9 @@ const EditNewRoleModal = () => {
       <div className="flex flex-col gap-2 w-full md:w-[25rem] h-auto bg-white dark:bg-[#E5E5E5] px-5 py-4 rounded-md dark:border dark:border-gray-600">
         <div className="flex justify-between items-center">
           <h6 className="text-[14px] font-semibold text-[var(--blue)]">Edit Role</h6>
-          <button onClick={handleModalClose} className="dark:text-black">X</button>
+          <button onClick={handleModalClose} className="dark:text-black">
+            <X size={18} />
+          </button>
         </div>
         <form className="flex flex-col gap-2" onSubmit={handleSubmit}>
           {/* Role ID (Disabled) */}

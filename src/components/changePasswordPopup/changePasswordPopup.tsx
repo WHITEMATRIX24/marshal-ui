@@ -5,7 +5,7 @@ import Cookies from "js-cookie";
 import { toast } from "sonner";
 import { useMutation } from "@tanstack/react-query";
 import { hideChangePasswordForm } from "@/lib/global-redux/features/uiSlice";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 
@@ -76,29 +76,23 @@ const ChangePasswordModal = () => {
             handleSuccessfulPasswordChange();
         },
         onError: (error: any) => {
-            console.log('Raw error:', error);  // For debugging
+            let msg = "Something went wrong";
 
-            let errorMessage = "Failed to update password";
-
-            // Handle different error formats
-            if (typeof error?.detail === "string") {
-                // Direct string error (first type)
-                errorMessage = error.detail;
-            } else if (Array.isArray(error?.detail)) {
-                // Array of error objects (second type)
-                const firstError = error.detail[0];
-                if (firstError?.msg) {
-                    errorMessage = firstError.msg;
-                } else if (firstError?.message) {
-                    errorMessage = firstError.message;
+            try {
+                if (Array.isArray(error) && error[0]?.msg) {
+                    msg = error[0].msg;
+                } else if (typeof error === "string") {
+                    const parsed = JSON.parse(error);
+                    if (Array.isArray(parsed) && parsed[0]?.msg) {
+                        msg = parsed[0].msg;
+                    }
                 }
-            } else if (error?.message) {
-                // Generic error message
-                errorMessage = error.message;
+            } catch (e) {
+                console.error("Error parsing error message:", e);
             }
 
-            toast.error(errorMessage, {
-                style: { backgroundColor: "#dc3545", color: "white", border: "none" },
+            toast.error(msg, {
+                style: { backgroundColor: "#ff5555", color: "white", border: "none" },
             });
         }
     });
@@ -128,7 +122,7 @@ const ChangePasswordModal = () => {
             <div className="flex flex-col gap-2 w-full md:w-[25rem] h-auto bg-white dark:bg-[#E5E5E5] px-5 py-4 rounded-md dark:border dark:border-gray-600">
                 <div className="flex justify-between items-center">
                     <h6 className="text-[14px] font-semibold text-[var(--blue)]">Change Password</h6>
-                    <button onClick={handleModalClose} className="dark:text-black">X</button>
+                    <button onClick={handleModalClose} className="dark:text-black"><X size={18} /></button>
                 </div>
                 <form className="flex flex-col gap-2" onSubmit={handleSubmit}>
                     <div className="relative">

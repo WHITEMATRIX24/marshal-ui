@@ -1,6 +1,6 @@
 "use client";
 import * as React from "react";
-import { Pencil, Trash, ChevronDown, ChevronUp } from "lucide-react";
+import { Pencil, Trash, ChevronDown, ChevronUp, X } from "lucide-react";
 import { saveAs } from "file-saver";
 import Papa from "papaparse";
 import {
@@ -395,7 +395,7 @@ export function DataTable<
                 onClick={() => setEditingRow(null)}
                 className="bg-transparent hover:bg-transparent text-black"
               >
-                X
+                <X size={18} />
               </Button>
             </div>
             <form onSubmit={handleSubmit}>

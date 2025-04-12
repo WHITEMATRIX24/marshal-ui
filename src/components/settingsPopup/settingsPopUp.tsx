@@ -13,6 +13,7 @@ import { RootState } from "@/lib/global-redux/store";
 import { useDispatch, useSelector } from "react-redux";
 import { showChangePasswordForm } from "@/lib/global-redux/features/uiSlice";
 import ChangePasswordModal from "../changePasswordPopup/changePasswordPopup";
+import { X } from "lucide-react";
 
 interface SettingsPopUpProps {
   onClose: () => void;
@@ -108,9 +109,10 @@ export const SettingsPopUp: React.FC<SettingsPopUpProps> = ({ onClose }) => {
         <div className="flex flex-col gap-6 w-full md:w-[30rem] h-auto bg-white dark:bg-[#E5E5E5] px-5 py-4 rounded-md ">
           <div className="flex justify-between items-center">
             <h6 className="text-sm font-semibold text-[var(--blue)]">Settings</h6>
-            <button onClick={onClose} className="text-lg font-bold dark:text-black">
-              ✖
+            <button onClick={onClose} className="font-bold dark:text-black">
+              <X size={18} />
             </button>
+
           </div>
           <div className="h-62 flex flex-col gap-5">
             <div className="flex items-center justify-end gap-3">

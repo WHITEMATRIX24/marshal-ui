@@ -1,4 +1,5 @@
 "use client";
+import { X } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 
@@ -26,7 +27,7 @@ const DeleteCnfModal = ({
             Are you sure?
           </h6>
           <button onClick={handleCancelClick} className="dark:text-black">
-            X
+            <X size={18} />
           </button>
         </div>
         <p className="text-gray-600 mb-4 text-[12px] dark:text-black">

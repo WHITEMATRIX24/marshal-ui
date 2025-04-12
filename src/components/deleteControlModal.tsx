@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { toast } from "sonner";
 import Cookies from "js-cookie";;
 import { deleteControlsApi } from "@/services/apis";
+import { X } from "lucide-react";
 
 interface DeleteModalProps {
     ctrlId: number | null;
@@ -67,7 +68,9 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
             <div className="bg-white p-6 rounded-lg shadow-lg w-96  dark:bg-[#e5e5e5] dark:border dark:border-gray-600">
                 <div className="flex justify-between items-center">
                     <h6 className="text-[14px] font-semibold text-[var(--blue)] py-2" >Are you sure?</h6>
-                    <button onClick={onClose} className="dark:text-black">X</button>
+                    <button onClick={onClose} className="dark:text-black">
+                        <X size={18} />
+                    </button>
                 </div>
                 <p className="text-gray-600 mb-4 text-[12px] dark:text-black">
                     You are about to delete this item. This action cannot be undone.

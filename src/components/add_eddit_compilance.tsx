@@ -1,6 +1,6 @@
 "use client";
 import { hideAddEditComapilanceModal } from "@/lib/global-redux/features/uiSlice";
-import { Standard, StandardsResponse } from "@/models/standards";
+import { Standard } from "@/models/standards";
 import {
   createComplinecApi,
   editComplinceApi,
@@ -13,6 +13,7 @@ import Cookies from "js-cookie";
 import { toast } from "sonner";
 import { RootState } from "@/lib/global-redux/store";
 import { ComplianceAddModel } from "@/models/compilance";
+import { X } from "lucide-react";
 
 const AddEditCompilanceModal = () => {
   const dispatch = useDispatch();
@@ -116,7 +117,7 @@ const AddEditCompilanceModal = () => {
             Add compliance
           </h6>
           <button onClick={handleModalClose} className="dark:text-black">
-            X
+            <X size={18} />
           </button>
         </div>
         <form onSubmit={handleCreateComplience} className="flex flex-col gap-2">
