@@ -4,7 +4,7 @@ import React from "react";
 const Loader = () => {
   return (
     <div className="w-full h-full flex justify-center items-center">
-      <div className="w-24 h-24">
+      <div className="w-10 h-10">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
           <circle
             fill="#000000"
