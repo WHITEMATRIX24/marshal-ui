@@ -28,6 +28,7 @@ export const fetchL1ControlsByStandardApi = async ({
 }: ApiConfigProps): Promise<AxiosResponse | undefined> => {
   return apiConfig({ method, urlEndpoint, headers });
 };
+
 export const updateControlsApi = async ({
   method,
   urlEndpoint,
@@ -235,6 +236,31 @@ export const editComplinceApi = async ({
 };
 
 export const deleteComplinceApi = async ({
+  method,
+  urlEndpoint,
+  headers,
+  data,
+}: ApiConfigProps): Promise<AxiosResponse | undefined> => {
+  return apiConfig({ method, urlEndpoint, headers, data });
+};
+
+export const fetchAdditionalDataApi = async ({
+  method,
+  urlEndpoint,
+  headers,
+}: ApiConfigProps): Promise<AxiosResponse | undefined> => {
+  return apiConfig({ method, urlEndpoint, headers });
+};
+
+export const editTaskApi = async ({
+  method,
+  urlEndpoint,
+  headers,
+  data,
+}: ApiConfigProps): Promise<AxiosResponse | undefined> => {
+  return apiConfig({ method, urlEndpoint, headers, data });
+};
+export const editAssignmentApi = async ({
   method,
   urlEndpoint,
   headers,

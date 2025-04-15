@@ -1,7 +1,9 @@
 "use client";
 
 import { Role } from "@/app/home/role-user-management/create-or-update-roles/page";
+import { AssignmentModel } from "@/models/assignment";
 import { ComplianceAddModel } from "@/models/compilance";
+import { TaskEditModel } from "@/models/taskdetail";
 import { CreateUserModel } from "@/models/users";
 import { createSlice } from "@reduxjs/toolkit";
 
@@ -28,6 +30,14 @@ export interface UiStates {
     isVisible: boolean;
     data: ComplianceAddModel | null;
   };
+  editTaskModal: {
+    isVisible: boolean;
+    data: TaskEditModel | null;
+  };
+  editAssignmentModal: {
+    isVisible: boolean;
+    data: AssignmentModel | null;
+  };
 }
 
 const initialState: UiStates = {
@@ -50,6 +60,14 @@ const initialState: UiStates = {
     isVisible: false,
   },
   addEditComapilanecModal: {
+    isVisible: false,
+    data: null,
+  },
+  editTaskModal: {
+    isVisible: false,
+    data: null,
+  },
+  editAssignmentModal: {
     isVisible: false,
     data: null,
   },
@@ -112,6 +130,22 @@ export const UiSlice = createSlice({
       state.addEditComapilanecModal.isVisible = false;
       state.addEditComapilanecModal.data = null;
     },
+    showEditTaskModal: (state, action) => {
+      state.editTaskModal.isVisible = true;
+      state.editTaskModal.data = action.payload;
+    },
+    hideEditTaskModal: (state) => {
+      state.editTaskModal.isVisible = false;
+      state.editTaskModal.data = null;
+    },
+    showEditAssignmentModal: (state, action) => {
+      state.editAssignmentModal.isVisible = true;
+      state.editAssignmentModal.data = action.payload;
+    },
+    hideEditAssignmentModal: (state) => {
+      state.editAssignmentModal.isVisible = false;
+      state.editAssignmentModal.data = null;
+    },
   },
 });
 
@@ -131,6 +165,10 @@ export const {
   showChangePasswordForm,
   showAddEditComapilanceModal,
   hideAddEditComapilanceModal,
+  showEditTaskModal,
+  hideEditTaskModal,
+  showEditAssignmentModal,
+  hideEditAssignmentModal
 } = UiSlice.actions;
 
 export default UiSlice.reducer;

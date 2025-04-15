@@ -2,20 +2,33 @@
 import { ViewActivityTable } from "@/components/activites/viewactivitytable";
 import BreadCrumbsProvider from "@/components/ui/breadCrumbsProvider";
 import { fetchActivitesControlsApi } from "@/services/apis";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Pencil, Trash } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { formatDate } from "@/utils/formater";
 import Loader from "@/components/loader";
+import { useDispatch, useSelector } from "react-redux";
+import { showEditTaskModal } from "@/lib/global-redux/features/uiSlice";
+import EditTaskModal from "@/components/activites/editActivityModal";
+import { RootState } from "@/lib/global-redux/store";
+import DeletetaskModal from "@/components/activites/deleteActivityModal";
 
 const ViewActivity = () => {
   const token = Cookies.get("access_token");
   const userData = Cookies.get("user_info");
   const govId = Cookies.get("selected_governance");
+  const dispatch = useDispatch();
+  const queryClient = useQueryClient();
 
   const [userName, setUserName] = useState<string | null>(null);
   const [roleName, setRoleName] = useState<string | null>(null);
+  const [deleteModal, setDeleteModal] = useState(false);
+  const [deletingTaskId, setDeletingTaskId] = useState<number | null>(null);
+
+  const complilaceFormState = useSelector(
+    (state: RootState) => state.ui.editTaskModal.isVisible
+  );
 
   useEffect(() => {
     if (userData) {
@@ -32,7 +45,7 @@ const ViewActivity = () => {
   }, [govId]);
 
   const getEndpointUrl = () => {
-    if (!userName || !roleName) return "/taskdetail/details"; // Fallback
+    if (!userName || !roleName) return "/taskdetail/details";
 
     const role = roleName.toLowerCase();
     if (role.includes("doer")) {
@@ -106,11 +119,56 @@ const ViewActivity = () => {
       cell: ({ row }: any) => {
         const isAdmin = roleName?.toLowerCase().includes("admin");
 
+        const handleOpenEdit = () => {
+          const {
+            id,
+            task_name,
+            task_details,
+            doer,
+            reviewer,
+            approver,
+            plan_startdate,
+            actual_startdate,
+            end_date,
+            status,
+            action,
+            is_active,
+          } = row.original;
+
+          dispatch(
+            showEditTaskModal({
+              id,
+              task_name,
+              task_details,
+              doer,
+              reviewer,
+              approver,
+              plan_startdate: plan_startdate?.split("T")[0],
+              actual_startdate: actual_startdate?.split("T")[0],
+              end_date: end_date?.split("T")[0],
+              status,
+              action,
+              is_active,
+            })
+          );
+        };
+
+        const handleDeleteOption = () => {
+          setDeletingTaskId(row.original.id);
+          setDeleteModal(true);
+        };
+
         return (
           <div className="flex w-full justify-center gap-2">
-            <Pencil className="h-3 w-3 text-blue-900 cursor-pointer" />
+            <Pencil
+              className="h-3 w-3 text-blue-900 cursor-pointer"
+              onClick={handleOpenEdit}
+            />
             {isAdmin && (
-              <Trash className="h-3 w-3 text-[var(--red)] cursor-pointer" />
+              <Trash
+                className="h-3 w-3 text-[var(--red)] cursor-pointer"
+                onClick={handleDeleteOption}
+              />
             )}
           </div>
         );
@@ -119,7 +177,7 @@ const ViewActivity = () => {
   ];
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ["activites", userName, roleName],
+    queryKey: ["task", userName, roleName],
     queryFn: async () =>
       await fetchActivitesControlsApi({
         method: "GET",
@@ -128,16 +186,17 @@ const ViewActivity = () => {
           Authorization: `Bearer ${token}`,
         },
       }),
-    enabled: !!userName && !!roleName, // Only fetch when both are set
+    enabled: !!userName && !!roleName,
   });
 
   return (
     <div className="flex flex-col w-full mb-[50px]">
-      <header className="flex flex-col shrink-0 gap-0 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
+      <header className="flex flex-col shrink-0 gap-0">
         <div className="flex items-center gap-2 px-4">
           <BreadCrumbsProvider />
         </div>
       </header>
+
       <div className="py-0 w-full px-4">
         {isLoading ? (
           <Loader />
@@ -145,10 +204,28 @@ const ViewActivity = () => {
           <p>Something went wrong ...</p>
         ) : (
           data && (
-            <ViewActivityTable columns={columnData} data={data.data.items} />
+            <ViewActivityTable columns={columnData} data={data.data.items.filter((item: any) => item.is_active)} />
           )
         )}
       </div>
+
+      {complilaceFormState && <EditTaskModal />}
+
+      {deleteModal && deletingTaskId !== null && (
+        <DeletetaskModal
+          task_id={deletingTaskId}
+          isOpen={deleteModal}
+          onClose={() => {
+            setDeletingTaskId(null);
+            setDeleteModal(false);
+          }}
+          onDeleteSuccess={() => {
+            setDeletingTaskId(null);
+            setDeleteModal(false);
+            queryClient.invalidateQueries({ queryKey: ["task", userName, roleName] });
+          }}
+        />
+      )}
     </div>
   );
 };
