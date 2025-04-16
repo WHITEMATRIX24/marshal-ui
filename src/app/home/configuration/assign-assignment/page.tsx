@@ -1,27 +1,29 @@
 "use client";
 import BreadCrumbsProvider from "@/components/ui/breadCrumbsProvider";
-import React, { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
 import { CreateTaskModel } from "@/models/tasks";
-import { useQuery } from "@tanstack/react-query";
-import { fetchUsersDataApi, getAllComplianceApi } from "@/services/apis";
+import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
-import { roleModel } from "@/models/roles";
-import { UserInfo } from "@/models/auth";
-import { Compliance } from "../create-or-view-compliance/page";
-import { FrequencyModel } from "@/models/frequency";
+import { useQuery } from "@tanstack/react-query";
+import {
+  createAssignmentApi,
+  fetchL1ControlsByStandardApi,
+  fetchStandardsApi,
+  fetchUsersDataApi,
+  getAllComplianceApi,
+} from "@/services/apis";
+import { Standard } from "@/models/standards";
+import { Control } from "@/models/control";
+import { AssignAssignmentTable } from "@/components/assign_assignment_table";
 import { toast } from "sonner";
+import { Compliance } from "../create-or-view-compliance/page";
+import { UserInfo } from "@/models/auth";
+import { FrequencyModel } from "@/models/frequency";
 
-const AddAssignment = () => {
+const AssignAssignment = () => {
+  const selectedGovernance = JSON.parse(
+    Cookies.get("selected_governance") || "null"
+  );
   const token = Cookies.get("access_token");
-  const searchParams = useSearchParams();
-  let taskQuery = null;
-  try {
-    const taskParams = searchParams.get("task");
-    if (taskParams) taskQuery = JSON.parse(taskParams);
-  } catch (error) {
-    taskQuery = null;
-  }
   const [formData, setFormData] = useState<CreateTaskModel>({
     action: "",
     actual_startdate: "",
@@ -31,11 +33,15 @@ const AddAssignment = () => {
     plan_startdate: "",
     reviewer: "",
     status: "",
-    task_id: taskQuery ? taskQuery.id : null,
+    task_id: null,
     compliance_id: null,
     frequency: null,
     position: "",
   });
+  const [selectedStandards, setSelcetedStandards] = useState<string | number>(
+    "default"
+  );
+  const [tableData, setTableData] = useState<Control[]>([]);
   const [positionNumber, setPositionNumber] = useState<number | null>(null);
   const [positionData, setPositionData] = useState<string[]>([]);
   const [userFilterData, setUserFilterData] = useState<{
@@ -43,6 +49,51 @@ const AddAssignment = () => {
     reviewer: UserInfo[];
     auditor: UserInfo[];
   }>();
+  const [taskNameDisplay, setTaskNameDisplay] = useState<string>("");
+
+  //   columns data
+  const tableColumnData = [
+    {
+      accessorKey: "control_full_name",
+      header: "App Rev Area Name",
+      id: "control_full_name",
+    },
+  ];
+
+  //   standerds fetch
+  const {
+    data: standerdsData,
+    isLoading: standerdsLoading,
+    error: standardsError,
+  } = useQuery({
+    queryKey: ["standerdsbygovid"],
+    queryFn: () =>
+      fetchStandardsApi({
+        method: "GET",
+        urlEndpoint: `/standards/by-governance/${selectedGovernance.governance_id}`,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }),
+    enabled: selectedGovernance ? true : false,
+  });
+
+  //   compliance fetch
+  const {
+    data: complianceData,
+    isLoading: complianceLoading,
+    error: complianceError,
+  } = useQuery({
+    queryKey: ["compliance"],
+    queryFn: async () =>
+      await getAllComplianceApi({
+        method: "GET",
+        urlEndpoint: "/compliance/compliance-periods",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }),
+  });
 
   //   userData
   const {
@@ -81,6 +132,35 @@ const AddAssignment = () => {
     }
   }, [userData]);
 
+  //   fetch tasks
+  const fetchtasks = async () => {
+    const headers = {
+      Accept: "application/json",
+      Authorization: `Bearer ${token}`,
+    };
+
+    const urlEndpoint = `/controls/tree/with-tasks/?std_id=${selectedStandards}&gov_id=${selectedGovernance.governance_id}`;
+    const method = "GET";
+
+    try {
+      const response = await fetchL1ControlsByStandardApi({
+        urlEndpoint,
+        method,
+        headers,
+      });
+      console.log(response?.data.items);
+
+      setTableData(response?.data.items);
+    } catch (error) {
+      console.log("error in fetching controls in assign assignment");
+    }
+  };
+  useEffect(() => {
+    if (selectedStandards != "default") {
+      fetchtasks();
+    }
+  }, [selectedStandards]);
+
   //   fequency
   const {
     data: frequencyData,
@@ -98,26 +178,8 @@ const AddAssignment = () => {
       }),
   });
 
-  //   compliance fetch
-  const {
-    data: complianceData,
-    isLoading: complianceLoading,
-    error: complianceError,
-  } = useQuery({
-    queryKey: ["compliance"],
-    queryFn: async () =>
-      await getAllComplianceApi({
-        method: "GET",
-        urlEndpoint: "/compliance/compliance-periods",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }),
-  });
-
-  // handle submit
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  //   handle submit
+  const handleSubmit = async () => {
     if (!positionNumber) return;
 
     if (positionData.length < positionNumber)
@@ -154,7 +216,22 @@ const AddAssignment = () => {
       !task_id
     )
       return toast.warning("Fill form completly");
-    console.log(formData);
+
+    setFormData({ ...formData, position: positionJoinedData });
+
+    try {
+      const response = await createAssignmentApi({
+        method: "POST",
+        urlEndpoint: "/assignments/assignments",
+        data: formData,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log(response);
+    } catch (error) {
+      console.log("error on adding assignments");
+    }
   };
 
   return (
@@ -165,23 +242,48 @@ const AddAssignment = () => {
         </div>
       </header>
       <div className="py-4 w-full px-4 pe-20">
-        <form onSubmit={handleSubmit} className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2">
+          <select
+            value={selectedStandards}
+            onChange={(e) => setSelcetedStandards(e.target.value)}
+            className="px-2 py-1 border outline-none rounded-md text-[11px] w-full"
+          >
+            <option value="default" disabled>
+              select standards
+            </option>
+            {standerdsLoading ? (
+              <option disabled>loading...</option>
+            ) : standardsError ? (
+              <option disabled>something went erong</option>
+            ) : (
+              standerdsData?.data.items.map((standerds: Standard) => (
+                <option key={standerds.id} value={standerds.id}>
+                  {standerds.std_short_name}
+                </option>
+              ))
+            )}
+          </select>
           <input
             type="text"
-            value={taskQuery?.task_title || ""}
-            placeholder="Task select from portfolio"
+            placeholder="selected task"
             readOnly
-            className="px-3 py-1 text-[11px] border border-darkThemegrey rounded-md "
+            className="px-2 py-1 border outline-none rounded-md text-[11px] w-full"
+            value={taskNameDisplay}
           />
-          <input
-            type="text"
-            placeholder="Task description"
-            value={taskQuery?.task_details || ""}
-            readOnly
-            className="px-3 py-1 text-[11px] border border-darkThemegrey rounded-md"
-          />
+          {/* task table */}
+          <div className="relative h-[23rem]">
+            <AssignAssignmentTable
+              columns={tableColumnData}
+              data={tableData}
+              displayHandler={setTaskNameDisplay}
+              taskDataHandler={(taskId: number) =>
+                setFormData({ ...formData, task_id: taskId })
+              }
+            />
+          </div>
+          {/* form */}
           <div className="grid grid-cols-3 gap-x-8 gap-y-4">
-            <div>
+            <div className="w-full">
               <select
                 value={formData.doer === "" ? "default" : formData.doer}
                 onChange={(e) =>
@@ -400,16 +502,16 @@ const AddAssignment = () => {
               Cancel
             </button>
             <button
-              type="submit"
+              onClick={handleSubmit}
               className="px-2 py-1 bg-[var(--blue)] w-fit text-white text-[11px] rounded-md"
             >
               Assign
             </button>
           </div>
-        </form>
+        </div>
       </div>
     </div>
   );
 };
 
-export default AddAssignment;
+export default AssignAssignment;

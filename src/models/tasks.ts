@@ -8,4 +8,7 @@ export interface CreateTaskModel {
   end_date: string;
   status: string;
   action: string;
+  compliance_id: number | null;
+  frequency: number | null;
+  position: string;
 }

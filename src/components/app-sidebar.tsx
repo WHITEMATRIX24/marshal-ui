@@ -168,7 +168,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       items: [
         {
           title: "Create Assignment",
-          url: "/home/configuration/create-assignment",
+          url: "/home/configuration/assign-assignment",
           onClick: () => {
             dispatch(setMainBreadcrumb("Add Assignment"));
             dispatch(setSubBredCrum(""));

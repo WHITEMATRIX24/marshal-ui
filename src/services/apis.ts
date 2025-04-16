@@ -268,3 +268,12 @@ export const editAssignmentApi = async ({
 }: ApiConfigProps): Promise<AxiosResponse | undefined> => {
   return apiConfig({ method, urlEndpoint, headers, data });
 };
+
+export const createAssignmentApi = async ({
+  method,
+  urlEndpoint,
+  headers,
+  data,
+}: ApiConfigProps): Promise<AxiosResponse | undefined> => {
+  return apiConfig({ method, urlEndpoint, headers, data });
+};

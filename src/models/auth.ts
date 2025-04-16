@@ -10,6 +10,7 @@ export interface UserGovernanceStructure {
   role_code: string;
   role_id: number;
   role_name: string;
+  role_type_name?: string;
 }
 
 export interface UserInfo {
