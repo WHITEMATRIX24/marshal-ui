@@ -70,7 +70,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   useEffect(() => {
     if (govId) {
       const parsedGovId = JSON.parse(govId);
-      handleFetchStandards(parsedGovId.role_id);
+      console.log("parsed gov id", parsedGovId.governance_id);
+      handleFetchStandards(parsedGovId.governance_id);
       setRole(parsedGovId.role_name);
     }
   }, [govId]);
@@ -166,14 +167,18 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       url: "#",
       icon: Cog,
       items: [
-        {
-          title: "Create Assignment",
-          url: "/home/configuration/assign-assignment",
-          onClick: () => {
-            dispatch(setMainBreadcrumb("Add Assignment"));
-            dispatch(setSubBredCrum(""));
-          },
-        },
+        ...(role?.toLowerCase().includes("admin")
+          ? [
+            {
+              title: "Create Assignment",
+              url: "/home/configuration/assign-assignment",
+              onClick: () => {
+                dispatch(setMainBreadcrumb("Add Assignment"));
+                dispatch(setSubBredCrum(""));
+              },
+            },
+          ]
+          : []),
         {
           title: "Create/View Compliance",
           url: "/home/configuration/create-or-view-compliance",

@@ -143,9 +143,9 @@ export function ViewAssignmentTable<TData, TValue>({
                             <TableRow>
                                 <TableCell
                                     colSpan={columns.length}
-                                    className="h-24 text-center"
+                                    className="h-24 text-[11px] text-center"
                                 >
-                                    No results.
+                                    No Assignments Found.
                                 </TableCell>
                             </TableRow>
                         )}

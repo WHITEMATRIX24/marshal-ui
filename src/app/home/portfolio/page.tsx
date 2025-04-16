@@ -71,7 +71,7 @@ export default function Page() {
     if (govIdCookie) {
       try {
         const parsedGovId = JSON.parse(govIdCookie);
-        setGovId(parsedGovId.role_id);
+        setGovId(parsedGovId.governance_id);
       } catch (error) {
         console.error("Error parsing governance ID:", error);
       }
@@ -89,8 +89,8 @@ export default function Page() {
       row.id === updatedRow.id
         ? updatedRow
         : row.children
-        ? { ...row, children: updateData(row.children, updatedRow) }
-        : row
+          ? { ...row, children: updateData(row.children, updatedRow) }
+          : row
     );
   }
   useEffect(() => {

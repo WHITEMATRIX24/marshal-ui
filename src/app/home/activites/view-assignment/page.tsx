@@ -46,7 +46,9 @@ const ViewActivity = () => {
     if (role.includes("doer")) {
       return `/assignments/assignments?doer=${userName}`;
     } else if (role.includes("reviewer") || role.includes("approver")) {
-      return `/assignments/assignments=${userName}`;
+      return `/assignments/assignments?reviewer=${userName}`;
+    } else if (role.includes("auditor") || role.includes("approver")) {
+      return `/assignments/assignments?reviewr=${userName}`;
     } else {
       return "/assignments/assignments";
     }
@@ -238,7 +240,16 @@ const ViewActivity = () => {
         ) : error ? (
           <p>Something went wrong ...</p>
         ) : (
-          data && <ViewActivityTable columns={columnData} data={data.filter((item: any) => item.is_active)} />
+          data && (
+            roleName?.toLowerCase().includes("doer") ||
+              roleName?.toLowerCase().includes("reviewer") ||
+              roleName?.toLowerCase().includes("auditor") ||
+              roleName?.toLowerCase().includes("admin") ? (
+              <ViewActivityTable columns={columnData} data={data.filter((item: any) => item.is_active)} />
+            ) : (
+              <p className=" text-[11px] text-gray-600 mt-6">No assignments found</p>
+            )
+          )
         )}
       </div>
       {assignmentEditState && <EditAssignmentModal />}
