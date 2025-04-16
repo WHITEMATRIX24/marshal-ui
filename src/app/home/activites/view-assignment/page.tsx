@@ -64,19 +64,20 @@ const ViewActivity = () => {
 
           const freqRes = await fetchAdditionalDataApi({
             method: "GET",
-            urlEndpoint: `/frequencies/frequencies/5`,
+            urlEndpoint: `/frequencies/frequencies/${item.frequency}`,
             headers: { Authorization: `Bearer ${token}` },
           });
-          // const complianceRes = await fetchAdditionalDataApi({
-          //   method: "GET",
-          //   urlEndpoint: `/frequencies/frequencies/5`,
-          //   headers: { Authorization: `Bearer ${token}` },
-          // });
+          const complianceRes = await fetchAdditionalDataApi({
+            method: "GET",
+            urlEndpoint: `/compliance/compliance-periods/${item.compliance_id}`,
+            headers: { Authorization: `Bearer ${token}` },
+          });
           console.log("task res ", taskRes)
           return {
             ...item,
             task_name: taskRes?.data?.task_title ?? "N/A",
             frequency: freqRes?.data?.frequency ?? "N/A",
+            compliance: complianceRes?.data?.compliance_title ?? "N/A"
           };
         } catch (err) {
           console.error("Failed to fetch task or frequency for item", item.id, err);
@@ -84,6 +85,7 @@ const ViewActivity = () => {
             ...item,
             task_name: "N/A",
             frequency: "N/A",
+            compliance: "N/A"
           };
         }
       })
@@ -129,10 +131,10 @@ const ViewActivity = () => {
       id: "approver",
     },
     {
-      accessorKey: "compliance_id",
+      accessorKey: "compliance",
       header: "Compliance",
-      id: "compliance_id",
-      cell: () => "Compliance Period 2025",
+      id: "compliance",
+      // cell: () => "Compliance Period 2025",
     },
 
     {
