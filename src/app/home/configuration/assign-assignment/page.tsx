@@ -23,6 +23,7 @@ const AssignAssignment = () => {
   const selectedGovernance = JSON.parse(
     Cookies.get("selected_governance") || "null"
   );
+  const loginUserData = JSON.parse(Cookies.get("user_info") || "null");
   const token = Cookies.get("access_token");
   const [formData, setFormData] = useState<CreateTaskModel>({
     action: "",
@@ -205,19 +206,22 @@ const AssignAssignment = () => {
     if (
       !action ||
       !actual_startdate ||
-      //   !approver ||
       !compliance_id ||
-      !doer ||
       !end_date ||
       !frequency ||
       !plan_startdate ||
-      !reviewer ||
       !status ||
       !task_id
     )
       return toast.warning("Fill form completly");
 
     setFormData({ ...formData, position: positionJoinedData });
+
+    if (!approver)
+      setFormData({ ...formData, approver: loginUserData.username });
+    if (!doer) setFormData({ ...formData, doer: loginUserData.username });
+    if (!reviewer)
+      setFormData({ ...formData, reviewer: loginUserData.username });
 
     try {
       const response = await createAssignmentApi({
@@ -228,7 +232,28 @@ const AssignAssignment = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log(response);
+      if (
+        (response && response?.status >= 200) ||
+        (response && response?.status < 300)
+      ) {
+        toast.success("assignment created successfully");
+        setFormData({
+          action: "",
+          actual_startdate: "",
+          approver: "",
+          doer: "",
+          end_date: "",
+          plan_startdate: "",
+          reviewer: "",
+          status: "",
+          task_id: null,
+          compliance_id: null,
+          frequency: null,
+          position: "",
+        });
+      } else {
+        toast.error("something went wrong");
+      }
     } catch (error) {
       console.log("error on adding assignments");
     }
@@ -389,7 +414,7 @@ const AssignAssignment = () => {
             <div>
               <input
                 type="text"
-                placeholder="plan start date"
+                placeholder="plan start date (YYYY-MM-DD)"
                 className="px-2 py-1 border outline-none rounded-md text-[11px] w-full"
                 value={formData.plan_startdate}
                 onChange={(e) =>
@@ -400,7 +425,7 @@ const AssignAssignment = () => {
             <div>
               <input
                 type="text"
-                placeholder="actual start date"
+                placeholder="actual start date (YYYY-MM-DD)"
                 className="px-2 py-1 border outline-none rounded-md text-[11px] w-full"
                 value={formData.actual_startdate}
                 onChange={(e) =>
@@ -411,7 +436,7 @@ const AssignAssignment = () => {
             <div>
               <input
                 type="text"
-                placeholder="end date"
+                placeholder="end date (YYYY-MM-DD)"
                 className="px-2 py-1 border outline-none rounded-md text-[11px] w-full"
                 value={formData.end_date}
                 onChange={(e) =>

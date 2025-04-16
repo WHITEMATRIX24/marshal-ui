@@ -4,7 +4,11 @@ import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { CreateTaskModel } from "@/models/tasks";
 import { useQuery } from "@tanstack/react-query";
-import { fetchUsersDataApi, getAllComplianceApi } from "@/services/apis";
+import {
+  createAssignmentApi,
+  fetchUsersDataApi,
+  getAllComplianceApi,
+} from "@/services/apis";
 import Cookies from "js-cookie";
 import { roleModel } from "@/models/roles";
 import { UserInfo } from "@/models/auth";
@@ -14,6 +18,7 @@ import { toast } from "sonner";
 
 const AddAssignment = () => {
   const token = Cookies.get("access_token");
+  const loginUserData = JSON.parse(Cookies.get("user_info") || "null");
   const searchParams = useSearchParams();
   let taskQuery = null;
   try {
@@ -143,7 +148,7 @@ const AddAssignment = () => {
     if (
       !action ||
       !actual_startdate ||
-      //   !approver ||
+      !approver ||
       !compliance_id ||
       !doer ||
       !end_date ||
@@ -154,7 +159,49 @@ const AddAssignment = () => {
       !task_id
     )
       return toast.warning("Fill form completly");
-    console.log(formData);
+
+    setFormData({ ...formData, position: positionJoinedData });
+
+    if (!approver)
+      setFormData({ ...formData, approver: loginUserData.username });
+    if (!doer) setFormData({ ...formData, doer: loginUserData.username });
+    if (!reviewer)
+      setFormData({ ...formData, reviewer: loginUserData.username });
+
+    try {
+      const response = await createAssignmentApi({
+        method: "POST",
+        urlEndpoint: "/assignments/assignments",
+        data: formData,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (
+        (response && response?.status >= 200) ||
+        (response && response?.status < 300)
+      ) {
+        toast.success("assignment created successfully");
+        setFormData({
+          action: "",
+          actual_startdate: "",
+          approver: "",
+          doer: "",
+          end_date: "",
+          plan_startdate: "",
+          reviewer: "",
+          status: "",
+          task_id: taskQuery ? taskQuery.id : null,
+          compliance_id: null,
+          frequency: null,
+          position: "",
+        });
+      } else {
+        toast.error("something went wrong");
+      }
+    } catch (error) {
+      console.log("error on adding assignments");
+    }
   };
 
   return (
@@ -287,7 +334,7 @@ const AddAssignment = () => {
             <div>
               <input
                 type="text"
-                placeholder="plan start date"
+                placeholder="plan start date (YYYY-MM-DD)"
                 className="px-2 py-1 border outline-none rounded-md text-[11px] w-full"
                 value={formData.plan_startdate}
                 onChange={(e) =>
@@ -298,7 +345,7 @@ const AddAssignment = () => {
             <div>
               <input
                 type="text"
-                placeholder="actual start date"
+                placeholder="actual start date (YYYY-MM-DD)"
                 className="px-2 py-1 border outline-none rounded-md text-[11px] w-full"
                 value={formData.actual_startdate}
                 onChange={(e) =>
@@ -309,7 +356,7 @@ const AddAssignment = () => {
             <div>
               <input
                 type="text"
-                placeholder="end date"
+                placeholder="end date (YYYY-MM-DD)"
                 className="px-2 py-1 border outline-none rounded-md text-[11px] w-full"
                 value={formData.end_date}
                 onChange={(e) =>
