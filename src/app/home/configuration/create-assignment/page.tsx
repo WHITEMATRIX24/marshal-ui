@@ -128,6 +128,15 @@ const AddAssignment = () => {
     if (positionData.length < positionNumber)
       return toast.warning("Fill all positions");
 
+    for (let index = 1; index < positionData.length; index++) {
+      const current = Number(positionData[index]);
+      const previous = Number(positionData[index - 1]);
+
+      if (current <= previous) {
+        return toast.warning("positin should be in a ascending order");
+      }
+    }
+
     const positionJoinedData = positionData.join(", ");
 
     const {
@@ -160,19 +169,21 @@ const AddAssignment = () => {
     )
       return toast.warning("Fill form completly");
 
-    setFormData({ ...formData, position: positionJoinedData });
+    const updatedFormData = {
+      ...formData,
+      position: positionJoinedData,
+      approver: approver || loginUserData.username,
+      doer: doer || loginUserData.username,
+      reviewer: reviewer || loginUserData.username,
+    };
 
-    if (!approver)
-      setFormData({ ...formData, approver: loginUserData.username });
-    if (!doer) setFormData({ ...formData, doer: loginUserData.username });
-    if (!reviewer)
-      setFormData({ ...formData, reviewer: loginUserData.username });
+    setFormData(updatedFormData);
 
     try {
       const response = await createAssignmentApi({
         method: "POST",
         urlEndpoint: "/assignments/assignments",
-        data: formData,
+        data: updatedFormData,
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -200,6 +211,8 @@ const AddAssignment = () => {
         toast.error("something went wrong");
       }
     } catch (error) {
+      toast.error("some thing went wrong");
+
       console.log("error on adding assignments");
     }
   };
@@ -400,6 +413,7 @@ const AddAssignment = () => {
                     e.target.selectedIndex
                   ].getAttribute("data-frequencycount");
                   const frequency = frequencyStr ? Number(frequencyStr) : null;
+                  setPositionData([]);
                   setPositionNumber(frequency);
                 }}
                 className="px-2 py-1 border outline-none rounded-md text-[11px] w-full"
@@ -443,7 +457,10 @@ const AddAssignment = () => {
               ))}
           </div>
           <div className="pt-4 flex justify-end gap-5">
-            <button className="px-2 py-1 bg-[var(--red)] w-fit text-white text-[11px] rounded-md">
+            <button
+              type="button"
+              className="px-2 py-1 bg-[var(--red)] w-fit text-white text-[11px] rounded-md"
+            >
               Cancel
             </button>
             <button
